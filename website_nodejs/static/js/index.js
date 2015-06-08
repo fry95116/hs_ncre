@@ -19,7 +19,7 @@ $(document).ready(function() {
   $('form :input').blur(function() {
     // 每次移开鼠标焦点时，先清楚后面的错误提示，以便重新验证
     var $parent = $(this).parent();
-    $parent.find('.form_tips').remove();
+    // $parent.find('.form_tips').remove(); 这行代码是干嘛的
 
     // 验证姓名
     // 正确与否，都在input的兄弟元素.validated_result中添加文本
@@ -63,7 +63,6 @@ $(document).ready(function() {
     // 邮政编码
     if( $(this).is('[name=post_code]')) {
       if( this.value.length != 6) {
-        var error_message = '请输入正确的邮编';
         $parent.children('.validated_result').text('请输入正确的邮编');
         $parent.removeClass().addClass('has_error');
       } else {
@@ -84,6 +83,7 @@ $(document).ready(function() {
     }
 
     // 验证电子邮箱
+    // 非必填项
     if( $(this).is('[name=email]')) {
       if( this.value === '') {
         $parent.children('.validated_result').text('请输入电子邮箱');
@@ -135,7 +135,7 @@ $(document).ready(function() {
   $('[name=submit_form]').click(function() {
     var error = [];
   	//考点代码
-    if( $('[name=exam_site_code]').val() < 1 || $('[name=exam_site_code]').val() > 2) {
+    if( $('[name=exam_site_code]').val() != 410067 && $('[name=exam_site_code]').val() != 410084) {
       error.push('请选择考点');
     }
   	//姓名 input
@@ -149,20 +149,18 @@ $(document).ready(function() {
   	}
 
     // 出生日期 input
-    if( $('[name=id_type]').val() === 1) {
       if ( $('[name=birthday]').val().length != 8) {
         error.push('请输入正确的出生日期');
       }
-    }
 
   	//证件类型 select
   	if( $('[name=id_type]').val() < 1 || $('[name=id_type]').val() > 5) {
-  		error.push('请选择证件号码');
+  		error.push('请选择证件类型');
   	}
 
   	//证件号码 input
   	if( $('[name=id_type]').val().length == 1 && $('[name=id_number]').val().length != 18) {
-  		error.push('请输入证件号码');
+  		error.push('请输入18位身份证号');
   	}
 
   	//民族 select
