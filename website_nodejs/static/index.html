@@ -11,7 +11,7 @@
 
 <body>
 <div id="header">
-	
+
 	<div style="position:relative;">
 		<img src="./img/school.png">
 		<h1>考生信息录入</h1>
@@ -276,15 +276,39 @@
 			<input type="text" name="phone" value="">
 			<span class="validated_result"></span>
 		</div>
+
+		<div class="" id="input_is_our_school">
+			<label for="is_our_school">是否为本校学生？</label>
+			<input type="checkbox" name="is_our_school" value="">
+		</div>
+
+		<div id="input_remark_for_is_our_school">
+			<select class="" name="department">
+				<option value="0">请选择</option>
+				<option value="1">信息工程学院</option>
+				<option value="2">软件学院</option>
+				<option value="3">机械学院</option>
+			</select>
+			<select class="" name="major">
+				<option value="0">请选择</option>
+				<option value="1" department="1">计算机科学与技术</option>
+				<option value="2" department="1">通信工程</option>
+				<option value="3" department="2">软件工程</option>
+				<option value="4" department="3">机械及其自动化</option>
+				<option value="5" department="3">车辆工程</option>
+			</select>
+		</div>
+
 		<div class="" id="input_remark">
 			<label for="remark">备注:</label>
 			<input type="text" name="remark" value="">
 			<span class="validated_result"></span>
 			<div class="tips">
 				如果你是我校学生,请填写你的学号<br>
-				如果不是,请填写你的学校和所在专业或者你的工作单位
+				如果不是,请填写你的学校或者你的工作单位
 			</div>
 		</div>
+
 		<div id="input_submit">
 			<input type="submit" name="submit_form" value="提交"></div>
 		<span id="error_message"></span>
