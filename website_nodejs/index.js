@@ -20,15 +20,30 @@ function isEmpty(inp){
 	}
 	return re;
 }
+
 //中间件
 app.use('/submit', bodyparser.urlencoded({
 	extended: true
 })); //post请求
-app.use(express.static(__dirname + '/static')); //处理静态文件
+app.use('/',express.static(__dirname + '/static')); //处理静态文件
 
 app.get('/', function(req, res) {
-	res.sendFile(__dirname + '/static/index.html')
+	res.sendFile(__dirname + '/pages/welcome.html');
 });
+
+app.get('/fillout', function(req, res) {
+	res.sendFile(__dirname + '/pages/fillout.html');
+});
+
+app.get('/repeatcheck',function(req,res){
+	db('data.mytest').find({id_number: '' + req.query.id_number}, function(r) {
+		if (r.documents.length == 0) {
+			res.send('true');
+		} else {
+			res.send('false');
+		}
+	});
+})
 
 app.post('/submit', function(req, res) {
 
@@ -37,9 +52,15 @@ app.post('/submit', function(req, res) {
 		res.send('submited failed<br>' + JSON.stringify(error));
 	}
 	else{
-		console.log('save');
-		db('data.mytest').insert(req.body);
-		res.send('sccess submited');
+		db('data.mytest').find({id_number:''+req.body.id_number},function(r){	
+			if(r.documents.length==0){
+				db('data.mytest').insert(req.body);
+				res.send('sccess submited');
+			}
+			else{
+				res.send('do not submit twice');
+			}
+		});
 	}
 });
 
