@@ -15,7 +15,7 @@ body {
 }
 
 #header div{
-	width: 1170px;
+	width: 960px;
 	margin: 0 auto 1em;
 	text-align: left;
 	padding: 1em;
@@ -40,12 +40,12 @@ body {
 #header img{
 	height: 48px;
 	position: absolute;
-	right: 24px;
-	top: 16px;
+	right: 32px;
+	top: 24px;
 }
 
 #mainPanel {
-	width: 1102px;
+	width: 892px;
 	margin: 20px auto;
 	background-color: #f7f7f7;
 	padding: 32px;

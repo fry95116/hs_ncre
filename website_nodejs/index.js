@@ -34,7 +34,7 @@ app.post('/submit', function(req, res) {
 
 	var error = check(req.body);
 	if (isEmpty(error)){
-		res.send('submited failed\n' + JSON.stringify(error));
+		res.send('submited failed<br>' + JSON.stringify(error));
 	}
 	else{
 		console.log('save');
