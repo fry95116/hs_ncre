@@ -1,0 +1,21 @@
+{
+  'exam_site_code' : '110201',
+  'serial_number' : '000001',(自增?)
+  'ticket_number' : '3238110201200103',(录入时不用考虑留白即可)
+  'name' : '王飞',
+  'sex' : '男',
+  'birthday' : '19940101',
+  'id_type' : '1',
+  'id_number' : '110101199401012757',(验证长度并对比生日?)
+  'nationality' : '1',
+  'career' : '30',
+  'degree_of_education' : '2',
+  'training_type' : '1',
+  'subject_code' : '32',
+  'post_code' : '100012',(验证长度?)
+  'address' : '北京市西城区灵境胡同10号',
+  'email' : 'wangfei1994@163.com',
+  'phone' : '13695635699',
+  'user_defined_info' : '20118001096',
+  'remark' : '11级电子信息专业'
+  }

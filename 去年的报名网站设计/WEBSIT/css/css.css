@@ -1,0 +1,174 @@
+/*
+'' ============================================================================================
+'' 项目名称：查询班级报名情况
+'' 项目版本：V1.0
+'' 项目描述：按班级查询报名情况
+'' 文件名称：css/css.css
+'' 文件描述：[CSS] Cascading Style Sheet 层叠式样式表文件
+'' 公司名称：教务处
+'' 开发人员：李大侠
+'' 创建日期：2010-12-4 16:44:24
+'' 修订日期：2010-12-04 04:53:53
+'' 版权信息：Copyright (C) 2010
+
+'' 项目升级时需读取以下生成工具的版权信息
+'' 生成工具：风越代码生成器 [FireCode Creator]
+'' 当前版本：通用版 V3.5
+'' 官方网站：http://www.sino8848.com
+'' ============================================================================================
+*/
+
+/* 通用链接样式 Begin--------------------------- */
+/* 链接正常显示时的样式 */
+A:link
+{
+    text-decoration: none; 
+    color: #000000;
+    font-size:9pt;
+    CURSOR: hand;
+}
+
+/* 链接文字在鼠标已点击过后的样式 */
+A:visited
+{
+    text-decoration: none; 
+    color: #000000;
+    font-size:9pt
+}
+
+/* 链接文字在鼠标移上时的样式 */
+a:hover {   
+    text-decoration: none; 
+    color: #ff0000;
+    font-size:9pt;
+    POSITION: relative;
+    LEFT: 0px;
+    TOP: 0px;
+}
+
+/* 链接文字在鼠标点击时的样式 */
+A:active 
+{
+    color: #874598;
+    TEXT-DECORATION: underline;
+    font-size:9pt
+}
+/* 通用链接样式 End--------------------------- */
+
+
+/* 白色文字，深色背景的链接样式 使用：<a href class="whiteLink"> Begin--------------------------- */
+/* 链接正常显示时的样式 */
+A.whiteLink:link
+{
+    text-decoration: none; 
+    color: #FFFFFF;
+    font-size:9pt;
+    CURSOR: hand;
+}
+
+/* 链接文字在鼠标已点击过后的样式 */ 
+A.whiteLink:visited
+{  
+    text-decoration: none; 
+    color: #FFFFFF;
+    font-size:9pt
+}
+
+/* 链接文字在鼠标移上时的样式 */ 
+A.whiteLink:hover {   
+    text-decoration: none; 
+    color: #FF0000;
+    font-size:9pt;
+    POSITION: relative;
+    LEFT: 0px;
+    TOP: 0px;
+}
+
+/* 链接文字在鼠标点击时的样式 */ 
+A.whiteLink:active 
+{
+    color: #FF0000;
+    TEXT-DECORATION: underline;
+    font-size:9pt
+}
+
+/* 白色文字，深色背景的链接样式 Begin--------------------------- */
+
+
+BODY,TD
+{
+    FONT-FAMILY: "宋体","Tahoma";
+    FONT-SIZE: 9pt;color:#000000;
+
+    scrollbar-face-color: #77849A;
+    scrollbar-highlight-color: #FFFFFF;
+    scrollbar-shadow-color: #FFFFFF;
+    scrollbar-3dlight-color: #5A626F;
+    scrollbar-arrow-color: #FFFFFF;
+    scrollbar-track-color: #ACB7CA;
+    scrollbar-darkshadow-color: #5A626F
+}
+
+/*  影响全部input控件
+input {
+    border: 1px solid #999999;
+    padding: 1px;
+    height: 20px;
+    vertical-align: middle;
+    display: run-in;
+    text-align: left;
+    clear: both;
+    float: none;
+}
+*/
+
+.line13 {line-height: 130%}
+.line15 {line-height: 150%}
+.line18 {line-height: 180%}
+.line20 {line-height: 200%}
+
+
+.hidden
+{
+    visibility:hidden;
+    display:none;
+}
+
+.textBox 
+{
+    height: 20px;
+    padding: 1px;
+    padding-left: 5px;
+    FONT-SIZE: 9pt;
+    border:                                      solid 1px #000000;
+    VERTICAL-ALIGN:                              baseline;
+    BACKGROUND-COLOR:                            #FFFFFF
+}
+
+.textBoxReadOnly
+{
+    height: 20px;
+    padding: 1px;
+    padding-left: 5px;
+    FONT-SIZE: 9pt;
+    border:                                      solid 1px #888888;
+    VERTICAL-ALIGN:                              baseline;
+    BACKGROUND-COLOR:                            #EEEEEE
+}
+
+.textBoxNoBorder
+{
+    width: 100%;
+    font-family:                                 Arial;
+    border:                                      solid 0px #FFFFFF;
+    VERTICAL-ALIGN:                              baseline;
+    BACKGROUND-COLOR:                            #ffffff
+}
+
+/* 单线框表格 */
+.tableStyleSolidLine
+{
+    /*同时在表格中设置：bordercolor=#006699 border=1 */
+    border-collapse:collapse;
+    border: 1px solid #006699;
+}
