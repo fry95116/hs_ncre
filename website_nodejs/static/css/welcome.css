@@ -2,22 +2,33 @@ body{
 	margin:0px;
 	background-color: #66ccff;
 	text-align: center;
-	padding-top: 12%;
+	padding-top: 7%;
 	font-family: Microsoft YaHei;
 	color:#fff;
 }
-h1{
+
+img{
+	height: 48px;
+}
+
+#nav h1{
 	font-size: 80px;
 	font-weight: lighter;
 	margin-bottom: 20px;
 }
-h2{
+#header h2{
 	font-size: 60px;
 	font-weight: lighter;
 	margin-top: 0px;
+	margin-bottom:32px;
 }
-button{
+
+#read_info{
 	width: 150px;
+	margin-top:32px;
+}
+
+button{
 	font-size: 20px;
 	padding: 12px;
 	border: 3px solid #fff;
@@ -25,6 +36,7 @@ button{
 	background-color: #66ccff;
 	color:#fff;
 }
+
 
 button:hover{
 	color:#66ccff;
@@ -34,4 +46,17 @@ button:hover{
 
 button:active{
 	background-color: #eee;
+}
+
+#info{
+	width:600px;
+	margin: 0 auto;
+	text-align: center;
+}
+#content{
+	text-align: left;
+}
+
+#content+a>button{
+	margin:32px 0px 48px;
 }
