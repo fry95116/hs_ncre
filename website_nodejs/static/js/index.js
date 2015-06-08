@@ -45,17 +45,13 @@ $(document).ready(function() {
 					$parent.removeClass().addClass('has_success');
 				}
 			}
-			// 这个 ajax 还没有测试，等方任渊做好 api
-			$.get("http://php.weather.sina.com.cn/xml.php", {
-				city: '郑州',
-				password: 'DJOYnieT8234jlsK',
-				day: 0
-					//id_number: $('[name=id_number]').val()
-			}, function(data, status) {
-				if (status == 200) {
-					if (data.result === 'false')
-						$parent.children('.validated_result').text('不能重复报名');
-				}
+
+			// 这里要修改 ajax 地址
+			$.get("http://127.0.0.1:8080/repeatcheck", {
+			  id_number: $('[name=id_number]').val()
+			}, function(data) {
+				if (data === 'false')
+					$parent.children('.validated_result').text('不能重复报名');
 			});
 		}
 
@@ -204,20 +200,28 @@ $(document).ready(function() {
 		}
 
 		//邮编
+		// 可以为空
+		/*
 		if ($('[name=post_code]').val().length != 6) {
 			error.push('请输入邮政编码');
 		}
+		*/
 
 		//地址长度 input
+		// 可以不填
+		/*
 		if ($('[name=address]').val().length === 0 || $('[name=address]').val().length > 64) {
 			error.push('请输入地址');
 		}
+		*/
 
 		// 电子邮箱 input
-		// 空为错
+		// 可以为空
+		/*
 		if ($('[name=email]').val().length === 0) {
 			error.push('请输入电子邮箱');
 		}
+		*/
 
 		// 联系电话 input
 		// 既不为11位也不为8位则出错
@@ -244,11 +248,11 @@ $(document).ready(function() {
 // 这个函数不需要了，本来是做的院系，专业双select联动，现在不需要了。
 $(document).ready(function() {
   var select_department = $('select[name=department]');
-  $('select[name=major] > option').hide(); // 在没有选择学院的时候，隐藏所有的专业信息
+  $('select[name=class] > option').hide(); // 在没有选择学院的时候，隐藏所有的专业信息
   select_department.change(function() {
-    $('select[name=major]').val('0');
-    $('select[name=major] > option').hide(); // 切换了学院后，要重置，要隐藏所有的专业标签
-    $('select[name=major] > option[department=' + select_department.val() + ']').show();
+    $('select[name=class]').val('0');
+    $('select[name=class] > option').hide(); // 切换了学院后，要重置，要隐藏所有的专业标签
+    $('select[name=class] > option[department=' + select_department.val() + ']').show();
   });
 
   $('div#input_remark_for_is_our_school').hide();
