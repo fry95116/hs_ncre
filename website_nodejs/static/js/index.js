@@ -255,8 +255,7 @@ $(document).ready(function() {
 
   $('input[name=is_our_school]').change(function() {
     $('div#input_remark_for_is_our_school').hide();
-    current_selected_value = $('input[name=is_our_school]:checked').val();
-    if (current_selected_value === 'is_our_school')
+    if ( $('input[name=is_our_school]').is(':checked'))
       $('div#input_remark_for_is_our_school').toggle(function() {
         $(this).show();
       });
