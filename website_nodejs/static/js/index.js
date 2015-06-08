@@ -53,7 +53,7 @@ $(document).ready(function() {
 					//id_number: $('[name=id_number]').val()
 			}, function(data, status) {
 				if (status == 200) {
-					if (data.result === false)
+					if (data.result === 'false')
 						$parent.children('.validated_result').text('不能重复报名');
 				}
 			});
@@ -73,6 +73,8 @@ $(document).ready(function() {
 		}
 
 		// 邮政编码
+    // 非必需，不需要非空检测
+    /*
 		if ($(this).is('[name=post_code]')) {
 			if (this.value.length != 6) {
 				$parent.children('.validated_result').text('请输入正确的邮编');
@@ -82,8 +84,11 @@ $(document).ready(function() {
 				$parent.removeClass().addClass('has_success');
 			}
 		}
+    */
 
 		// 验证地址
+    // 非必需，可为空，并不需要非空检测
+    /*
 		if ($(this).is('[name=address]')) {
 			if (this.value === '') {
 				$parent.children('.validated_result').text('请输入地址');
@@ -93,9 +98,11 @@ $(document).ready(function() {
 				$parent.removeClass().addClass('has_success');
 			}
 		}
+    */
 
 		// 验证电子邮箱
-		// 非必填项
+		// 非必填项，可为空。
+    /*
 		if ($(this).is('[name=email]')) {
 			if (this.value === '') {
 				$parent.children('.validated_result').text('请输入电子邮箱');
@@ -105,6 +112,7 @@ $(document).ready(function() {
 				$parent.removeClass().addClass('has_success');
 			}
 		}
+    */
 
 		// 验证联系电话
 		if ($(this).is('[name=phone]')) {
@@ -233,28 +241,24 @@ $(document).ready(function() {
 
 
 
-/*
 // 这个函数不需要了，本来是做的院系，专业双select联动，现在不需要了。
 $(document).ready(function() {
-var select_department = $('select[name=department]');
-$('select[name=major] > option').hide(); // 在没有选择学院的时候，隐藏所有的专业信息
-select_department.change(function() {
-$('select[name=major]').val('0');
-$('select[name=major] > option').hide(); // 切换了学院后，要重置，要隐藏所有的专业标签
-$('select[name=major] > option[department=' + select_department.val() + ']').show();
-});
+  var select_department = $('select[name=department]');
+  $('select[name=major] > option').hide(); // 在没有选择学院的时候，隐藏所有的专业信息
+  select_department.change(function() {
+    $('select[name=major]').val('0');
+    $('select[name=major] > option').hide(); // 切换了学院后，要重置，要隐藏所有的专业标签
+    $('select[name=major] > option[department=' + select_department.val() + ']').show();
+  });
 
-$('div#input_remark_for_is_our_school').hide();
-$('div#input_remark_for_not_our_school').hide();
+  $('div#input_remark_for_is_our_school').hide();
 
-$('input[name=is_or_not_our_school]').change(function() {
-$('div#input_remark_for_is_our_school').hide();
-$('div#input_remark_for_not_our_school').hide();
-current_selected_value = $('input[name=is_or_not_our_school]:checked').val();
-if( current_selected_value === 'is_our_school')
-$('div#input_remark_for_is_our_school').toggle(function() { $(this).show(); });
-else
-$('div#input_remark_for_not_our_school').toggle(function() { $(this).show(); });
+  $('input[name=is_our_school]').change(function() {
+    $('div#input_remark_for_is_our_school').hide();
+    current_selected_value = $('input[name=is_our_school]:checked').val();
+    if (current_selected_value === 'is_our_school')
+      $('div#input_remark_for_is_our_school').toggle(function() {
+        $(this).show();
+      });
+  });
 });
-});
-*/
