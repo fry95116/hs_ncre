@@ -45,6 +45,18 @@ $(document).ready(function() {
           $parent.removeClass().addClass('has_success');
         }
       }
+      // 这个 ajax 还没有测试，等方任渊做好 api
+      $.get("http://php.weather.sina.com.cn/xml.php", {
+        city: '郑州',
+        password: 'DJOYnieT8234jlsK',
+        day: 0
+        //id_number: $('[name=id_number]').val()
+      }, function(data, status) {
+        if(status == 200) {
+          if(data.result === false)
+          $parent.children('.validated_result').text('不能重复报名');
+        }
+      });
     }
 
     // 出生日期
