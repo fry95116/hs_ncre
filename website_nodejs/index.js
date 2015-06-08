@@ -1,7 +1,9 @@
 var express = require('express'),
 	bodyparser = require('body-parser'), //解析post请求用
 	app = express(),
-	db=require('mongous').Mongous;
+	db=require('mongous').Mongous,
+	fs=require('fs'),
+	_=require('underscore');
 
 String.prototype.bytes = function() {
 	var c, b = 0,
@@ -20,7 +22,8 @@ function isEmpty(inp){
 	}
 	return re;
 }
-
+app.set("view engine","ejs");
+app.set("view options",{"layout":false});
 //中间件
 app.use('/submit', bodyparser.urlencoded({
 	extended: true
@@ -28,11 +31,21 @@ app.use('/submit', bodyparser.urlencoded({
 app.use('/',express.static(__dirname + '/static')); //处理静态文件
 
 app.get('/', function(req, res) {
-	res.sendFile(__dirname + '/pages/welcome.html');
+	var count=0
+	db('data.mytest').find({},function(r){
+		if(r.more===undefined){
+			count+=r.numberReturned;
+			res.render('welcome',{count:count,sub:1000});
+		}
+		else{
+			count+=r.numberReturned;
+		}
+	})
+	//res.sendFile(__dirname + '/pages/welcome.html');
 });
 
 app.get('/fillout', function(req, res) {
-	res.sendFile(__dirname + '/pages/fillout.html');
+	res.render('fillout',{});
 });
 
 app.get('/repeatcheck',function(req,res){
