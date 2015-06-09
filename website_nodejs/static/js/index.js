@@ -146,7 +146,6 @@ $(document).ready(function() {
 
 
 $(document).ready(function() {
-	// 全局验证，用下面的check函数。
 	// 绑定submit键，如未通过验证，则返回false，不进行表单提交
 	$('[name=submit_form]').click(function() {
 		var error = [];
@@ -253,27 +252,25 @@ $(document).ready(function() {
     $('select[name=class] > option[department=' + select_department.val() + ']').show();
   });
 
-  $('div#input_remark_for_is_our_school').hide();
+	if( $('input[name=is_our_school]').is(':checked')) {
+		$('div#input_remark_for_not_our_school').hide();
+	} else {
+		$('div#input_remark_for_is_our_school').hide();	
+	}
 
   $('input[name=is_our_school]').click(function() {
 		// 切换是否本校学生时，先全部隐藏
-    $('div#input_remark_for_is_our_school').hide();
-		$('div#input_remark_for_not_our_school').hide();
+    //$('div#input_remark_for_is_our_school').hide();
+		//$('div#input_remark_for_not_our_school').hide();
     if ( $('input[name=is_our_school]').is(':checked')) {
 			// 是本校学生时
-			$('div#input_remark_for_not_our_school').toggle(function() {
-				$(this).hide();
+			$('div#input_remark_for_not_our_school').fadeOut('fast',function() {
+				$('div#input_remark_for_is_our_school').fadeIn('middle');
 			});
-      $('div#input_remark_for_is_our_school').toggle(function() {
-        $(this).show();
-      });
 		} else {
 			// 不是本校学生时
-			$('div#input_remark_for_not_our_school').toggle(function() {
-				$(this).show();
-			});
-			$('div#input_remark_for_is_our_school').toggle(function() {
-				$(this).hide();
+			$('div#input_remark_for_is_our_school').fadeOut('fast',function() {
+				$('div#input_remark_for_not_our_school').fadeIn('middle');
 			});
 		}
   });
