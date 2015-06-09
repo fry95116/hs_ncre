@@ -244,8 +244,6 @@ $(document).ready(function() {
 });
 
 
-
-// 这个函数不需要了，本来是做的院系，专业双select联动，现在不需要了。
 $(document).ready(function() {
   var select_department = $('select[name=department]');
   $('select[name=class] > option').hide(); // 在没有选择学院的时候，隐藏所有的专业信息
