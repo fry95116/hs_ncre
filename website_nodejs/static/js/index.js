@@ -40,19 +40,20 @@ $(document).ready(function() {
 					$parent.children('.validated_result').text('请输入正确的身份证号');
 					$parent.removeClass().addClass('has_error');
 				} else {
-					var ok_message = '输入正确';
-					$parent.children('.validated_result').text('正确');
-					$parent.removeClass().addClass('has_success');
+					// 保证是18位身份证号后，发送异步验证到服务器，确认该身份证号是否已经注册
+					$.get("/repeatcheck", {
+					  id_number: $('[name=id_number]').val()
+					}, function(data) {
+					  if (data === 'false') {
+					    $parent.children('.validated_result').text('不能重复报名');
+							$parent.removeClass().addClass('has_error');
+						} else {
+							$parent.children('.validated_result').text('正确');
+							$parent.removeClass().addClass('has_success');
+						}
+					});
 				}
 			}
-
-			// 这里要修改 ajax 地址
-			$.get("http://127.0.0.1:8080/repeatcheck", {
-			  id_number: $('[name=id_number]').val()
-			}, function(data) {
-				if (data === 'false')
-					$parent.children('.validated_result').text('不能重复报名');
-			});
 		}
 
 		// 出生日期
@@ -228,10 +229,23 @@ $(document).ready(function() {
 			error.push('请输入联系电话');
 		}
 
-		// 备注 input
-		if ($('[name=remark]').val().length === 0) {
-			error.push('请输入备注信息');
+		if( $('input[name=is_our_school]').is(':checked')) {
+			// 勾选本校学生
+			if( $('[name=department]').val() == '0') {
+				error.push('请选择学院');
+			}
+			if( $('[name=class]').val() == '0') {
+				error.push('请选择班级');
+			}
+			if ($('[name=student_number]').val().length === 0) {
+				error.push('请输入学号');
+			}
+		} else {
+			if( $('[name=school]').val() == '0') {
+				error.push('请选择学校');
+			}
 		}
+
 
 		if (error.length === 0) {
 			return true;
@@ -255,7 +269,7 @@ $(document).ready(function() {
 	if( $('input[name=is_our_school]').is(':checked')) {
 		$('div#input_remark_for_not_our_school').hide();
 	} else {
-		$('div#input_remark_for_is_our_school').hide();	
+		$('div#input_remark_for_is_our_school').hide();
 	}
 
   $('input[name=is_our_school]').click(function() {
