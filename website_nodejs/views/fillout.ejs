@@ -280,7 +280,15 @@
 			<input type="checkbox" name="is_our_school" value="true">
 		</div>
 
-		<div id="input_remark_for_is_our_school">
+		<div class="" id="input_remark_for_not_our_school">
+			<select class="" name="school">
+				<option value="0">请选择学校</option>
+				<option value="01">郑州大学</option>
+				<option value="02">郑州航空工业管理学院</option>
+			</select>
+		</div>
+
+		<div class="" id="input_remark_for_is_our_school">
 			<select class="" name="department">
 				<option value="0">请选择学院</option>
 				<option value="01">资环</option>
@@ -915,16 +923,16 @@
 				<option department="05" value="2012113">自动化2012113</option>
 				<option department="05" value="2012114">自动化2012114</option>
 			</select>
-		</div>
-
-		<div class="" id="input_remark">
-			<label for="remark">备注:</label>
-			<input type="text" name="remark" value="">
+			<label for="student_number">学号:</label>
+			<input type="text" name="student_number" value="">
 			<span class="validated_result"></span>
 			<div class="tips">
 				如果你是我校学生,请填写你的学号
-				<br>如果不是,请填写你的学校或者你的工作单位</div>
+				<br>如果不是,请填写你的学校或者你的工作单位
+			</div>
 		</div>
+
+
 
 		<div id="input_submit">
 			<input type="submit" name="submit_form" value="提交"></div>

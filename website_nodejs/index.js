@@ -80,7 +80,7 @@ app.post('/submit', function(req, res) {
 		res.send('submited failed<br>' + JSON.stringify(error));
 	}
 	else{
-		db('data.mytest').find({id_number:''+req.body.id_number},function(r){	
+		db('data.mytest').find({id_number:''+req.body.id_number},function(r){
 			if(r.documents.length==0){
 				db('data.mytest').insert(req.body);
 				res.send('sccess submited');
@@ -209,14 +209,14 @@ function check(form) {
 		error.phone = 'empty';
 	}
 	//备注????
-	if (form.remark) {
-		if (/\d {9}/.test(form.remark)) {
+	if (form.student_number) {
+		if (/\d {9}/.test(form.student_number)) {
 
 		} else {
 
 		}
 	} else {
-		error.remark = 'empty';
+		error.student_number = 'empty';
 	}
 	//
 	return error;

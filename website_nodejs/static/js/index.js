@@ -255,11 +255,26 @@ $(document).ready(function() {
 
   $('div#input_remark_for_is_our_school').hide();
 
-  $('input[name=is_our_school]').change(function() {
+  $('input[name=is_our_school]').click(function() {
+		// 切换是否本校学生时，先全部隐藏
     $('div#input_remark_for_is_our_school').hide();
-    if ( $('input[name=is_our_school]').is(':checked'))
+		$('div#input_remark_for_not_our_school').hide();
+    if ( $('input[name=is_our_school]').is(':checked')) {
+			// 是本校学生时
+			$('div#input_remark_for_not_our_school').toggle(function() {
+				$(this).hide();
+			});
       $('div#input_remark_for_is_our_school').toggle(function() {
         $(this).show();
       });
+		} else {
+			// 不是本校学生时
+			$('div#input_remark_for_not_our_school').toggle(function() {
+				$(this).show();
+			});
+			$('div#input_remark_for_is_our_school').toggle(function() {
+				$(this).hide();
+			});
+		}
   });
 });
