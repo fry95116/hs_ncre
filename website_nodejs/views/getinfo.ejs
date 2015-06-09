@@ -1,0 +1,33 @@
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<script type="text/javascript" src="/js/jquery-1.11.3.min.js"></script>
+	<script type="text/javascript" src="/js/getinfo.js"></script>
+	<link href="/css/getinfo.css" rel="stylesheet" type="text/css">
+	<style type="text/css"></style>
+</head>
+
+<body>
+	<div id="header">
+
+		<div style="position:relative;">
+			<img src="./img/school.png">
+			<h1>考生信息</h1>
+			<p>
+				检查你的个人信息
+				<br>如果有错误,请在现场报名阶段更正</p>
+		</div>
+	</div>
+	<div id='mainPanel'>
+		<% if(info==null){ %>
+			no user found
+		<%}else{%>
+			<table>
+			<% for (key in info){%>
+			<tr><td><%= key %></td><td><%=info[key]%></td></tr>
+			<% }%>
+			</table>
+		<%}%> 
+	</div>
+</body>
+</html>

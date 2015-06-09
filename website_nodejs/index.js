@@ -44,18 +44,33 @@ app.get('/', function(req, res) {
 	//res.sendFile(__dirname + '/pages/welcome.html');
 });
 
+app.get('/getinfo',function(req,res){
+	if(req.query.id_number){
+		db('data.mytest').find({id_number: '' + req.query.id_number}, function(r) {
+			if (r.documents.length == 0) {
+				res.render('getinfo',{info:null});
+			} else {
+				res.render('getinfo',{info:r.documents[0]});
+			}
+		});
+	}
+	
+});
+
 app.get('/fillout', function(req, res) {
 	res.render('fillout',{});
 });
 
 app.get('/repeatcheck',function(req,res){
-	db('data.mytest').find({id_number: '' + req.query.id_number}, function(r) {
-		if (r.documents.length == 0) {
-			res.send('true');
-		} else {
-			res.send('false');
-		}
-	});
+	if(req.query.id_number){
+		db('data.mytest').find({id_number: '' + req.query.id_number}, function(r) {
+			if (r.documents.length == 0) {
+				res.send('true');
+			} else {
+				res.send('false');
+			}
+		});
+	}
 })
 
 app.post('/submit', function(req, res) {
