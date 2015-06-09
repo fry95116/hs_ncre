@@ -42,10 +42,27 @@ $(document).ready(function() {
 				} else {
 					// 保证是18位身份证号后，发送异步验证到服务器，确认该身份证号是否已经注册
 					$.get("/repeatcheck", {
-					  id_number: $('[name=id_number]').val()
+						id_number: $('[name=id_number]').val()
 					}, function(data) {
-					  if (data === 'false') {
-					    $parent.children('.validated_result').text('不能重复报名');
+						if (data === 'false') {
+							$parent.children('.validated_result').text('不能重复报名');
+							$parent.removeClass().addClass('has_error');
+						} else {
+							$parent.children('.validated_result').text('正确');
+							$parent.removeClass().addClass('has_success');
+						}
+					});
+				}
+			} else {
+				if ($(this).val().length == 0) {
+					$parent.children('.validated_result').text('请输入证件号');
+					$parent.removeClass().addClass('has_error');
+				} else {
+					$.get("/repeatcheck", {
+						id_number: $('[name=id_number]').val()
+					}, function(data) {
+						if (data === 'false') {
+							$parent.children('.validated_result').text('不能重复报名');
 							$parent.removeClass().addClass('has_error');
 						} else {
 							$parent.children('.validated_result').text('正确');
