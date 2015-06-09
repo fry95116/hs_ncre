@@ -23,8 +23,9 @@
 			no user found
 		<%}else{%>
 			<table>
+				<th>信息名称</th><th>信息内容</th>
 			<% for (key in info){%>
-			<tr><td><%= key %></td><td><%=info[key]%></td></tr>
+			<tr><td class="key"><%= key %></td><td class="value"><%=info[key]%></td></tr>
 			<% }%>
 			</table>
 		<%}%> 

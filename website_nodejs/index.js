@@ -200,14 +200,41 @@ function check(form) {
 		error.phone = 'empty';
 	}
 	//备注????
-	if (form.student_number) {
-		if (/\d {9}/.test(form.student_number)) {
-
+	if(form.is_our_school){
+		//学院
+		if (form.department) {
+			if (form.department==0) {
+				error.department='department not selected'
+			}
 		} else {
-
+			error.department = 'empty';
 		}
-	} else {
-		error.student_number = 'empty';
+		//班级
+		if (form.class) {
+			if (form.class==0) {
+				error.class='class not selected'
+			}
+		} else {
+			error.class = 'empty';
+		}
+		//学号
+		if (form.student_number) {
+			if (/\d {9}/.test(form.student_number)==false) {
+				error.student_number='unknown student_number'
+			}
+		} else {
+			error.student_number = 'empty';
+		}
+	}
+	else{
+		if(form.school){
+			if(form.school==0){
+				error.class='school not selected'
+			}
+		}
+		else{
+			error.school = 'empty';
+		}
 	}
 	//
 	return error;

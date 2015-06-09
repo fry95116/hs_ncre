@@ -47,4 +47,26 @@ body {
 	padding: 32px;
 	border: 2px solid #eee;
 	border-radius: 10px;
+	text-align: center;
+}
+
+table{
+	margin:0 auto;
+	border-collapse: collapse;
+	border: 1px solid #aaa;
+}
+table *{
+	border: 1px solid #aaa;
+	padding:8px 12px;
+}
+
+table th{
+	background-color: #d5d5d5;
+}
+
+table .key{
+	text-align: right;
+}
+table .value{
+	text-align: center;
 }

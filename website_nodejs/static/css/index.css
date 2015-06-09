@@ -62,7 +62,7 @@ form{
 	text-align: left;
 }
 form div label {
-	width: 100px;
+	width: 128px;
 	display: inline-block;
 	text-align: right;
 	margin-right: 10px;
@@ -148,7 +148,7 @@ box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
 }
 
 .tips{
-	margin-left: 105px;
+	margin-left: 131px;
 	font-size: 10px;
 	color: #888;
 	padding-bottom: 0px;

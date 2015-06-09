@@ -25,7 +25,7 @@
 	<form name="info_form" action="submit" method="post">
 
 		<div class="" id="input_exam_site_code">
-			<label for="exam_site_code">考点:</label>
+			<label for="exam_site_code">考点(必填):</label>
 			<select class="" name="exam_site_code">
 				<option value="0">请选择</option>
 				<option value="410067">华北水利水电大学（郑东新区）</option>
@@ -33,13 +33,13 @@
 			</select>
 		</div>
 		<div id="input_name">
-			<label for="name">姓名:</label>
+			<label for="name">姓名(必填):</label>
 			<input name="name" type="text">
 			<span class="validated_result"></span>
 		</div>
 
 		<div id="input_sex">
-			<label for="sex">性别:</label>
+			<label for="sex">性别(必选):</label>
 			男
 			<input type="radio" name="sex" value="male">
 			&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp女
@@ -47,7 +47,7 @@
 		<span class="validated_result"></span>
 
 		<div id="input_id_type">
-			<label for="id_type">证件类型:</label>
+			<label for="id_type">证件类型(必选):</label>
 			<select name="id_type">
 				<option value="1" selected="selected">中华人民共和国居民身份证</option>
 				<option value="2">台湾居民往来大陆通行证</option>
@@ -59,13 +59,13 @@
 		</div>
 
 		<div id="input_id_number">
-			<label for="id_number">证件号码</label>
+			<label for="id_number">证件号码(必填);</label>
 			<input type="text" name="id_number">
 			<span class="validated_result"></span>
 		</div>
 
 		<div class="" id="input_birthday">
-			<label for="birthday">出生日期</label>
+			<label for="birthday">出生日期(必填)</label>
 			<input type="text" name="birthday">
 			<span class="validated_result"></span>
 			<div class="tips">
@@ -74,7 +74,7 @@
 		</div>
 
 		<div id="input_nationality">
-			<label for="nationality">民族:</label>
+			<label for="nationality">民族(必选):</label>
 			<select name="nationality">
 				<option value="0">请选择</option>
 				<option value="1">汉</option>
@@ -140,7 +140,7 @@
 		</div>
 
 		<div id="input_career">
-			<label for="career">职业:</label>
+			<label for="career">职业(必选):</label>
 			<select class="" name="career">
 				<option value="00">请选择</option>
 				<option value="01">中国共产党中央委员会和地方各级组织负责人</option>
@@ -215,7 +215,7 @@
 		</div>
 
 		<div class="" id="input_degree_of_education">
-			<label for="degree_of_education">文化程度</label>
+			<label for="degree_of_education">文化程度(必选):</label>
 			<select class="" name="degree_of_education">
 				<option value="0">请选择</option>
 				<option value="1">博士</option>
@@ -231,7 +231,7 @@
 		</div>
 
 		<div class="" id="input_training_type">
-			<label for="training_type">培训类型:</label>
+			<label for="training_type">培训类型(必选):</label>
 			<select class="" name="training_type">
 				<option value="0">请选择</option>
 				<option value="1">在校正规课程</option>
@@ -242,7 +242,7 @@
 		</div>
 
 		<div class="" id="input_subject_code">
-			<label for="subject_code">考试科目:</label>
+			<label for="subject_code">考试科目(必选):</label>
 			<select class="" name="subject_code">
 				<option value="0">请选择</option>
 				<option value="1">科目一</option>
@@ -250,7 +250,11 @@
 			</select>
 			<span class="validated_result"></span>
 		</div>
-
+		<div class="" id="input_phone">
+			<label for="phone">联系电话(必填):</label>
+			<input type="text" name="phone" value="">
+			<span class="validated_result"></span>
+		</div>
 		<div class="" id="input_post_code">
 			<label for="post_code">邮编:</label>
 			<input type="text" name="post_code" value="">
@@ -269,11 +273,6 @@
 			<span class="validated_result"></span>
 		</div>
 
-		<div class="" id="input_phone">
-			<label for="phone">联系电话:</label>
-			<input type="text" name="phone" value="">
-			<span class="validated_result"></span>
-		</div>
 		<div id="remark">
 			<h4>备注</h4>
 			<div class="" id="input_is_our_school">
@@ -924,7 +923,7 @@
 					<option department="05" value="2012113">自动化2012113</option>
 					<option department="05" value="2012114">自动化2012114</option>
 				</select>
-				<span>学号:</span>
+				<span>学号(必填):</span>
 				<input type="text" name="student_number" value="">
 				<span class="validated_result"></span>
 			</div>
