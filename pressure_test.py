@@ -45,3 +45,9 @@ for i in range(100000):
     print(r.text)
     if(r.status_code != 200):
         not_200_count += 1
+
+for i in range(10000):
+    r = requests.get('http://127.0.0.1:8080/')
+    print(i)
+    if(r.status_code != 200):
+        print('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
