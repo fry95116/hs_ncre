@@ -177,21 +177,12 @@ function check(form) {
 		error.training_type = 'empty';
 	}
 	//邮编
-	if (form.post_code) {
-		if (/\d {8}/.test(form.post_code)) {
-			error.post_code = 'too lang';
-		}
-	} else {
-		error.post_code = 'empty';
-	}
 	//地址长度
 	if (form.address) {
 		if (form.address.length > 64) {
 			error.address = 'too lang';
 		}
-	} else {
-		error.addess = 'empty';
-	}
+	} 
 	//考试科目代码
 	if (form.subject_code) {
 		if (form.subject_code) {
