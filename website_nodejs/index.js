@@ -73,20 +73,24 @@ app.get('/repeatcheck',function(req,res){
 	}
 })
 
+app.get('/t',function(rep,res){
+	res.render('op_res',{res:'test',info:{}});
+});
+
 app.post('/submit', function(req, res) {
 
 	var error = check(req.body);
 	if (isEmpty(error)){
-		res.send('submited failed<br>' + JSON.stringify(error));
+		res.render('op_res',{res:'提交失败',info:error});
 	}
 	else{
 		db('data.mytest').find({id_number:''+req.body.id_number},function(r){
 			if(r.documents.length==0){
 				db('data.mytest').insert(req.body);
-				res.send('sccess submited');
+				res.render('op_res',{res:'提交成功',info:{}});
 			}
 			else{
-				res.send('do not submit twice');
+				res.render('op_res',{res:'提交失败：不要重复提交',info:{}});
 			}
 		});
 	}
@@ -219,7 +223,7 @@ function check(form) {
 		}
 		//学号
 		if (form.student_number) {
-			if (/\d {9}/.test(form.student_number)==false) {
+			if (/\d{9}/.test(form.student_number)==false) {
 				error.student_number='unknown student_number'
 			}
 		} else {

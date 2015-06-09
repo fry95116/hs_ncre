@@ -1,0 +1,36 @@
+body {
+	text-align: center;
+	font-family: Microsoft YaHei;
+	margin: 0px;
+
+}
+
+#header{
+	background-color: #66ccff;
+	text-align: center;
+}
+
+#header div{
+	width: 960px;
+	margin: 0 auto 1em;
+	text-align: right;
+	padding: 1em;
+	color: #fff;
+	font-weight: lighter;
+	background-color: inherit;
+}
+
+#header img{
+	height: 48px;
+	margin: 24px 32px;
+}
+
+#mainPanel {
+	width: 704px;
+	margin: 20px auto;
+	background-color: #f7f7f7;
+	padding: 32px 128px;
+	border: 2px solid #eee;
+	border-radius: 10px;
+	text-align: left;
+}
