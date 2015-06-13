@@ -1,4 +1,4 @@
-ï»¿<html>
+<html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<link href="/css/op_res.css" rel="stylesheet" type="text/css">
@@ -12,7 +12,7 @@
 		</div>
 	</div>
 	<div id='mainPanel'>
-		<h4><%- res %></h4>
+		<h1><%= res %></h1>
 			<%if(info){%>
 				<ul>
 					<%for (key in info){%>
@@ -20,7 +20,7 @@
 					<%}%>
 				</ul>
 			<%}%>
-		<a href="/">ç‚¹æ­¤è¿”å›žé¦–é¡µ</a>
+		<a href="/">µã´Ë·µ»ØÊ×Ò³</a>
 	</div>
 </body>
 </html>

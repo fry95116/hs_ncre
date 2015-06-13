@@ -1,0 +1,1 @@
+mongod --logpath E:\BSCHISMongoDB\mongodb\data\logs\mongodb.log --logappend --dbpath E:\BSCHISMongoDB\mongodb\data -install

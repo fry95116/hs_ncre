@@ -1,11 +1,11 @@
-var express = require('express'),
+﻿var express = require('express'),
 	bodyparser = require('body-parser'), //解析post请求用
 	app = express(),
 	db=require('mongous').Mongous,
 	fs=require('fs'),
 	_=require('underscore');
 
-var sub1=1140,sub2=3300;
+var sub1=1140,sub2=2861;
 
 var mapping_exam_site_code = {
   '410067': '华北水利水电大学（北环路36号）',
@@ -259,6 +259,24 @@ var mapping_item={
 	student_number:'学号'
 };
 
+var mapping_training_type = {
+  '1': '在校正规课程社会培训班',
+  '2': '社会培训班',
+  '3': '未参加培训'
+};
+
+var mapping_subject_code = {
+  '24': '二级 —— C语言程序设计',
+  '26': '二级 —— VB语言程序设计',
+  '27': '二级 —— VFP据库程序设计',
+  '29': '二级 —— Access数据库程序设计',
+  '35': '三级 —— 网络技术',
+  '36': '三级 —— 数据库技术',
+  '41': '四级 —— 网络工程师',
+  '42': '四级 —— 数据库工程师'
+};
+
+
 String.prototype.bytes = function() {
 	var c, b = 0,
 		l = this.length;
@@ -326,12 +344,14 @@ app.get('/getinfo',function(req,res){
 				rep.degree_of_education=mapping_degree_of_education[rep.degree_of_education];
 				rep.school=mapping_school[rep.school];
 				rep.department=mapping_department[rep.department];
+				rep.training_type=mapping_training_type[rep.training_type];
+				rep.subject_code=mapping_subject_code[rep.subject_code];
 				if(rep.is_our_school==='true'){
+					delete rep.is_our_school;
 					delete rep.school;
 				}
 				else{
 					delete rep.department;
-					delete rep.class;
 					delete rep.student_number;
 				}
 				res.render('getinfo',{info:rep,map:mapping_item});
@@ -365,10 +385,16 @@ app.post('/submit', function(req, res) {
 			info: error
 		});
 	} else {
-		var count = 0
-		db('data.mytest').find({exam_site_code:''+form.exam_site_code}, function(r) {
+		var count = 0,sub=0;
+		db('data.mytest').find({exam_site_code:''+req.body.exam_site_code}, function(r) {
 			if (r.more === undefined) {
 				count += r.numberReturned;
+				if(req.body.exam_site_code=='410067'){
+					sub=sub1;
+				}
+				else{
+					sub=sub2;	
+				}
 				if (count >= sub) {
 					res.render('op_res', {
 						res: '提交失败：名额已满',
@@ -379,15 +405,15 @@ app.post('/submit', function(req, res) {
 						id_number: '' + req.body.id_number
 					}, function(r) {
 						if (r.documents.length == 0) {
-
+							req.body.ip=req.ip;
 							db('data.mytest').insert(req.body);
 							res.render('op_res', {
-								res: '提交成功',
+								res: '您已报名成功,如要查询报名结果,请返回主页。<br>报名成功后,需要考生现场校对信息和缴费,安排如下:<br>花园校区考点：6月22日～6月25日8:30-17:00，地点：综合实验楼401。<br>龙子湖校区考点：6月22日～6月26日8:30-20:00，地点：实验楼S2一楼101房间。',
 								info: {}
 							});
 						} else {
 							res.render('op_res', {
-								res: '提交失败：不要重复提交',
+								res: '提交失败：您已报名,请勿重复提交',
 								info: {}
 							});
 						}
@@ -517,17 +543,9 @@ function check(form) {
 		} else {
 			error.department = 'empty';
 		}
-		//班级
-		if (form.class) {
-			if (form.class==0) {
-				error.class='class not selected'
-			}
-		} else {
-			error.class = 'empty';
-		}
 		//学号
 		if (form.student_number) {
-			if (/\d{9}/.test(form.student_number)==false) {
+			if (/\d{9}\d*/.test(form.student_number)==false) {
 				error.student_number='unknown student_number'
 			}
 		} else {

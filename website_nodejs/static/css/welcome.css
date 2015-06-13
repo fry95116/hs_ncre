@@ -85,3 +85,13 @@ button:active,input[type="submit"]:active{
 #content+a>button{
 	margin:32px 0px 48px;
 }
+#question{
+width:165px;
+margin:0 auto;
+font-size:18px;
+margin-top:20px;
+text-align:right;
+}
+#question div{
+text-align:left;
+}
