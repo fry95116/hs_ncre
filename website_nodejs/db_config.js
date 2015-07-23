@@ -3,6 +3,7 @@
     host: 'localhost',
     user: 'root',
     password: 'abc7758258',
-    database: 'test'
+    database: 'test',
+    table: 'data'
   }
 })();
