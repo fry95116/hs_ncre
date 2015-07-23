@@ -2,7 +2,7 @@
   var mysql = require('mysql'),
     async = require('async'),
     _ = require('underscore'),
-    db_config = require('./db_config'),
+    db_config = require('./user_config').db_config,
     data_schema = require('./data_schema');
 
   var con = mysql.createConnection(db_config);
@@ -65,7 +65,8 @@
 
   //插入记录
   exports.insertInfo = function(data_in, count, callback) {
-    if (check(data_in) !== null) callback(err);
+    var err = check(data_in);
+    if (err != null) callback(err);
     else {
       var re;
       //过滤掉无用的属性
@@ -119,7 +120,13 @@
           });
         } else {
           console.log('succeed');
-          callback();
+          con.commit(function(error) {
+            if (error) throw error;
+            else {
+              console.log('rollback');
+              callback();
+            }
+          });
         }
       });
     }
