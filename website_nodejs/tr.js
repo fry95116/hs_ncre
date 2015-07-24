@@ -225,27 +225,7 @@
       '53': '郑州职业技术学院',
       '54': '河南工业贸易职业学院'
     },
-    item: {
-      exam_site_code: '考点',
-      name: '姓名',
-      sex: '性别',
-      id_type: '证件类型',
-      id_number: '证件号码', //330182199501160019
-      birthday: '生日', //19931214
-      nationality: '民族',
-      career: '职业',
-      degree_of_education: '文化程度',
-      training_type: '培训类型',
-      subject_code: '考试科目',
-      phone: '联系电话',
-      post_code: '邮编',
-      address: '地址',
-      email: '电子邮件',
-      school: '学校',
-      department: '学院',
-      class: '班级',
-      student_number: '学号'
-    },
+
     training_type: {
       '1': '在校正规课程社会培训班',
       '2': '社会培训班',

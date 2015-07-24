@@ -44,6 +44,34 @@ app.get('/', function(req, res) {
 		});
 	});
 });
+
+app.get('/getinfo', function(req, res) {
+	if (req.query.id_number) {
+		dbc.getInfo(req.query.id_number, function(err, result) {
+			if (err) {
+				console.log(err);
+				if (err === 'empty') res.render('op_res', {
+					res: '查不到该考生的信息',
+					info: {}
+				});
+			} else {
+				var out = {};
+				for (i in user_config.getinfo_items) {
+					out[user_config.getinfo_items[i]] = (result[0])[i];
+				}
+				console.log(out);
+				res.render('getinfo', {
+					info: out,
+				});
+			}
+		});
+	} else {
+		res.render('op_res', {
+			res: '查询格式错误',
+			info: {}
+		});
+	}
+});
 /*
 app.get('/getinfo', function(req, res) {
 	if (req.query.id_number) {

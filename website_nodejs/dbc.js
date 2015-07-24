@@ -135,10 +135,10 @@
   //查看考生信息
   exports.getInfo = function(id_number, callback) {
     var sql = 'SELECT * FROM data WHERE id_number=?';
-    con.query(sql, data_in.id_type, data_in.id_number, function(err, res) {
+    con.query(sql, id_number, function(err, res) {
       if (err) callback(err);
-      else if (res.length === 0) callbcak('empty');
-      else callbcak(res);
+      else if (res.length === 0) callback('empty');
+      else callback(null, res);
     });
   };
 

@@ -22,4 +22,23 @@
       '龙子湖校区考点：6月22日～6月26日8:30-20:00，地点：实验楼S2一楼101房间。',
     other_err: '提交失败',
   };
+
+  exports.getinfo_items = {
+    exam_site_code: '考点',
+    name: '姓名',
+    sex: '性别',
+    id_type: '证件类型',
+    id_number: '证件号码', //330182199501160019
+    birthday: '生日', //19931214
+    nationality: '民族',
+    career: '职业',
+    degree_of_education: '文化程度',
+    training_type: '培训类型',
+    subject_code: '考试科目',
+    phone: '联系电话',
+    post_code: '邮编',
+    address: '地址',
+    email: '电子邮件',
+    remark: '备注'
+  };
 })();
