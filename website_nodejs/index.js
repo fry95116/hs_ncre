@@ -50,9 +50,8 @@ app.get('/getinfo', function(req, res) {
 		dbc.getInfo(req.query.id_number, function(err, result) {
 			if (err) {
 				console.log(err);
-				if (err === 'empty') res.render('op_res', {
-					res: '查不到该考生的信息',
-					info: {}
+				if (err === 'empty') res.render('getInfo', {
+					info: null
 				});
 			} else {
 				var out = {};
