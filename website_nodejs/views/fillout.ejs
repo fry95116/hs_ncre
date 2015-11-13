@@ -77,6 +77,9 @@
 			<label for="nationality">民族(必选):</label>
 			<select name="nationality">
 				<option value="0">请选择</option>
+				<% for (key in tr.nationality) { %>
+					<option value="<%= key %>"><%= tr.nationality[key]%></option>
+				<% }%>
 				<option value="01">汉</option>
 				<option value="02">蒙古</option>
 				<option value="03">回</option>

@@ -112,9 +112,13 @@ app.get('/getinfo', function(req, res) {
 
 });
 */
+
+
 app.get('/fillout', function(req, res) {
-	res.render('fillout', {});
+	res.render('fillout', {tr:tr});
 });
+
+
 /*重复检查*/
 app.get('/repeatcheck', function(req, res) {
 	if (req.query.id_number) {
