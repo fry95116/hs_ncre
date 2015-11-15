@@ -240,6 +240,24 @@
       '36': '三级 —— 数据库技术',
       '41': '四级 —— 网络工程师',
       '42': '四级 —— 数据库工程师'
-    }
+    },
+    data_schema_convert: {
+      exam_site_code: '考点',
+      name: '姓名',
+      sex: '性别',
+      birthday: '出生日期',
+      id_type: '证件类型',
+      id_number: '证件号码',
+      nationality: '民族',
+      career: '职业',
+      degree_of_education: '文化程度',
+      training_type: '培训类型',
+      subject_code: '考试科目',
+      post_code: '邮政编码',
+      address: '地址',
+      email: '电子邮箱',
+      phone: '联系电话',
+      remark:'备注'
+  }
   }
 })();

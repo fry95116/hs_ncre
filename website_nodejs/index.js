@@ -115,7 +115,8 @@ app.post('/submit', function(req, res) {
 				} else {
 					res.render('op_res', {
 						res: op_res_text.other_err,
-						info: error
+						data_schema_convert: tr.data_schema_convert,
+						info: err
 					});
 				}
 			} else {

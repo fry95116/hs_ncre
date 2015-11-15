@@ -13,18 +13,32 @@
 		console.log('db connected');
 	});
 
-	//对数据进行检查
-	var check = function(data_in) {
-		var err = {};
-		for (key in data_schema) {
-			if (!data_schema[key].test(data_in[key])) {
-				err[key] = data_in[key] ? 'invalid data' : 'empty';
-			}
-		}
-		console.log(err);
-		if (_.isEmpty(err)) return null;
-		return err;
-	};
+  //对数据进行检查
+  var check = function(data_in) {
+    var err = {};
+    // 下面的for循环是用正则表达式验证是否合乎规则
+    for (key in data_schema) {
+      if (!data_schema[key].test(data_in[key])) {
+        // 在 data_schema 中的正则表达式已经为可以为空的key做了匹配规则
+        // 如果data_in[key]不存在，表明提交的表单object被修改过，有的键被删除，则err[key]设为'not exist'
+        // 否则设为'invalid data'
+        err[key] = data_in[key] ? 'invalid data' : 'not exist';
+      }
+    }
+
+    // 接下来对特殊的验证请求做处理
+    // 如果使用的是身份证，则对身份证号码合法性校验
+    if(data_in.id_type == "1") {
+      id_info = getIdCardInfo(data_in.id_number.toString());
+      if(!id_info.isTrue) {
+        err['id_number'] = 'invalid data';
+      }
+    }
+
+    console.log(err);
+    if (_.isEmpty(err)) return null;
+    return err;
+  };
 
 	exports.check = check;
 
@@ -41,6 +55,9 @@
 	};
 
 	exports.getCount = getCount;
+
+
+
 
 	//人数统计(同考点同科目)
 	var getCountBySubject = function(exam_site_code, subject_code, cb) {
@@ -218,5 +235,91 @@
 			else callback(null, res);
 		});
 	};
+
+  // 身份证校验算法，
+  function getIdCardInfo(cardNo) {
+    var info = {
+      isTrue : false,
+      year : null,
+      month : null,
+      day : null,
+      isMale : false,
+      isFemale : false
+    };
+    if (!cardNo || (15 != cardNo.length && 18 != cardNo.length) ) {
+      info.isTrue = false;
+      return info;
+    }
+    if (15 == cardNo.length) {
+      var year = cardNo.substring(6, 8);
+      var month = cardNo.substring(8, 10);
+      var day = cardNo.substring(10, 12);
+      var p = cardNo.substring(14, 15); //性别位
+      var birthday = new Date(year, parseFloat(month) - 1,
+          parseFloat(day));
+      // 对于老身份证中的年龄则不需考虑千年虫问题而使用getYear()方法
+      if (birthday.getYear() != parseFloat(year)
+          || birthday.getMonth() != parseFloat(month) - 1
+          || birthday.getDate() != parseFloat(day)) {
+        info.isTrue = false;
+      } else {
+        info.isTrue = true;
+        info.year = birthday.getFullYear();
+        info.month = birthday.getMonth() + 1;
+        info.day = birthday.getDate();
+        if (p % 2 == 0) {
+          info.isFemale = true;
+          info.isMale = false;
+        } else {
+          info.isFemale = false;
+          info.isMale = true
+        }
+      }
+      return info;
+    }
+    if (18 == cardNo.length) {
+      var year = cardNo.substring(6, 10);
+      var month = cardNo.substring(10, 12);
+      var day = cardNo.substring(12, 14);
+      var p = cardNo.substring(14, 17)
+      var birthday = new Date(year, parseFloat(month) - 1,
+          parseFloat(day));
+      // 这里用getFullYear()获取年份，避免千年虫问题
+      if (birthday.getFullYear() != parseFloat(year)
+          || birthday.getMonth() != parseFloat(month) - 1
+          || birthday.getDate() != parseFloat(day)) {
+        info.isTrue = false;
+        return info;
+      }
+      var Wi = [ 7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2, 1 ];// 加权因子
+      var Y = [ 1, 0, 10, 9, 8, 7, 6, 5, 4, 3, 2 ];// 身份证验证位值.10代表X
+      // 验证校验位
+      var sum = 0; // 声明加权求和变量
+      var _cardNo = cardNo.split("");
+      if (_cardNo[17].toLowerCase() == 'x') {
+        _cardNo[17] = 10;// 将最后位为x的验证码替换为10方便后续操作
+      }
+      for ( var i = 0; i < 17; i++) {
+        sum += Wi[i] * _cardNo[i];// 加权求和
+      }
+      var i = sum % 11;// 得到验证码所位置
+      if (_cardNo[17] != Y[i]) {
+        return info.isTrue = false;
+      }
+      info.isTrue = true;
+      info.year = birthday.getFullYear();
+      info.month = birthday.getMonth() + 1;
+      info.day = birthday.getDate();
+      if (p % 2 == 0) {
+        info.isFemale = true;
+        info.isMale = false;
+      } else {
+        info.isFemale = false;
+        info.isMale = true
+      }
+      return info;
+    }
+    return info;
+  }
 
 })();
