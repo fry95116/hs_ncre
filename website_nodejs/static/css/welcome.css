@@ -29,6 +29,22 @@ img{
 	margin-right: 24px;
 }
 
+#RegNum{
+	list-style: none;
+	font-weight: bold;
+	font-size: 18px;
+	padding-left: 0px;
+}
+
+#RegNum ul{
+	list-style: none;
+	font-weight: lighter;
+	font-size: 15px;
+	padding-left: 0px;
+	margin-top: 2px;
+	margin-bottom: 16px;
+}
+
 #get_id_number{
 	margin-top: 32px;
 }
@@ -86,12 +102,7 @@ button:active,input[type="submit"]:active{
 	margin:32px 0px 48px;
 }
 #question{
-width:165px;
 margin:0 auto;
 font-size:18px;
 margin-top:20px;
-text-align:right;
-}
-#question div{
-text-align:left;
 }

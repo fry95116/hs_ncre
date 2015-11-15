@@ -11,15 +11,16 @@ var express = require('express'),
 var sub = user_config.plan_count,
 	op_res_text = user_config.op_res_text;
 
-
 app.set("view engine", "ejs");
 app.set("view options", {
 	"layout": false
 });
+
 //中间件
 app.use('/submit', bodyparser.urlencoded({
 	extended: true
 })); //post请求
+
 app.use('/', express.static(__dirname + '/static')); //处理静态文件
 
 app.get('/', function(req, res) {
@@ -71,47 +72,6 @@ app.get('/getinfo', function(req, res) {
 		});
 	}
 });
-/*
-app.get('/getinfo', function(req, res) {
-	if (req.query.id_number) {
-		db('data.mytest').find({
-			id_number: '' + req.query.id_number
-		}, function(r) {
-			if (r.documents.length == 0) {
-				res.render('getinfo', {
-					info: null
-				});
-			} else {
-				var rep = r.documents[0];
-				delete rep._id;
-				delete rep.submit_form;
-				rep.exam_site_code = mapping_exam_site_code[rep.exam_site_code];
-				rep.sex = mapping_sex[rep.sex];
-				rep.id_type = mapping_id_type[rep.id_type];
-				rep.nationality = mapping_nationality[rep.nationality];
-				rep.career = mapping_career[rep.career];
-				rep.degree_of_education = mapping_degree_of_education[rep.degree_of_education];
-				rep.school = mapping_school[rep.school];
-				rep.department = mapping_department[rep.department];
-				rep.training_type = mapping_training_type[rep.training_type];
-				rep.subject_code = mapping_subject_code[rep.subject_code];
-				if (rep.is_our_school === 'true') {
-					delete rep.is_our_school;
-					delete rep.school;
-				} else {
-					delete rep.department;
-					delete rep.student_number;
-				}
-				res.render('getinfo', {
-					info: rep,
-					map: mapping_item
-				});
-			}
-		});
-	}
-
-});
-*/
 
 
 app.get('/fillout', function(req, res) {
@@ -147,7 +107,7 @@ app.post('/submit', function(req, res) {
 						res: op_res_text.exist,
 						info: {}
 					});
-				} else if (err == 'overflow') {
+				} else if (err == 'overflow_site' || err == 'overflow_subject') {
 					res.render('op_res', {
 						res: op_res_text.overflow,
 						info: {}
