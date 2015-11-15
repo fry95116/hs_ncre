@@ -56,8 +56,8 @@ app.get('/getinfo', function(req, res) {
 				});
 			} else {
 				var out = {};
-				for (i in user_config.getinfo_items) {
-					out[user_config.getinfo_items[i]] = (result[0])[i];
+				for (i in tr.data_schema_convert) {
+					out[tr.data_schema_convert[i]] = (result[0])[i];
 				}
 				console.log(out);
 				res.render('getinfo', {
@@ -75,7 +75,7 @@ app.get('/getinfo', function(req, res) {
 
 
 app.get('/fillout', function(req, res) {
-	res.render('fillout', {tr:tr});
+	res.render('fillout', {tr:tr, exam_plan:user_config.exam_plan});
 });
 
 
@@ -92,6 +92,8 @@ app.get('/repeatcheck', function(req, res) {
 /*处理提交的考生记录*/
 app.post('/submit', function(req, res) {
 	if (req.body) {
+		// 将身份证中可能出现的x变成大写字母
+
 		//生成备注
 		if (req.body.is_our_school) {
 			req.body.remark = '' + tr.department[req.body.department] + req.body.student_number;

@@ -3,8 +3,7 @@
     _ = require('underscore');
 
   module.exports = {
-    exam_site_code: new RegExp('^' + _.keys(tr.exam_site_code).join('$|^') +
-      '$'),
+    exam_site_code: /^\d+$/,  // 仅仅检测非空，特殊验证在外面做
     name: /^...*/,
     sex: new RegExp('^' + _.keys(tr.sex).join('$|^') + '$'),
     birthday: /^([1-9]\d{3})(0\d|1[012])([0][1-9]|[12]\d|3[01])$/,
@@ -16,8 +15,7 @@
       '$|^') + '$'),
     training_type: new RegExp('^' + _.keys(tr.training_type).join('$|^') +
       '$'),
-    subject_code: new RegExp('^' + _.keys(tr.subject_code).join('$|^') +
-      '$'),
+    subject_code: /^\d+$/,  // 仅仅检测非空，特殊验证在外面做
     post_code: /^\d*$/,
     address: /^.*$/,
     email: /^$|^(\w)+(\.\w+)*@(\w)+((\.\w+)+)$/,

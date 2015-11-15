@@ -35,6 +35,13 @@
       }
     }
 
+	// 考点和科目的后端联动验证
+	// 等前端完善了，再试一试
+	exam_plan = user_config.exam_plan;
+	if(!(data_in['subject_code'] in exam_plan.exam_sites[data_in.exam_site_code].subjects)) {
+		err['subject_code'] = '不被提供';
+	}
+
     console.log(err);
     if (_.isEmpty(err)) return null;
     return err;

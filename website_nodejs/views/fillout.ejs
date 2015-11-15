@@ -121,9 +121,13 @@
 			<label for="subject_code">考试科目(必选):</label>
 			<select class="" name="subject_code">
 				<option value="0">请选择</option>
-				<% for (key in tr.subject_code) { %>
-					<option value="<%= key %>"><%= tr.subject_code[key]%></option>
+
+				<% for (exam_site_code in exam_plan.exam_sites) { %>
+					<% for( subject_code in exam_plan.exam_sites[exam_site_code].subjects) { %>
+						<option value="<%= subject_code %>" site="<%= exam_site_code %>"><%= exam_plan.exam_sites[exam_site_code].subjects[subject_code].name %></option>
+					<% } %>
 				<% } %>
+
 			</select>
 			<span class="validated_result"></span>
 		</div>
