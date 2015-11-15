@@ -16,7 +16,7 @@
 			<%if(info){%>
 				<ul>
 					<%for (key in info){%>
-					<li><%= info[key]%></li>
+					<li><%= "" + data_schema_convert[key] + ":" + info[key]%></li>
 					<%}%>
 				</ul>
 			<%}%>
