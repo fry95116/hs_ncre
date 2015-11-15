@@ -13,6 +13,8 @@
 		'410067': 100,
 		'410084': 200
 	};
+	//招生计划
+	//注意：每个exam_sites（考点）的count（招生人数）是必填项
 
 	exports.exam_plan = {
 		exam_sites: {

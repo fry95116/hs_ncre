@@ -11,15 +11,16 @@ var express = require('express'),
 var sub = user_config.plan_count,
 	op_res_text = user_config.op_res_text;
 
-
 app.set("view engine", "ejs");
 app.set("view options", {
 	"layout": false
 });
+
 //中间件
 app.use('/submit', bodyparser.urlencoded({
 	extended: true
 })); //post请求
+
 app.use('/', express.static(__dirname + '/static')); //处理静态文件
 
 app.get('/', function(req, res) {
