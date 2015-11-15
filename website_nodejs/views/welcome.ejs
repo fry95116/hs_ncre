@@ -14,9 +14,16 @@
 	</div>
 	<div id="header">
 		<h2>网上报名系统</h2>
-		<p>
-			花园校区考点：已报&nbsp<%= count1 %>&nbsp人，剩余&nbsp<%=sub1-count1%>&nbsp人
-			<br>龙子湖校区考点：已报&nbsp<%= count2 %>&nbsp人，剩余&nbsp<%= sub2-count2 %>&nbsp人</p>
+		<ul id="RegNum">
+			<li>
+				花园校区考点：已报&nbsp<%= count1 %>&nbsp人，剩余&nbsp<%=sub1-count1%>&nbsp人
+				<ul>
+					<li>ms-office：已报&nbsp10&nbsp人，剩余&nbsp20&nbsp人</li>
+					<li>ms-office：已报&nbsp10&nbsp人，剩余&nbsp20&nbsp人</li>
+				</ul>
+			</li>
+			<li>龙子湖校区考点：已报&nbsp<%= count2 %>&nbsp人，剩余&nbsp<%= sub2-count2 %>&nbsp人</li>
+		</ul>
 		<button id="read_info">开始报名</button>
 		
 		<button id="get_info">报名结果查询</button>
@@ -26,13 +33,9 @@
 			<input type="submit" value="检索">
 		</form> 
 		<div id="question">
-		   <div>考试信息咨询QQ群:</div>
-			437252399<br>
-			437306317<br>
-			437312687<br>
-			437314632<br>
-		   <div>报名咨询电话:</div>
-			86551362</div>
+			<div>考试信息咨询QQ群: 437252399 / 437306317 / 437312687 / 437314632</div>
+			<div>报名咨询电话: 86551362</div>
+		</div>
 	</div>
 	<div id="info">
 		<h1>考生须知</h1>
