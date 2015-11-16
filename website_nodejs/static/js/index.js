@@ -13,6 +13,18 @@ $('#input_birthday').hide();
 });
 });
 */
+//考点选择与学科选择联动
+$(document).ready(function(){
+	var subject_selector = $('[name="subject_code"]');
+	subject_selector.children().hide();
+	subject_selector.children('[site = "0"]').show();
+
+	$('[name="exam_site_code"]').change(function(){
+		var esc = $(this).children('option:selected').val();
+		subject_selector.children().hide();
+		subject_selector.children('[site = "' + esc + '"]').show();
+	});
+});
 
 $(document).ready(function() {
 

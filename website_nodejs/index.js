@@ -93,7 +93,9 @@ app.get('/repeatcheck', function(req, res) {
 app.post('/submit', function(req, res) {
 	if (req.body) {
 		// 将身份证中可能出现的x变成大写字母
-
+		if(req.body.id_type = 1){
+			req.body.id_number.toUpperCase();
+		}
 		//生成备注
 		if (req.body.is_our_school) {
 			req.body.remark = '' + tr.department[req.body.department] + req.body.student_number;
@@ -131,6 +133,6 @@ app.post('/submit', function(req, res) {
 	}
 });
 
-app.listen(8080, function() {
+app.listen(8081, function() {
 	console.log('listening on 8080');
 });
