@@ -10,14 +10,14 @@
 
 	con.connect(function(err) {
 		if (err) throw err;
-		console.log('db connected');
+		console.log('数据库已连接');
 	});
 
 	//对数据进行检查
 	var check = function(data_in) {
 		var err = {};
 		// 下面的for循环是用正则表达式验证是否合乎规则
-		for (key in data_schema) {
+		for (var key in data_schema) {
 			if (!data_schema[key].test(data_in[key])) {
 				// 在 data_schema 中的正则表达式已经为可以为空的key做了匹配规则
 				// 如果data_in[key]不存在，表明提交的表单object被修改过，有的键被删除，则err[key]设为'not exist'
@@ -38,16 +38,21 @@
 		// 考点和科目的后端联动验证
 		// 等前端完善了，再试一试
 		exam_plan = user_config.exam_plan;
-		if(!(data_in.exam_site_code in _.keys(exam_plan))){
+
+		if(!(data_in.exam_site_code in exam_plan.exam_sites)){
 			err['exam_site_code'] = 'invalid data';
 		}
 		else if(!(data_in.subject_code in exam_plan.exam_sites[data_in.exam_site_code].subjects)) {
 			err['subject_code'] = 'subject not supported in this site';
 		}
 
-		console.log(err);
-		if (_.isEmpty(err)) return null;
-		return err;
+		if (_.isEmpty(err)) {
+			return null;
+		}
+		else {
+			var re = {error_type: 'data_error', err_info: err};
+			return re;
+		}
 	};
 
 	exports.check = check;
@@ -89,9 +94,16 @@
 				' GROUP BY exam_site_code',
 				function(err, res) {
 					if (err) cb(err);
-					else cb(null, res);
+					else  {
+						res = _.object( _.map(res,function(row){
+									return [row.exam_site_code,row.count];
+								})
+						);
+						cb(null,res);
+					}
 				});
 	}
+
 	exports.getStatistics_AllSite = getStatistics_AllSite;
 
 	//人数统计(同考点各科目)
@@ -103,7 +115,13 @@
 				exam_site_code,
 				function(err, res) {
 					if (err) cb(err);
-					else cb(null, res);
+					else {
+						res = _.object( _.map(res,function(row){
+								return [row.subject_code,row.count];
+							})
+						);
+						cb(null,res);
+					}
 				});
 	}
 	exports.getStatisticsByExamSite_AllSubject = getStatisticsByExamSite_AllSubject;
@@ -118,10 +136,10 @@
 					if (err) cb(err);
 					else {
 						if (res[0].count > 0) {
-							console.log('false');
+							//console.log('false');
 							cb(null, 'false');
 						} else {
-							console.log('true');
+							//console.log('true');
 							cb(null, 'true');
 						}
 					}
@@ -169,7 +187,7 @@
 						getCount(data_in.exam_site_code, function(err, res) {
 							if (err) cb(err);
 							else {
-								if (res >= plancount) cb('overflow_site');
+								if (res >= plancount) cb({error_type: 'overflow', err_info: 'overflow_site'});
 								else cb();
 							}
 						});
@@ -184,7 +202,7 @@
 						getCountBySubject(data_in.exam_site_code, data_in.subject_code, function(err, res) {
 							if (err) cb(err);
 							else {
-								if (res >= plancount) cb('overflow_subject');
+								if (res >= plancount) cb({error_type: 'overflow', err_info: 'overflow_subject'});
 								else cb();
 							}
 						});
@@ -195,7 +213,7 @@
 					repeatCheck(data_in.id_number, function(err, res) {
 						if (err) cb(err);
 						else {
-							if (res === 'false') cb('exist');
+							if (res === 'false') cb({error_type: 'exist', err_info: 'exist'});
 							else {
 								//插入数据
 								var sql = 'INSERT INTO ' + db_config.table +
@@ -211,20 +229,20 @@
 			//执行
 			async.series(insert_transaction, function(err, res) {
 				if (err) {
-					console.log(err);
+					//console.log(err);
 					con.rollback(
 							(function() {
 								return function(error) {
 									if (error) throw error;
 									else {
-										console.log('rollback');
+										//console.log('rollback');
 										callback(err);
 									}
 								};
 							})()
 					);
 				} else {
-					console.log('succeed');
+					//console.log('succeed');
 					con.commit(function(error) {
 						if (error) throw error;
 						else {

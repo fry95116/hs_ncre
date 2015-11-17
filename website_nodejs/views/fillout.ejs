@@ -124,7 +124,9 @@
 
 				<% for (exam_site_code in exam_plan.exam_sites) { %>
 					<% for( subject_code in exam_plan.exam_sites[exam_site_code].subjects) { %>
-						<option value="<%= subject_code %>" site="<%= exam_site_code %>"><%= exam_plan.exam_sites[exam_site_code].subjects[subject_code].name %></option>
+						<option value="<%= subject_code %>" site="<%= exam_site_code %>"><%= exam_plan.exam_sites[exam_site_code].subjects[subject_code].name %>
+							@<%= exam_plan.exam_sites[exam_site_code].name %>
+						</option>
 					<% } %>
 				<% } %>
 

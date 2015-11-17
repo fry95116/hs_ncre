@@ -6,10 +6,90 @@ var express = require('express'),
 	async = require('async'),
 	dbc = require('./dbc'),
 	tr = require('./tr'),
-	user_config = require('./user_config');
+	user_config = require('./user_config'),
+	util = require('util');
 
 var sub = user_config.plan_count,
 	op_res_text = user_config.op_res_text;
+
+//统计报名人数信息
+function getRegInfo(callback){
+	//构建并行查询
+	var querylist = [
+		function(cb) {
+			dbc.getStatistics_AllSite(function(err, res) {
+				if(err) cb(err);
+				else{
+					var sites = {};
+					for(var site_code in user_config.exam_plan.exam_sites){
+						sites[site_code] = 0;
+					}
+					cb(null, _.defaults(res,sites));
+				}
+			});
+		}
+	];
+
+	for(var site_code in user_config.exam_plan.exam_sites){
+
+		var picker =[];
+		for(var subject_code in user_config.exam_plan.exam_sites[site_code].subjects){
+			if(user_config.exam_plan.exam_sites[site_code].subjects[subject_code].count){
+				picker.push(subject_code);
+			}
+		}
+
+		querylist.push(_.partial(function(site_code, picker, cb){
+			dbc.getStatisticsByExamSite_AllSubject(site_code,function(err,res){
+				if(err) cb(err);
+				else{
+					res = _.pick(res,picker);
+
+					var subjects = {};
+					for(var sc in picker){
+						subjects[ picker[sc] ] = 0;
+					}
+
+					res = _.defaults(res,subjects);
+					cb(null,{exam_site_code:site_code,counts:res});
+				}
+			});
+		},site_code,picker));
+	}
+
+	async.parallel(querylist, function(err, result) {
+		if (err) throw err;
+		else {
+			var re = {};
+
+			//组装考点人数统计
+			var siteCount = result[0];
+
+			for (var esc in siteCount){
+				re[esc] = {
+					name:user_config.exam_plan.exam_sites[esc].name,
+					total:user_config.exam_plan.exam_sites[esc].count,
+					count:siteCount[esc]
+				};
+			}
+
+			//组装科目人数统计
+			for (var i = 1; i < result.length; ++i){
+				var subject_count = result[i];
+				re[subject_count.exam_site_code].subjects = {};
+				for(var sc in subject_count.counts){
+					re[subject_count.exam_site_code].subjects[sc] = {
+						name:user_config.exam_plan.exam_sites[subject_count.exam_site_code].subjects[sc].name,
+						total:user_config.exam_plan.exam_sites[subject_count.exam_site_code].subjects[sc].count,
+						count:subject_count.counts[sc]
+					}
+				}
+			}
+
+			callback(re);
+		}
+	});
+}
 
 app.set("view engine", "ejs");
 app.set("view options", {
@@ -24,28 +104,26 @@ app.use('/submit', bodyparser.urlencoded({
 app.use('/', express.static(__dirname + '/static')); //处理静态文件
 
 app.get('/', function(req, res) {
-	async.parallel([
-		function(cb) {
-			dbc.getCount(410067, function(err, res) {
-				cb(err, res);
-			});
-		},
-		function(cb) {
-			dbc.getCount(410084, function(err, res) {
-				cb(err, res);
-			});
-		}
-	], function(err, result) {
-		if (err) throw err;
-		else res.render('welcome', {
-			count1: result[0],
-			count2: result[1],
-			sub1: sub['410067'],
-			sub2: sub['410084']
+	getRegInfo(function(reginfo){
+		res.render('welcome', {
+			reg_info:reginfo
 		});
 	});
 });
 
+/*
+app.get('/', function(req, res) {
+	dbc.getStatistics_AllSite(function(err,res){
+		if(err) throw err;
+		else{
+			regNum = {};
+			for(site_code in user_config.exam_plan){
+				regNum[site_code].count = res[site_code] || 0;
+			}
+		}
+	});
+});
+*/
 app.get('/getinfo', function(req, res) {
 	if (req.query.id_number) {
 		dbc.getInfo(req.query.id_number, function(err, result) {
@@ -91,6 +169,11 @@ app.get('/repeatcheck', function(req, res) {
 
 /*处理提交的考生记录*/
 app.post('/submit', function(req, res) {
+
+	// 对于每一次请求都做一次日志记录
+	var now = Date();
+	console.log(now.toString() + '  【【请求】】' + '  【IP来源】:' + req.connection.remoteAddress.toString() + '  【提交的报名信息】:' + util.inspect(req.body).replace(/\n/g, ''))
+
 	if (req.body) {
 		// 将身份证中可能出现的x变成大写字母
 		if(req.body.id_type = 1){
@@ -106,12 +189,17 @@ app.post('/submit', function(req, res) {
 		//插入数据
 		dbc.insertInfo(req.body, sub['' + req.body.exam_site_code], function(err) {
 			if (err) {
-				if (err === 'exist') {
+
+				// “数据错误”、“已存在”、“考点报滿”、“科目报滿” 而提交失败的日志记录
+				var now = Date();
+				console.log(now.toString() + '【【提交失败】】'+ '  【错误类型】：'+ err.error_type + '  【错误原因】' + util.inspect(err.err_info).replace(/\n/g, '') + util.inspect(err) + '  【IP来源】:' + req.connection.remoteAddress.toString() + '  【提交的报名信息】：' + util.inspect(req.body).replace(/\n/g, ''))
+
+				if (err.error_type == 'exist') {
 					res.render('op_res', {
 						res: op_res_text.exist,
 						info: {}
 					});
-				} else if (err == 'overflow_site' || err == 'overflow_subject') {
+				} else if (err.error_type == 'overflow') {
 					res.render('op_res', {
 						res: op_res_text.overflow,
 						info: {}
@@ -120,10 +208,16 @@ app.post('/submit', function(req, res) {
 					res.render('op_res', {
 						res: op_res_text.other_err,
 						data_schema_convert: tr.data_schema_convert,
-						info: err
+						info: err.err_info
 					});
 				}
 			} else {
+				// 提交成功
+
+				// 提交成功的日志记录
+				var now = Date();
+				console.log(now.toString() + '【【提交成功】】' + '  【IP来源】:' + req.connection.remoteAddress.toString() + '  【提交的报名信息】' + util.inspect(req.body).replace(/\n/g, ''))
+
 				res.render('op_res', {
 					res: op_res_text.succeed,
 					info: {}
@@ -134,5 +228,5 @@ app.post('/submit', function(req, res) {
 });
 
 app.listen(8081, function() {
-	console.log('listening on 8080');
+	console.log('listening on 8081');
 });

@@ -13,8 +13,9 @@ $('#input_birthday').hide();
 });
 });
 */
-//考点选择与学科选择联动
 $(document).ready(function(){
+
+	//考点选择与学科选择联动
 	var subject_selector = $('[name="subject_code"]');
 	subject_selector.children().hide();
 	subject_selector.children('[site = "0"]').show();
@@ -23,6 +24,11 @@ $(document).ready(function(){
 		var esc = $(this).children('option:selected').val();
 		subject_selector.children().hide();
 		subject_selector.children('[site = "' + esc + '"]').show();
+	});
+
+	//隐藏掉科目选项中的考点名后缀
+	subject_selector.children().each(function(){
+		$(this).text($(this).text().split('@')[0]);
 	});
 });
 
