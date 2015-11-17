@@ -15,6 +15,11 @@ $('#input_birthday').hide();
 */
 $(document).ready(function(){
 
+	//验证码点击事件
+	$('#captcha').click(function(){
+		this.src = '/favicon.ico?t=' + Math.random();
+	});
+
 	//考点选择与学科选择联动
 	var subject_selector = $('[name="subject_code"]');
 	subject_selector.children().hide();
@@ -30,6 +35,7 @@ $(document).ready(function(){
 	subject_selector.children().each(function(){
 		$(this).text($(this).text().split('@')[0]);
 	});
+
 });
 
 $(document).ready(function() {

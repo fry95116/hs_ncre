@@ -1,16 +1,22 @@
 ﻿
 var express = require('express'),
 	bodyparser = require('body-parser'), //解析post请求用
+	cookieParser = require('cookie-parser'),
+	session = require('express-session'), //session
 	app = express(),
+
 	_ = require('underscore'),
 	async = require('async'),
+
 	dbc = require('./dbc'),
 	tr = require('./tr'),
 	user_config = require('./user_config'),
-	util = require('util');
+	util = require('util'),
 
-var sub = user_config.plan_count,
-	op_res_text = user_config.op_res_text;
+	ccap = require('ccap');//验证码模块
+
+var op_res_text = user_config.op_res_text;
+var captcha = ccap({width:256,height:60,offset:0});
 
 //统计报名人数信息
 function getRegInfo(callback){
@@ -103,6 +109,10 @@ app.use('/submit', bodyparser.urlencoded({
 
 app.use('/', express.static(__dirname + '/static')); //处理静态文件
 
+app.use(cookieParser());
+app.use(session({ secret: 'myserect',resave:true,saveUninitialized:false }));
+
+//路由
 app.get('/', function(req, res) {
 	getRegInfo(function(reginfo){
 		res.render('welcome', {
@@ -111,19 +121,7 @@ app.get('/', function(req, res) {
 	});
 });
 
-/*
-app.get('/', function(req, res) {
-	dbc.getStatistics_AllSite(function(err,res){
-		if(err) throw err;
-		else{
-			regNum = {};
-			for(site_code in user_config.exam_plan){
-				regNum[site_code].count = res[site_code] || 0;
-			}
-		}
-	});
-});
-*/
+
 app.get('/getinfo', function(req, res) {
 	if (req.query.id_number) {
 		dbc.getInfo(req.query.id_number, function(err, result) {
@@ -151,9 +149,20 @@ app.get('/getinfo', function(req, res) {
 	}
 });
 
+//获取验证码图片
+app.get('/favicon.ico', function(req, res) {
+	var re = captcha.get();
+	req.session.captcha = re[0];
+	res.end(re[1]);
+});
+
+//验证码检测
+app.get('/captchatest',function(req, res) {
+	res.send(req.session.captcha == req.param('test'));
+});
 
 app.get('/fillout', function(req, res) {
-	res.render('fillout', {tr:tr, exam_plan:user_config.exam_plan});
+	res.render('fillout', {tr:tr, exam_plan:user_config.exam_plan,error_info:''});
 });
 
 
@@ -174,7 +183,15 @@ app.post('/submit', function(req, res) {
 	var now = Date();
 	console.log(now.toString() + '  【【请求】】' + '  【IP来源】:' + req.connection.remoteAddress.toString() + '  【提交的报名信息】:' + util.inspect(req.body).replace(/\n/g, ''))
 
+
 	if (req.body) {
+		//验证验证码
+		if(!req.session || req.session.captcha != req.body.captcha.toUpperCase()){
+			console.log('captcha test failed');
+			res.render('fillout', {tr:tr, exam_plan:user_config.exam_plan,error_info:'验证码错误！'});
+			return;
+		}
+
 		// 将身份证中可能出现的x变成大写字母
 		if(req.body.id_type = 1){
 			req.body.id_number.toUpperCase();
@@ -187,7 +204,7 @@ app.post('/submit', function(req, res) {
 			else req.body.remark = tr.school[req.body.school];
 		}
 		//插入数据
-		dbc.insertInfo(req.body, sub['' + req.body.exam_site_code], function(err) {
+		dbc.insertInfo(req.body, function(err) {
 			if (err) {
 
 				// “数据错误”、“已存在”、“考点报滿”、“科目报滿” 而提交失败的日志记录
@@ -227,6 +244,6 @@ app.post('/submit', function(req, res) {
 	}
 });
 
-app.listen(8081, function() {
-	console.log('listening on 8081');
+app.listen(8080, function() {
+	console.log('listening on 8080');
 });

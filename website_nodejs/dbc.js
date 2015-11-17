@@ -163,7 +163,7 @@
 	exports.getPlanCount = getPlanCount;
 
 	//插入记录
-	exports.insertInfo = function(data_in, count, callback) {
+	exports.insertInfo = function(data_in, callback) {
 		var err = check(data_in);
 		if (err != null) callback(err);
 		else {
