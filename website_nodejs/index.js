@@ -11,6 +11,85 @@ var express = require('express'),
 var sub = user_config.plan_count,
 	op_res_text = user_config.op_res_text;
 
+//统计报名人数信息
+function getRegInfo(callback){
+	//构建并行查询
+	var querylist = [
+		function(cb) {
+			dbc.getStatistics_AllSite(function(err, res) {
+				if(err) cb(err);
+				else{
+					var sites = {};
+					for(var site_code in user_config.exam_plan.exam_sites){
+						sites[site_code] = 0;
+					}
+					cb(null, _.defaults(res,sites));
+				}
+			});
+		}
+	];
+
+	for(var site_code in user_config.exam_plan.exam_sites){
+
+		var picker =[];
+		for(var subject_code in user_config.exam_plan.exam_sites[site_code].subjects){
+			if(user_config.exam_plan.exam_sites[site_code].subjects[subject_code].count){
+				picker.push(subject_code);
+			}
+		}
+
+		querylist.push(_.partial(function(site_code, picker, cb){
+			dbc.getStatisticsByExamSite_AllSubject(site_code,function(err,res){
+				if(err) cb(err);
+				else{
+					res = _.pick(res,picker);
+
+					var subjects = {};
+					for(var sc in picker){
+						subjects[ picker[sc] ] = 0;
+					}
+
+					res = _.defaults(res,subjects);
+					cb(null,{exam_site_code:site_code,counts:res});
+				}
+			});
+		},site_code,picker));
+	}
+
+	async.parallel(querylist, function(err, result) {
+		if (err) throw err;
+		else {
+			var re = {};
+
+			//组装考点人数统计
+			var siteCount = result[0];
+
+			for (var esc in siteCount){
+				re[esc] = {
+					name:user_config.exam_plan.exam_sites[esc].name,
+					total:user_config.exam_plan.exam_sites[esc].count,
+					count:siteCount[esc]
+				};
+			}
+
+			//组装科目人数统计
+			for (var i = 1; i < result.length; ++i){
+				var subject_count = result[i];
+				re[subject_count.exam_site_code].subjects = {};
+				for(var sc in subject_count.counts){
+					re[subject_count.exam_site_code].subjects[sc] = {
+						name:user_config.exam_plan.exam_sites[subject_count.exam_site_code].subjects[sc].name,
+						total:user_config.exam_plan.exam_sites[subject_count.exam_site_code].subjects[sc].count,
+						count:subject_count.counts[sc]
+					}
+				}
+			}
+
+			callback(re);
+		}
+	});
+}
+
 app.set("view engine", "ejs");
 app.set("view options", {
 	"layout": false
@@ -24,28 +103,26 @@ app.use('/submit', bodyparser.urlencoded({
 app.use('/', express.static(__dirname + '/static')); //处理静态文件
 
 app.get('/', function(req, res) {
-	async.parallel([
-		function(cb) {
-			dbc.getCount(410067, function(err, res) {
-				cb(err, res);
-			});
-		},
-		function(cb) {
-			dbc.getCount(410084, function(err, res) {
-				cb(err, res);
-			});
-		}
-	], function(err, result) {
-		if (err) throw err;
-		else res.render('welcome', {
-			count1: result[0],
-			count2: result[1],
-			sub1: sub['410067'],
-			sub2: sub['410084']
+	getRegInfo(function(reginfo){
+		res.render('welcome', {
+			reg_info:reginfo
 		});
 	});
 });
 
+/*
+app.get('/', function(req, res) {
+	dbc.getStatistics_AllSite(function(err,res){
+		if(err) throw err;
+		else{
+			regNum = {};
+			for(site_code in user_config.exam_plan){
+				regNum[site_code].count = res[site_code] || 0;
+			}
+		}
+	});
+});
+*/
 app.get('/getinfo', function(req, res) {
 	if (req.query.id_number) {
 		dbc.getInfo(req.query.id_number, function(err, result) {

@@ -15,14 +15,21 @@
 	<div id="header">
 		<h2>网上报名系统</h2>
 		<ul id="RegNum">
+			<%for (var site_code in reg_info) { %>
+			<%var site = reg_info[site_code];%>
 			<li>
-				花园校区考点：已报&nbsp<%= count1 %>&nbsp人，剩余&nbsp<%=sub1-count1%>&nbsp人
+				<%= site.name %>：已报&nbsp<%= site.count %>&nbsp人，剩余&nbsp<%= site.total - site.count %>&nbsp人
+				<%if(site.subjects){%>
+				<br><span>限选科目:</span>
 				<ul>
-					<li>ms-office：已报&nbsp10&nbsp人，剩余&nbsp20&nbsp人</li>
-					<li>ms-office：已报&nbsp10&nbsp人，剩余&nbsp20&nbsp人</li>
+					<%for(var subject_code in site.subjects){%>
+					<%var sub = site.subjects[subject_code];%>
+					<li><%= sub.name %>：已报&nbsp<%= sub.count %>&nbsp人，剩余&nbsp<%= sub.total - sub.count %>&nbsp人</li>
+					<%}%>
 				</ul>
+				<%}%>
 			</li>
-			<li>龙子湖校区考点：已报&nbsp<%= count2 %>&nbsp人，剩余&nbsp<%= sub2-count2 %>&nbsp人</li>
+			<%}%>
 		</ul>
 		<button id="read_info">开始报名</button>
 		

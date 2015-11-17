@@ -17,7 +17,7 @@
 	var check = function(data_in) {
 		var err = {};
 		// 下面的for循环是用正则表达式验证是否合乎规则
-		for (key in data_schema) {
+		for (var key in data_schema) {
 			if (!data_schema[key].test(data_in[key])) {
 				// 在 data_schema 中的正则表达式已经为可以为空的key做了匹配规则
 				// 如果data_in[key]不存在，表明提交的表单object被修改过，有的键被删除，则err[key]设为'not exist'
@@ -38,7 +38,8 @@
 		// 考点和科目的后端联动验证
 		// 等前端完善了，再试一试
 		exam_plan = user_config.exam_plan;
-		if(!(data_in.exam_site_code in _.keys(exam_plan))){
+
+		if(!(data_in.exam_site_code in exam_plan.exam_sites)){
 			err['exam_site_code'] = 'invalid data';
 		}
 		else if(!(data_in.subject_code in exam_plan.exam_sites[data_in.exam_site_code].subjects)) {
@@ -89,9 +90,16 @@
 				' GROUP BY exam_site_code',
 				function(err, res) {
 					if (err) cb(err);
-					else cb(null, res);
+					else  {
+						res = _.object( _.map(res,function(row){
+									return [row.exam_site_code,row.count];
+								})
+						);
+						cb(null,res);
+					}
 				});
 	}
+
 	exports.getStatistics_AllSite = getStatistics_AllSite;
 
 	//人数统计(同考点各科目)
@@ -103,7 +111,13 @@
 				exam_site_code,
 				function(err, res) {
 					if (err) cb(err);
-					else cb(null, res);
+					else {
+						res = _.object( _.map(res,function(row){
+								return [row.subject_code,row.count];
+							})
+						);
+						cb(null,res);
+					}
 				});
 	}
 	exports.getStatisticsByExamSite_AllSubject = getStatisticsByExamSite_AllSubject;
