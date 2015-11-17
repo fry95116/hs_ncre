@@ -3,7 +3,7 @@
 	exports.db_config = {
 		host: 'localhost',
 		user: 'root',
-		password: 'abc7758258',
+		password: 'lishenzhi1214',
 		database: 'test',
 		table: 'data'
 	};
@@ -19,9 +19,9 @@
 		exam_sites: {
 			'410084':{
 				name: '华北水利水电大学（郑东新区）',
-				count: 10,
+				count: 1000,
 				subjects: {
-					'24':{name: '二级 —— C语言程序设计',count:3},
+					'24':{name: '二级 —— C语言程序设计',count:100},
 					'26':{name: '二级 —— VB语言程序设计'},
 					'27':{name: '二级 —— VFP据库程序设计'},
 					'29':{name: '二级 —— Access数据库程序设计'},
@@ -33,7 +33,7 @@
 			},
 			'410067':{
 				name: '华北水利水电大学（北环路36号）',
-				count: 2000,
+				count: 1000,
 				subjects: {
 					'111':{name: "二级 —— MS office",count: 100},
 					'24':{name: '二级 —— C语言程序设计'},
