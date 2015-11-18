@@ -6,12 +6,34 @@
 			db_config = user_config.db_config,
 			data_schema = require('./data_schema');
 
-	var con = mysql.createConnection(db_config);
+	var con;
 
-	con.connect(function(err) {
-		if (err) throw err;
-		console.log('数据库已连接');
-	});
+	function handleDisconnect() {
+		con = mysql.createConnection(db_config); // Recreate the connection, since
+														// the old one cannot be reused.
+
+		con.connect(function(err) {              // The server is either down
+			if(err) {                                     // or restarting (takes a while sometimes).
+				console.log('error when connecting to db:', err);
+				setTimeout(handleDisconnect, 2000); // We introduce a delay before attempting to reconnect,
+			}                                     // to avoid a hot loop, and to allow our node script t
+			else{
+				console.log('db connected');
+
+			}
+		});                                     // process asynchronous requests in the meantime.
+												// If you're also serving http, display a 503 error.
+		con.on('error', function(err) {
+			if(err.code === 'PROTOCOL_CONNECTION_LOST') { // Connection to the MySQL server is usually
+				console.log('server closed the connection.reconnect...');
+				handleDisconnect();                         // lost due to either server restart, or a
+			} else {                                      // connnection idle timeout (the wait_timeout
+				throw err;                                  // server variable configures this)
+			}
+		});
+	}
+
+	handleDisconnect();
 
 	//对数据进行检查
 	var check = function(data_in) {

@@ -33,6 +33,24 @@
 				<% }%>
 			</select>
 		</div>
+
+		<div class="" id="input_subject_code">
+			<label for="subject_code">考试科目(必选):</label>
+			<select class="" name="subject_code">
+				<option value="0">请选择</option>
+
+				<% for (exam_site_code in exam_plan.exam_sites) { %>
+				<% for( subject_code in exam_plan.exam_sites[exam_site_code].subjects) { %>
+				<option value="<%= subject_code %>" site="<%= exam_site_code %>"><%= exam_plan.exam_sites[exam_site_code].subjects[subject_code].name %>
+					@<%= exam_plan.exam_sites[exam_site_code].name %>
+				</option>
+				<% } %>
+				<% } %>
+
+			</select>
+			<span class="validated_result"></span>
+		</div>
+
 		<div id="input_name">
 			<label for="name">姓名(必填):</label>
 			<input name="name" type="text">
@@ -117,22 +135,6 @@
 			<span class="validated_result"></span>
 		</div>
 
-		<div class="" id="input_subject_code">
-			<label for="subject_code">考试科目(必选):</label>
-			<select class="" name="subject_code">
-				<option value="0">请选择</option>
-
-				<% for (exam_site_code in exam_plan.exam_sites) { %>
-					<% for( subject_code in exam_plan.exam_sites[exam_site_code].subjects) { %>
-						<option value="<%= subject_code %>" site="<%= exam_site_code %>"><%= exam_plan.exam_sites[exam_site_code].subjects[subject_code].name %>
-							@<%= exam_plan.exam_sites[exam_site_code].name %>
-						</option>
-					<% } %>
-				<% } %>
-
-			</select>
-			<span class="validated_result"></span>
-		</div>
 		<div class="" id="input_phone">
 			<label for="phone">联系电话(必填):</label>
 			<input type="text" name="phone" value="">
@@ -193,7 +195,7 @@
 			<input type="text" name="captcha" value="">
 			<img id = "captcha" src="/captcha">
 			<span>看不清？点击图片刷新</span>
-			<span class="validated_result"></span>
+			<div ><span class="validated_result"></span></div>
 		</div>
 		<div id="input_submit">
 			<input type="submit" name="submit_form" value="提交"></div>

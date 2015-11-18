@@ -17,7 +17,7 @@ $(document).ready(function(){
 
 	//验证码点击事件
 	$('#captcha').click(function(){
-		this.src = '/favicon.ico?t=' + Math.random();
+		this.src = '/captcha?t=' + Math.random();
 	});
 
 	//考点选择与学科选择联动
@@ -162,8 +162,8 @@ $(document).ready(function() {
 
 		// 验证联系电话
 		if ($(this).is('[name=phone]')) {
-			if (this.value.length != 11 && this.value.length != 8) {
-				$parent.children('.validated_result').text('请输入11位手机号码或8位固定电话');
+			if (/^\d+$/.test(this.value) === false || this.value.length > 11) {
+				$parent.children('.validated_result').text('请输入11位手机号码或固定电话');
 				$parent.removeClass().addClass('has_error');
 			} else {
 				$parent.children('.validated_result').text('正确');
@@ -184,15 +184,17 @@ $(document).ready(function() {
 			}
 		}
 
+
+		//验证码
 		if ($(this).is('[name=captcha]')) {
 			var captcha_user = $('[name=captcha]').val();
 			$.get('/captchatest',{'test':captcha_user}, function(result) {
 				if(result != true ) {
 					// 验证失败
-					$parent.children('.validated_result').text('验证码错误');
+					$parent.find('.validated_result').text('验证码错误');
 					$parent.removeClass().addClass('has_error');
 				} else {
-					$parent.children('.validated_result').text('正确');
+					$parent.find('.validated_result').text('正确');
 					$parent.removeClass().addClass('has_success');
 				}
 			})
@@ -299,8 +301,8 @@ $(document).ready(function() {
 
 		// 联系电话 input
 		// 既不为11位也不为8位则出错
-		if ($('[name=phone]').val().length != 11 && $('[name=phone]').val().length != 8) {
-			error.push('请输入联系电话');
+		if(/^\d+$/.test($('[name=phone]').val()) === false || $('[name=phone]').val().length > 11) {
+			error.push('联系电话输入有误');
 		}
 
 		if ($('input[name=is_our_school]').is(':checked')) {
@@ -321,12 +323,11 @@ $(document).ready(function() {
 		}
 
 		var captcha_user = $('[name=captcha]').val();
-		$.get('/captchatest',{'test':captcha_user}, function(result) {
-			if(result != true ) {
-				// 验证失败
-				error.push('验证码错误');
-			}
-		})
+		var result = $.ajax({url:"/captchatest",data:{test:captcha_user},async:false}).responseJSON;
+		if(result != true ) {
+			// 验证失败
+			error.push('验证码错误');
+		}
 
 		if (error.length === 0) {
 			return true;
@@ -334,6 +335,7 @@ $(document).ready(function() {
 			$('#error_message').text(error);
 			return false;
 		}
+
 	});
 });
 

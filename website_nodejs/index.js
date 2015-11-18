@@ -126,16 +126,30 @@ app.get('/getinfo', function(req, res) {
 	if (req.query.id_number) {
 		dbc.getInfo(req.query.id_number, function(err, result) {
 			if (err) {
-				console.log(err);
-				if (err === 'empty') res.render('getInfo', {
+				//console.log(err);
+				if (err === 'empty') res.render('getinfo', {
 					info: null
 				});
 			} else {
 				var out = {};
-				for (i in tr.data_schema_convert) {
-					out[tr.data_schema_convert[i]] = (result[0])[i];
+				result = result[0];
+
+				out['姓名'] = result.name;
+				out[tr.data_schema_convert.exam_site_code] = user_config.exam_plan.exam_sites[result.exam_site_code].name;
+				out[tr.data_schema_convert.sex] = tr.sex[result.sex];
+				out[tr.data_schema_convert.id_type] = tr.id_type[result.id_type];
+				out[tr.data_schema_convert.nationality] = tr.nationality[result.nationality];
+				out[tr.data_schema_convert.career] = tr.career[result.career];
+				out[tr.data_schema_convert.degree_of_education] = tr.degree_of_education[result.degree_of_education];
+				out[tr.data_schema_convert.training_type] = tr.training_type[result.training_type];
+				out[tr.data_schema_convert.subject_code] = user_config.exam_plan.exam_sites[result.exam_site_code].subjects[result.subject_code].name;
+				out[tr.data_schema_convert.remark] = result.remark;
+				/*
+				for (var i in tr.data_schema_convert) {
+					out[tr.data_schema_convert[i]] = result[i];
 				}
-				console.log(out);
+				*/
+				//console.log(out);
 				res.render('getinfo', {
 					info: out,
 				});
@@ -187,8 +201,10 @@ app.post('/submit', function(req, res) {
 	if (req.body) {
 		//验证验证码
 		if(!req.session || req.session.captcha != req.body.captcha.toUpperCase()){
-
-			res.render('fillout', {tr:tr, exam_plan:user_config.exam_plan,error_info:'验证码错误！'});
+			res.render('op_res', {
+				res: '验证码错误',
+				info: {}
+			});
 			return;
 		}
 

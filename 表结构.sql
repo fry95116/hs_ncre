@@ -22,7 +22,7 @@ DROP TABLE IF EXISTS `data`;
 CREATE TABLE `data` (
   `exam_site_code` int(11) NOT NULL,
   `name` varchar(255) NOT NULL,
-  `sex` varchar(4) NOT NULL,
+  `sex` varchar(6) NOT NULL,
   `birthday` varchar(255) NOT NULL,
   `id_type` tinyint(4) NOT NULL,
   `id_number` varchar(255) NOT NULL,
