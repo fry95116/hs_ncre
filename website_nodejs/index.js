@@ -150,7 +150,7 @@ app.get('/getinfo', function(req, res) {
 });
 
 //获取验证码图片
-app.get('/favicon.ico', function(req, res) {
+app.get('/captcha', function(req, res) {
 	var re = captcha.get();
 	req.session.captcha = re[0];
 	res.end(re[1]);
@@ -158,7 +158,7 @@ app.get('/favicon.ico', function(req, res) {
 
 //验证码检测
 app.get('/captchatest',function(req, res) {
-	res.send(req.session.captcha == req.param('test'));
+	res.send(req.session.captcha == req.param('test').toUpperCase());
 });
 
 app.get('/fillout', function(req, res) {
@@ -187,7 +187,7 @@ app.post('/submit', function(req, res) {
 	if (req.body) {
 		//验证验证码
 		if(!req.session || req.session.captcha != req.body.captcha.toUpperCase()){
-			console.log('captcha test failed');
+
 			res.render('fillout', {tr:tr, exam_plan:user_config.exam_plan,error_info:'验证码错误！'});
 			return;
 		}

@@ -183,6 +183,21 @@ $(document).ready(function() {
 				}
 			}
 		}
+
+		if ($(this).is('[name=captcha]')) {
+			var captcha_user = $('[name=captcha]').val();
+			$.get('/captchatest',{'test':captcha_user}, function(result) {
+				if(result != true ) {
+					// 验证失败
+					$parent.children('.validated_result').text('验证码错误');
+					$parent.removeClass().addClass('has_error');
+				} else {
+					$parent.children('.validated_result').text('正确');
+					$parent.removeClass().addClass('has_success');
+				}
+			})
+		}
+
 		if ($(this).is('[name=school_name]')) {
 			if ($(this).val() == '') {
 				$parent.children('.validated_result').text('请输入学校或工作单位');
@@ -305,6 +320,13 @@ $(document).ready(function() {
 			}
 		}
 
+		var captcha_user = $('[name=captcha]').val();
+		$.get('/captchatest',{'test':captcha_user}, function(result) {
+			if(result != true ) {
+				// 验证失败
+				error.push('验证码错误');
+			}
+		})
 
 		if (error.length === 0) {
 			return true;
