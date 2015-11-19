@@ -13,6 +13,7 @@ $('#input_birthday').hide();
 });
 });
 */
+
 $(document).ready(function(){
 
 	//验证码点击事件
@@ -20,8 +21,18 @@ $(document).ready(function(){
 		this.src = '/captcha?t=' + Math.random();
 	});
 
+
 	//考点选择与学科选择联动
+
 	var subject_selector = $('[name="subject_code"]');
+
+	//隐藏掉科目选项中的考点名后缀
+	subject_selector.children().each(function(){
+		$(this).text($(this).text().split('@')[0]);
+	});
+
+	//only work at FF or Chrome
+/*
 	subject_selector.children().hide();
 	subject_selector.children('[site = "0"]').show();
 
@@ -30,11 +41,20 @@ $(document).ready(function(){
 		subject_selector.children().hide();
 		subject_selector.children('[site = "' + esc + '"]').show();
 	});
+*/
+	//fucking IE
+	var cache_sel = subject_selector.clone();
+	subject_selector.empty();
 
-	//隐藏掉科目选项中的考点名后缀
-	subject_selector.children().each(function(){
-		$(this).text($(this).text().split('@')[0]);
+	$('[name="exam_site_code"]').change(function(){
+		var esc = $(this).children('option:selected').val();
+		subject_selector.empty();
+		cache_sel.children('[site = "' + esc + '"]').each(function(){
+			subject_selector.append($(this).clone());
+		});
 	});
+
+
 
 });
 
