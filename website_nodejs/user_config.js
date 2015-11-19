@@ -1,9 +1,13 @@
 (function() {
+	exports.path = {
+		mysql:"D:\\MariaDB 10.0"
+	}
+
 	//数据库连接信息
 	exports.db_config = {
 		host: 'localhost',
 		user: 'root',
-		password: 'lishenzhi1214',
+		password: 'abc7758258',
 		database: 'test',
 		table: 'data'
 	};

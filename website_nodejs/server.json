@@ -1,0 +1,12 @@
+[
+  {
+    "name": "hs-ncre-front",
+    "script": "index.js",
+    "error_file": "./logout/error.log",
+    "out_file": "./logout/info.log",
+    "merge_logs":true,
+    "env": {
+      "NODE_ENV": "production"
+    }
+  }
+]
