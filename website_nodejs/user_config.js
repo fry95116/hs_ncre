@@ -7,7 +7,7 @@
 	exports.db_config = {
 		host: 'localhost',
 		user: 'root',
-		password: 'abc7758258',
+		password: 'lishenzhi1214',
 		database: 'test',
 		table: 'data'
 	};

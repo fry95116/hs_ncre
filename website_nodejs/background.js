@@ -11,7 +11,7 @@
     sub_process.exec('"' + path.mysql + '\\bin\\mysqldump" -quick -u ' + db_config.user + ' -p' + db_config.password + ' ' + db_config.database +' ' + db_config.table,function(err,stdout,stderr){
         var fn = new Date(Date.now()).toString();
         //fn.replace(/[ ]/,'_');
-        fn = fn.replace(/\s+/g, '');
+        fn = fn.replace(/\s+/g, '-');
 
         fs.writeFile('./dump/' + fn, stdout, function (err) {
             if (err) throw err;
