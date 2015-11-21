@@ -11,11 +11,7 @@
 		database: 'test',
 		table: 'data'
 	};
-	//计划招生人数
-	exports.plan_count = {
-		'410067': 100,
-		'410084': 200
-	};
+
 	//招生计划
 	//注意：每个exam_sites（考点）的count（招生人数）是必填项
 

@@ -1,11 +1,12 @@
 ﻿<html>
 <head>
+	<title>考生信息录入</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<!--<script type="text/javascript" src="http://cdn.bootcss.com/jquery/1.11.3/jquery.js"></script>
 -->
-<script type="text/javascript" src="/js/jquery-1.11.3.min.js"></script>
-<script type="text/javascript" src="/js/index.js"></script>
-<link href="/css/index.css" rel="stylesheet" type="text/css">
+	<script type="text/javascript" src="/js/jquery-1.11.3.min.js"></script>
+	<script type="text/javascript" src="/js/index.js"></script>
+	<link href="/css/index.css" rel="stylesheet" type="text/css">
 <style type="text/css"></style>
 </head>
 
@@ -28,26 +29,29 @@
 			<label for="exam_site_code">考点(必填):</label>
 			<select class="" name="exam_site_code">
 				<option value="0">请选择</option>
-				<% for (key in tr.exam_site_code) { %>
-					<option value="<%= key %>"><%= tr.exam_site_code[key]%></option>
+				<% for (var esc in exam_plan.exam_sites) { %>
+					<option value="<%= esc %>"><%= exam_plan.exam_sites[esc].name%></option>
 				<% }%>
 			</select>
 		</div>
 
 		<div class="" id="input_subject_code">
 			<label for="subject_code">考试科目(必选):</label>
-			<select class="" name="subject_code">
-				<option value="0">请选择</option>
+			<label>
+				<select class="" name="subject_code">
+					<option value="0">请选择</option>
 
-				<% for (exam_site_code in exam_plan.exam_sites) { %>
-				<% for( subject_code in exam_plan.exam_sites[exam_site_code].subjects) { %>
-				<option value="<%= subject_code %>" site="<%= exam_site_code %>"><%= exam_plan.exam_sites[exam_site_code].subjects[subject_code].name %>
-					@<%= exam_plan.exam_sites[exam_site_code].name %>
-				</option>
-				<% } %>
-				<% } %>
+					<% for (var exam_site_code in exam_plan.exam_sites) { %>
+						<% for( var subject_code in exam_plan.exam_sites[exam_site_code].subjects) { %>
+						<option value="<%= subject_code %>" site="<%= exam_site_code %>">
+							<%= exam_plan.exam_sites[exam_site_code].subjects[subject_code].name %>
+							@<%= exam_plan.exam_sites[exam_site_code].name %>
+						</option>
+						<% } %>
+					<% } %>
 
-			</select>
+				</select>
+			</label>
 			<span class="validated_result"></span>
 		</div>
 
@@ -59,18 +63,19 @@
 
 		<div id="input_sex">
 			<label for="sex">性别(必选):</label>
-			男
-			<input type="radio" name="sex" value="male">
-			&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp女
-			<input type="radio" name="sex" value="famale"></div>
+			<%for(var i in tr.sex){%>
+				<%= tr.sex[i].name %><input type="radio" name="sex" value="<%= tr.sex[i].code %>">
+				&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+			<%}%>
+		</div>
+
 		<span class="validated_result"></span>
 
 		<div id="input_id_type">
 			<label for="id_type">证件类型(必选):</label>
 			<select name="id_type">
-				<option value="1" selected="selected">中华人民共和国居民身份证</option>
-				<% for (key in tr.id_type) { %>
-					<option value="<%= key %>"><%= tr.id_type[key]%></option>
+				<% for (i in tr.id_type) { %>
+					<option value="<%= tr.id_type[i].code %>"><%= tr.id_type[i].name %></option>
 				<% }%>
 			</select>
 			<span class="validated_result"></span>
@@ -95,8 +100,8 @@
 			<label for="nationality">民族(必选):</label>
 			<select name="nationality">
 				<option value="0">请选择</option>
-				<% for (key in tr.nationality) { %>
-					<option value="<%= key %>"><%= tr.nationality[key]%></option>
+				<% for (i in tr.nationality) { %>
+					<option value="<%= tr.nationality[i].code %>"><%= tr.nationality[i].name %></option>
 				<% }%>
 			</select>
 			<span class="validated_result"></span>
@@ -106,8 +111,8 @@
 			<label for="career">职业(必选):</label>
 			<select class="" name="career">
 				<option value="00">请选择</option>
-				<% for (key in tr.career) { %>
-					<option value="<%= key %>"><%= tr.career[key]%></option>
+				<% for (i in tr.career) { %>
+					<option value="<%= tr.career[i].code %>"><%= tr.career[i].name%></option>
 				<% } %>
 			</select>
 			<span class="validated_result"></span>
@@ -117,8 +122,8 @@
 			<label for="degree_of_education">文化程度(必选):</label>
 			<select class="" name="degree_of_education">
 				<option value="0">请选择</option>
-				<% for (key in tr.degree_of_education) { %>
-					<option value="<%= key %>"><%= tr.degree_of_education[key]%></option>
+				<% for (i in tr.degree_of_education) { %>
+					<option value="<%= tr.degree_of_education[i].code %>"><%= tr.degree_of_education[i].name %></option>
 				<% } %>
 			</select>
 			<span class="validated_result"></span>
@@ -128,8 +133,8 @@
 			<label for="training_type">培训类型(必选):</label>
 			<select class="" name="training_type">
 				<option value="0">请选择</option>
-				<% for (key in tr.training_type) { %>
-					<option value="<%= key %>"><%= tr.training_type[key]%></option>
+				<% for (i in tr.training_type) { %>
+					<option value="<%= tr.training_type[i].code %>"><%= tr.training_type[i].name %></option>
 				<% } %>
 			</select>
 			<span class="validated_result"></span>
@@ -168,8 +173,8 @@
 			<div class="" id="input_remark_for_not_our_school">
 				<select class="" name="school">
 					<option value="0">请选择学校</option>
-					<% for (key in tr.school) { %>
-						<option value="<%= key %>"><%= tr.school[key]%></option>
+					<% for (i in tr.school) { %>
+						<option value="<%= tr.school[i].code %>"><%= tr.school[i].name %></option>
 					<% } %>
 				</select>
 				<span>学校(必填):</span>
@@ -180,8 +185,8 @@
 			<div class="" id="input_remark_for_is_our_school">
 				<select class="" name="department">
 					<option value="0">学院</option>
-					<% for (key in tr.department) { %>
-						<option value="<%= key %>"><%= tr.department[key]%></option>
+					<% for (i in tr.department) { %>
+						<option value="<%= tr.department[i].code %>"><%= tr.department[i].name %></option>
 					<% } %>
 				</select>
 				<span>学号(必填):</span>
