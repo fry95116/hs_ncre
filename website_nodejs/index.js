@@ -233,7 +233,7 @@ app.post('/submit', function(req, res) {
 			req.body.remark = '' + _.find(tr.department,function(o){return o.code == req.body.department}).name + req.body.student_number;
 		} else {
 			if (req.body.school == '01') req.body.remark = req.body.school_name;
-			else req.body.remark = _.find(tr.school,function(o){return o.code == req.body.school});
+			else req.body.remark = _.find(tr.school,function(o){return o.code == req.body.school}).name;
 		}
 		//插入数据
 		dbc.insertInfo(req.body, function(err) {
