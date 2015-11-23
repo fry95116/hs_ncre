@@ -44,7 +44,12 @@ $(document).ready(function(){
 */
 	//fucking IE
 	var cache_sel = subject_selector.clone();
+	//初始化
+	$('[name="exam_site_code"]').val('0');
 	subject_selector.empty();
+	cache_sel.children('[site = "0"]').each(function(){
+		subject_selector.append($(this).clone());
+	});
 
 	$('[name="exam_site_code"]').change(function(){
 		var esc = $(this).children('option:selected').val();
