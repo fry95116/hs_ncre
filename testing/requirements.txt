@@ -1,0 +1,3 @@
+pymysql
+beautifulsoup4
+requests
