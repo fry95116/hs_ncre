@@ -26,6 +26,14 @@
 
     nationality: [
       { code: '01', name: '汉' },
+      { code: '02', name: '蒙古' },
+      { code: '03', name: '回' },
+      { code: '04', name: '藏' },
+      { code: '05', name: '维吾尔' },
+      { code: '06', name: '苗' },
+      { code: '07', name: '彝' },
+      { code: '08', name: '壮' },
+      { code: '09', name: '布依' },
       { code: '10', name: '朝鲜' },
       { code: '11', name: '满' },
       { code: '12', name: '侗' },
@@ -74,20 +82,19 @@
       { code: '55', name: '珞巴' },
       { code: '56', name: '基诺' },
       { code: '97', name: '其他' },
-      { code: '98', name: '外国血统' },
-      { code: '02', name: '蒙古' },
-      { code: '03', name: '回' },
-      { code: '04', name: '藏' },
-      { code: '05', name: '维吾尔' },
-      { code: '06', name: '苗' },
-      { code: '07', name: '彝' },
-      { code: '08', name: '壮' },
-      { code: '09', name: '布依' }
+      { code: '98', name: '外国血统' }
     ]
     ,
 
     career: [
       { code: '30', name: '学生' },
+      { code: '01', name: '中国共产党中央委员会和地方各级组织负责人' },
+      { code: '02', name: '国家机关及其工作机构负责人' },
+      { code: '03', name: '民主党派和社会团体及其工作机构负责人' },
+      { code: '04', name: '事业单位负责人' },
+      { code: '05', name: '企业负责人' },
+      { code: '08', name: '军人' },
+      { code: '09', name: '不便分类的其他从业人员' },
       { code: '10', name: '失业（含待业及无业人员）' },
       { code: '11', name: '科学研究人员' },
       { code: '13', name: '工程技术人员' },
@@ -146,22 +153,10 @@
       { code: '91', name: '运输设备操作人员及有关人员' },
       { code: '92', name: '环境监测与废物处理人员' },
       { code: '93', name: '检验、计量人员' },
-      { code: '99', name: '其他生产、运输设备操作人员及有关人员' },
-      { code: '01', name: '中国共产党中央委员会和地方各级组织负责人' },
-      { code: '02', name: '国家机关及其工作机构负责人' },
-      { code: '03', name: '民主党派和社会团体及其工作机构负责人' },
-      { code: '04', name: '事业单位负责人' },
-      { code: '05', name: '企业负责人' },
-      { code: '08', name: '军人' },
-      { code: '09', name: '不便分类的其他从业人员' }
+      { code: '99', name: '其他生产、运输设备操作人员及有关人员' }
     ],
 
     department: [
-      { code: '10', name: '数信' },
-      { code: '11', name: '法学' },
-      { code: '43', name: '国教' },
-      { code: '45', name: '建筑' },
-      { code: '49', name: '软件' },
       { code: '01', name: '资环' },
       { code: '02', name: '水利' },
       { code: '03', name: '土木' },
@@ -170,9 +165,24 @@
       { code: '06', name: '环工' },
       { code: '07', name: '管经' },
       { code: '08', name: '信工' },
-      { code: '09', name: '外语' }
+      { code: '09', name: '外语' },
+      { code: '10', name: '数信' },
+      { code: '11', name: '法学' },
+      { code: '43', name: '国教' },
+      { code: '45', name: '建筑' },
+      { code: '49', name: '软件' },
+      { code: '50', name: '艺术' }
     ],
     school: [
+      { code: '01', name: '其他学校或工作单位' },
+      { code: '02', name: '郑州大学' },
+      { code: '03', name: '河南工业大学' },
+      { code: '04', name: '河南农业大学' },
+      { code: '05', name: '河南财经政法大学' },
+      { code: '06', name: '铁道警察学院' },
+      { code: '07', name: '郑州轻工业学院' },
+      { code: '08', name: '中原工学院' },
+      { code: '09', name: '河南牧业经济学院' },
       { code: '10', name: '河南中医学院' },
       { code: '11', name: '郑州航空工业管理学院' },
       { code: '12', name: '河南工程学院' },
@@ -216,16 +226,7 @@
       { code: '51', name: '河南农业职业学院' },
       { code: '52', name: '郑州旅游职业学院' },
       { code: '53', name: '郑州职业技术学院' },
-      { code: '54', name: '河南工业贸易职业学院' },
-      { code: '01', name: '其他学校或工作单位' },
-      { code: '02', name: '郑州大学' },
-      { code: '03', name: '河南工业大学' },
-      { code: '04', name: '河南农业大学' },
-      { code: '05', name: '河南财经政法大学' },
-      { code: '06', name: '铁道警察学院' },
-      { code: '07', name: '郑州轻工业学院' },
-      { code: '08', name: '中原工学院' },
-      { code: '09', name: '河南牧业经济学院' }
+      { code: '54', name: '河南工业贸易职业学院' }
     ],
 
     training_type: [

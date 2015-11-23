@@ -25,7 +25,7 @@
 				<ul>
 					<%for(var subject_code in site.subjects){%>
 					<%var sub = site.subjects[subject_code];%>
-					<li><%= sub.name %>：已报&nbsp<%= sub.count %>&nbsp人，剩余&nbsp<%= sub.total - sub.count %>&nbsp人</li>
+					<li><%= sub.name %>：已报&nbsp<%= sub.count %>&nbsp人，剩余&nbsp<%= Math.min(sub.total - sub.count,site.total - site.count) %>&nbsp人</li>
 					<%}%>
 				</ul>
 				<%}%>

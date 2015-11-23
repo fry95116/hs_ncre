@@ -271,8 +271,15 @@ $(document).ready(function() {
 		}
 
 		//证件号码 input
-		if ($('[name=id_type]').val().length == 1 && $('[name=id_number]').val().length != 18) {
-			error.push('请输入18位身份证号');
+		if($('[name=id_type]').val() == 1) {
+			if(!getIdCardInfo( $('[name=id_number]').val()).isTrue){
+				error.push('请输入正确的身份证号');
+			}
+		}
+		else{
+			if($('[name=id_number]').val().length <= 0){
+				error.push('请输入证件号');
+			}
 		}
 
 		//民族 select
