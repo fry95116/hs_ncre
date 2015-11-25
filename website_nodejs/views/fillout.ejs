@@ -2,8 +2,6 @@
 <head>
 	<title>考生信息录入</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-	<!--<script type="text/javascript" src="http://cdn.bootcss.com/jquery/1.11.3/jquery.js"></script>
--->
 	<script type="text/javascript" src="/js/jquery-1.11.3.min.js"></script>
 	<script type="text/javascript" src="/js/index.js"></script>
 	<link href="/css/index.css" rel="stylesheet" type="text/css">
@@ -146,19 +144,19 @@
 			<span class="validated_result"></span>
 		</div>
 		<div class="" id="input_post_code">
-			<label for="post_code">邮编:</label>
+			<label for="post_code">邮编(非必填):</label>
 			<input type="text" name="post_code" value="">
 			<span class="validated_result"></span>
 		</div>
 
 		<div class="" id="input_address">
-			<label for="address">地址:</label>
+			<label for="address">地址(非必填):</label>
 			<input type="text" name="address" value="">
 			<span class="validated_result"></span>
 		</div>
 
 		<div class="" id="input_email">
-			<label for="email">电子邮箱:</label>
+			<label for="email">电子邮箱(非必填):</label>
 			<input type="text" name="email" value="">
 			<span class="validated_result"></span>
 		</div>
@@ -184,7 +182,7 @@
 
 			<div class="" id="input_remark_for_is_our_school">
 				<select class="" name="department">
-					<option value="0">学院</option>
+					<option value="0">请选择学院</option>
 					<% for (i in tr.department) { %>
 						<option value="<%= tr.department[i].code %>"><%= tr.department[i].name %></option>
 					<% } %>

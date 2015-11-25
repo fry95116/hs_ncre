@@ -17,8 +17,6 @@ var express = require('express'),
 
 var op_res_text = user_config.op_res_text;
 
-
-
 //统计报名人数信息
 function getRegInfo(callback){
 	//构建并行查询

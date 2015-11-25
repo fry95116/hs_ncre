@@ -230,7 +230,7 @@
     ],
 
     training_type: [
-      { code: '1', name: '在校正规课程社会培训班' },
+      { code: '1', name: '在校正规课程' },
       { code: '2', name: '社会培训班' },
       { code: '3', name: '未参加培训' }
     ],
