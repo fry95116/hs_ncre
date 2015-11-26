@@ -2,12 +2,14 @@
 	var mysql = require('mysql'),
 			async = require('async'),
 			_ = require('underscore'),
+			data_schema = require('./data_schema'),
+
 			user_config = require('./user_config'),
 			db_config = user_config.db_config,
-			data_schema = require('./data_schema');
+			sites_info = user_config.sites_info,
+			limit_rules = user_config.limit_rules;
 
 	var con;
-
 	function handleDisconnect() {
 		con = mysql.createConnection(db_config); // Recreate the connection, since
 														// the old one cannot be reused.
@@ -32,7 +34,6 @@
 			}
 		});
 	}
-
 	handleDisconnect();
 
 	//对数据进行检查
@@ -49,9 +50,11 @@
 		}
 
 		// 接下来对特殊的验证请求做处理
+
+
 		// 如果使用的是身份证，则对身份证号码合法性校验
 		if(data_in.id_type == "1") {
-			id_info = getIdCardInfo(data_in.id_number.toString());
+			var id_info = getIdCardInfo(data_in.id_number.toString());
 			if(!id_info.isTrue) {
 				err['id_number'] = 'invalid data';
 			}
@@ -59,12 +62,11 @@
 
 		// 考点和科目的后端联动验证
 		// 等前端完善了，再试一试
-		exam_plan = user_config.exam_plan;
 
-		if(!(data_in.exam_site_code in exam_plan.exam_sites)){
+		if(!(data_in.exam_site_code in sites_info.get('$[*].code'))){
 			err['exam_site_code'] = 'invalid data';
 		}
-		else if(!(data_in.subject_code in exam_plan.exam_sites[data_in.exam_site_code].subjects)) {
+		else if(!(data_in.subject_code in sites_info.get('$[?(@.code=='+data_in.exam_site_code+')].subjects[*].code'))) {
 			err['subject_code'] = 'subject not supported in this site';
 		}
 
@@ -72,15 +74,14 @@
 			return null;
 		}
 		else {
-			var re = {error_type: 'data_error', err_info: err};
-			return re;
+			return {error_type: 'data_error', err_info: err};
 		}
 	};
 
 	exports.check = check;
 
 	//人数统计(同考点)
-	var getCount = function(exam_site_code, cb) {
+	exports.getCount = function(exam_site_code, cb) {
 		con.query(
 				'SELECT count(*) AS \'count\' FROM ' + db_config.table +
 				' WHERE exam_site_code=?',
@@ -91,13 +92,8 @@
 				});
 	};
 
-	exports.getCount = getCount;
-
-
-
-
 	//人数统计(同考点同科目)
-	var getCountBySubject = function(exam_site_code, subject_code, cb) {
+	exports.getCountBySubject = function(exam_site_code, subject_code, cb) {
 		con.query(
 				'SELECT count(*) AS \'count\' FROM ' + db_config.table + ' WHERE exam_site_code=? AND subject_code=?', [exam_site_code, subject_code],
 				function(err, res) {
@@ -105,9 +101,6 @@
 					else cb(null, res[0].count);
 				});
 	};
-
-	exports.getCountBySubject = getCountBySubject;
-
 
 	//人数统计(各考点)
 	var getStatistics_AllSite = function(cb) {
@@ -124,10 +117,7 @@
 						cb(null,res);
 					}
 				});
-	}
-
-	exports.getStatistics_AllSite = getStatistics_AllSite;
-
+	};
 	//人数统计(同考点各科目)
 	var getStatisticsByExamSite_AllSubject = function(exam_site_code, cb) {
 		con.query(
@@ -145,8 +135,67 @@
 						cb(null,res);
 					}
 				});
-	}
-	exports.getStatisticsByExamSite_AllSubject = getStatisticsByExamSite_AllSubject;
+	};
+
+	//人数统计（一次性返回所有信息）
+	var getStatistics = function(callback){
+		//组装模板
+		var sites_template = {};
+		var subjects_template = {};
+
+		for(var site in sites_info){
+			sites_template[ sites_info[site].code ] = 0;
+			subjects_template[ sites_info[site].code ] = {};
+
+			for (var subject in sites_info[site]['subjects']){
+				subjects_template[ sites_info[site].code ][ sites_info[site]['subjects'][subject].code ] = 0;
+			}
+		}
+
+		//构建并行查询
+		var querylist = [
+			function(cb) {
+				getStatistics_AllSite(function(err, res) {
+					if(err) cb(err);
+					else cb(null, _.defaults(res,sites_template));
+				});
+			}
+		];
+
+		for(site in sites_info){
+			querylist.push(_.partial(function(site_code, subject_template, cb){
+				getStatisticsByExamSite_AllSubject(site_code,function(err,res){
+					if(err) cb(err);
+					else {
+						var re = {};
+						re[site_code] = _.defaults(res,subject_template);
+						cb(null,re);
+					}
+				});
+			},sites_info[site].code,subjects_template[sites_info[site].code]));
+		}
+
+		//查询
+		async.parallel(querylist, function(err, result) {
+			if (err) callback(err);
+			else {
+				var re = {};
+
+				//组装考点人数统计
+				re.sitesCount = result[0];
+
+				//组装科目人数统计
+				re.subjectCount = {};
+				for (var i = 1; i < result.length; ++i){
+					_.extendOwn(re.subjectCount,result[i]);
+				}
+
+				callback(null,re);
+			}
+		});
+
+	};
+	exports.getStatistics = getStatistics;
 
 	//重复检查
 	var repeatCheck = function(id_number, cb) {
@@ -169,29 +218,35 @@
 	};
 	exports.repeatCheck = repeatCheck;
 
-	//检查某考点，或某考点某科目人数是否被限制
-	var getPlanCount = function(exam_site_code, subject_code) {
-		if (subject_code) {
-			if(!user_config.exam_plan.exam_sites['' + exam_site_code]) return undefined;
-			else if(!user_config.exam_plan.exam_sites['' + exam_site_code].subjects['' + subject_code]) return undefined;
-			else return user_config.exam_plan.exam_sites['' + exam_site_code].subjects['' + subject_code].count;
+	//按规则检查人数
+	var checkCount = function(counts, limit_rule){
+		var count = 0;
+		//noinspection JSUnresolvedVariable
+		if(!limit_rule.limit_obj) throw new Error('invalid limit_rule');
+		for(var i in limit_rule['limit_obj']){
+			var limit_obj = limit_rule['limit_obj'][i];
+			//某考点某科目人数
+			if(limit_obj.subject_code){
+				count += counts.subjectCount[limit_obj.exam_site_code][limit_obj.subject_code];
+			}
+			//考点总人数
+			else{
+				count += counts.sitesCount[limit_obj.exam_site_code];
+			}
 		}
-		else{
-			if(!user_config.exam_plan.exam_sites['' + exam_site_code]) return undefined;
-			else return user_config.exam_plan.exam_sites['' + exam_site_code].count;
-		}
-	}
+		//noinspection JSUnresolvedVariable
+		return count < limit_rule.limitNum;
 
-	exports.getPlanCount = getPlanCount;
+	};
+	exports.checkCount = checkCount;
 
 	//插入记录
 	exports.insertInfo = function(data_in, callback) {
 		var err = check(data_in);
 		if (err != null) callback(err);
 		else {
-			var re;
 			//过滤掉无用的属性
-			var data_in = _.pick(data_in, _.keys(data_schema));
+			data_in = _.pick(data_in, _.keys(data_schema));
 			//事物流程
 			var insert_transaction = [
 				//开始事务
@@ -200,35 +255,19 @@
 						cb(err);
 					});
 				},
-				//人数检查(考点限制)
-				function(cb) {
-					var plancount = getPlanCount(data_in.exam_site_code);
-					if (!plancount) { //人数未限制
-						cb();
-					} else {
-						getCount(data_in.exam_site_code, function(err, res) {
-							if (err) cb(err);
-							else {
-								if (res >= plancount) cb({error_type: 'overflow', err_info: 'overflow_site'});
-								else cb();
+				//按规则检查
+				function(cb){
+					getStatistics(function(err,res){
+						if(err) cb(err);
+						else{
+							var overflow = [];
+							for(var i in limit_rules){
+								if(!checkCount(res,limit_rules[i])) overflow.push(i);
 							}
-						});
-					}
-				},
-				//人数检查(科目限制)
-				function(cb) {
-					var plancount = getPlanCount(data_in.exam_site_code,data_in.subject_code);
-					if (!plancount) { //人数未限制
-						cb();
-					} else {
-						getCountBySubject(data_in.exam_site_code, data_in.subject_code, function(err, res) {
-							if (err) cb(err);
-							else {
-								if (res >= plancount) cb({error_type: 'overflow', err_info: 'overflow_subject'});
-								else cb();
-							}
-						});
-					}
+							if(overflow.length > 0) cb({error_type: 'overflow', err_info: 'Conflict in rule:' + overflow.join(',')});
+							else cb();
+						}
+					});
 				},
 				//重复检查
 				function(cb) {
@@ -240,7 +279,7 @@
 								//插入数据
 								var sql = 'INSERT INTO ' + db_config.table +
 										' SET ?';
-								con.query(sql, data_in, function(err, res) {
+								con.query(sql, data_in, function(err) {
 									cb(err);
 								});
 							}
@@ -249,7 +288,7 @@
 				}
 			];
 			//执行
-			async.series(insert_transaction, function(err, res) {
+			async.series(insert_transaction, function(err) {
 				if (err) {
 					//console.log(err);
 					con.rollback(
@@ -296,42 +335,16 @@
 			isMale : false,
 			isFemale : false
 		};
-		if (!cardNo || (15 != cardNo.length && 18 != cardNo.length) ) {
+		if (!cardNo || 18 != cardNo.length) {
 			info.isTrue = false;
 			return info;
 		}
-		if (15 == cardNo.length) {
-			var year = cardNo.substring(6, 8);
-			var month = cardNo.substring(8, 10);
-			var day = cardNo.substring(10, 12);
-			var p = cardNo.substring(14, 15); //性别位
-			var birthday = new Date(year, parseFloat(month) - 1,
-					parseFloat(day));
-			// 对于老身份证中的年龄则不需考虑千年虫问题而使用getYear()方法
-			if (birthday.getYear() != parseFloat(year)
-					|| birthday.getMonth() != parseFloat(month) - 1
-					|| birthday.getDate() != parseFloat(day)) {
-				info.isTrue = false;
-			} else {
-				info.isTrue = true;
-				info.year = birthday.getFullYear();
-				info.month = birthday.getMonth() + 1;
-				info.day = birthday.getDate();
-				if (p % 2 == 0) {
-					info.isFemale = true;
-					info.isMale = false;
-				} else {
-					info.isFemale = false;
-					info.isMale = true
-				}
-			}
-			return info;
-		}
+
 		if (18 == cardNo.length) {
 			var year = cardNo.substring(6, 10);
 			var month = cardNo.substring(10, 12);
 			var day = cardNo.substring(12, 14);
-			var p = cardNo.substring(14, 17)
+			var p = cardNo.substring(14, 17);
 			var birthday = new Date(year, parseFloat(month) - 1,
 					parseFloat(day));
 			// 这里用getFullYear()获取年份，避免千年虫问题
@@ -352,7 +365,7 @@
 			for ( var i = 0; i < 17; i++) {
 				sum += Wi[i] * _cardNo[i];// 加权求和
 			}
-			var i = sum % 11;// 得到验证码所位置
+			i = sum % 11;// 得到验证码所位置
 			if (_cardNo[17] != Y[i]) {
 				return info.isTrue = false;
 			}

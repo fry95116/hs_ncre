@@ -1,6 +1,6 @@
 {
   "name": "46test",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -17,7 +17,8 @@
     "express-session": "^1.12.1",
     "mysql": "^2.8.0",
     "node-schedule": "^0.5.1",
-    "underscore": "^1.8.3"
+    "underscore": "^1.8.3",
+    "JSONPath":"^0.10.0"
   },
   "devDependencies": {},
   "description": ""

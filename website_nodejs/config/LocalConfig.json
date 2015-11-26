@@ -1,0 +1,14 @@
+{
+  "commit":"打包的时候不要带这个文件",
+
+  "MySQLPath":"D:\\MariaDB 10.0",
+
+  "db_config":{
+    "host": "localhost",
+    "user": "root",
+    "password": "abc7758258",
+    "database": "test",
+    "table": "data"
+  }
+
+}

@@ -1,51 +1,66 @@
 {
-  "path":{
-    "mysql": "D:\\MariaDB 10.0"
-  },
-
-  "db_config":{
-    "host": "localhost",
-    "user": "root",
-    "password": "abc7758258",
-    "database": "test",
-    "table": "data"
-  },
 
   "exam_plan":{
     "exam_sites":[
       {
-        "code":"410084",
+        "code":410084,
         "name":"华北水利水电大学（郑东新区）",
         "subjects":[
-          {"code": "24", "name": "二级 —— C语言程序设计"},
-          {"code": "26", "name": "二级 —— VB语言程序设计"},
-          {"code": "27", "name": "二级 —— VFP据库程序设计"},
-          {"code": "29", "name": "二级 —— Access数据库程序设计"},
-          {"code": "35", "name": "三级 —— 网络技术"},
-          {"code": "36", "name": "三级 —— 数据库技术"},
-          {"code": "41", "name": "四级 —— 网络工程师"},
-          {"code": "42", "name": "四级 —— 数据库工程师"}
+          {"code": 24, "name": "二级 —— C语言程序设计"},
+          {"code": 26, "name": "二级 —— VB语言程序设计"},
+          {"code": 27, "name": "二级 —— VFP据库程序设计"},
+          {"code": 29, "name": "二级 —— Access数据库程序设计"},
+          {"code": 35, "name": "三级 —— 网络技术"},
+          {"code": 36, "name": "三级 —— 数据库技术"},
+          {"code": 41, "name": "四级 —— 网络工程师"},
+          {"code": 42, "name": "四级 —— 数据库工程师"}
         ]
       },
       {
-        "code":"410067",
+        "code":410067,
         "name": "华北水利水电大学（北环路36号）",
         "subjects": [
-          {"code":"111", "name": "二级 —— MS office"},
-          {"code": "24", "name": "二级 —— C语言程序设计"},
-          {"code": "26", "name": "二级 —— VB语言程序设计"},
-          {"code": "27", "name": "二级 —— VFP据库程序设计"},
-          {"code": "29", "name": "二级 —— Access数据库程序设计"},
-          {"code": "35", "name": "三级 —— 网络技术"},
-          {"code": "36", "name": "三级 —— 数据库技术"},
-          {"code": "41", "name": "四级 —— 网络工程师"},
-          {"code": "42", "name": "四级 —— 数据库工程师"}
+          {"code": 65, "name": "二级 —— MS office"},
+          {"code": 24, "name": "二级 —— C语言程序设计"},
+          {"code": 26, "name": "二级 —— VB语言程序设计"},
+          {"code": 27, "name": "二级 —— VFP据库程序设计"},
+          {"code": 29, "name": "二级 —— Access数据库程序设计"},
+          {"code": 35, "name": "三级 —— 网络技术"},
+          {"code": 36, "name": "三级 —— 数据库技术"},
+          {"code": 41, "name": "四级 —— 网络工程师"},
+          {"code": 42, "name": "四级 —— 数据库工程师"}
         ]
       }
     ],
-    "count_limit":{
+    "limit_rules":[
+      {
+        "limitNum":12,
+        "desc":"郑东新区考点",
+        "limit_obj":[
+          {"exam_site_code":410084}
+        ]
+      },{
+        "limitNum":10,
+        "desc":"北环考点",
+        "limit_obj":[
+          {"exam_site_code":410067}
+        ]
+      },{
+        "limitNum":5,
+        "desc":"西区MS—office",
+        "limit_obj":[
+          {"exam_site_code":410067,"subject_code":65}
+        ]
+      },{
+        "limitNum":5,
+        "desc":"东区+西区C语言",
+        "limit_obj":[
+          {"exam_site_code":410067,"subject_code":24},
+          {"exam_site_code":410084,"subject_code":24}
+        ]
+      }
 
-    }
+    ]
 
   },
 
@@ -54,5 +69,14 @@
     "overflow": "提交失败：名额已满",
     "succeed": "您已报名成功,如要查询报名结果,请返回主页。<br>报名成功后,需要考生现场校对信息和缴费,安排如下:<br>花园校区考点：6月22日～6月25日8:30-17:00，地点：综合实验楼401。<br>龙子湖校区考点：6月22日～6月26日8:30-20:00，地点：实验楼S2一楼101房间。",
     "other_err": "提交失败"
-  }
+  },
+
+  "dump_plan":{
+    "path":"/dump",
+    "schedule":"0 */30 * * * *"
+  },
+
+  "testing":true
+
+
 }
