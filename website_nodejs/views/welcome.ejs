@@ -16,20 +16,8 @@
 	<div id="header">
 		<h2>网上预报名系统</h2>
 		<ul id="RegNum">
-			<%for (var site_code in reg_info) { %>
-			<%var site = reg_info[site_code];%>
-			<li>
-				<%= site.name %>：已报&nbsp<%= site.count %>&nbsp人，剩余&nbsp<%= site.total - site.count %>&nbsp人
-				<%if(site.subjects){%>
-				<br><span>该考点的限选科目:</span>
-				<ul>
-					<%for(var subject_code in site.subjects){%>
-					<%var sub = site.subjects[subject_code];%>
-					<li><%= sub.name %>：已报&nbsp<%= sub.count %>&nbsp人，剩余&nbsp<%= Math.min(sub.total - sub.count,site.total - site.count) %>&nbsp人</li>
-					<%}%>
-				</ul>
-				<%}%>
-			</li>
+			<%for (var desc in reg_info) { %>
+			<li><%= desc %>:限报<%= reg_info[desc].limit %>人&nbsp已报<%= reg_info[desc].count %>人</li>
 			<%}%>
 		</ul>
 		<button id="read_info">开始报名</button>

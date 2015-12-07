@@ -9,94 +9,18 @@ var express = require('express'),
 	async = require('async'),
 
 	dbc = require('./dbc'),
-	tr = require('./tr'),
+	translate = require('./tr'),
+	codeRef = translate.codeRef,
+	tr = translate.tr,
+
 	user_config = require('./user_config'),
+	sites_info = user_config.sites_info,
+	limit_rules = user_config.limit_rules;
 	util = require('util'),
 
-	captchapng = require('captchapng');//验证码模块
+	Captchapng = require('captchapng');//验证码模块
 
 var op_res_text = user_config.op_res_text;
-
-//统计报名人数信息
-function getRegInfo(callback){
-	//构建并行查询
-	var querylist = [
-		function(cb) {
-			dbc.getStatistics_AllSite(function(err, res) {
-				if(err) cb(err);
-				else{
-					var sites = {};
-					if(user_config.exam_plan.hasOwnProperty('exam_sites')){
-						for(var site_code in user_config.exam_plan.exam_sites){
-							sites[site_code] = 0;
-						}
-						cb(null, _.defaults(res,sites));
-					}
-				}
-			});
-		}
-	];
-
-	for(var site_code in user_config.exam_plan.exam_sites){
-
-		var picker =[];
-		for(var subject_code in user_config.exam_plan.exam_sites[site_code].subjects){
-			if(user_config.exam_plan.exam_sites[site_code].subjects[subject_code].count){
-				picker.push(subject_code);
-			}
-		}
-
-		querylist.push(_.partial(function(site_code, picker, cb){
-			dbc.getStatisticsByExamSite_AllSubject(site_code,function(err,res){
-				if(err) cb(err);
-				else{
-					res = _.pick(res,picker);
-
-					var subjects = {};
-					for(var sc in picker){
-						subjects[ picker[sc] ] = 0;
-					}
-
-					res = _.defaults(res,subjects);
-					cb(null,{exam_site_code:site_code,counts:res});
-				}
-			});
-		},site_code,picker));
-	}
-
-	async.parallel(querylist, function(err, result) {
-		if (err) throw err;
-		else {
-			var re = {};
-
-			//组装考点人数统计
-			var siteCount = result[0];
-
-			for (var esc in siteCount){
-				re[esc] = {
-					name:user_config.exam_plan.exam_sites[esc].name,
-					total:user_config.exam_plan.exam_sites[esc].count,
-					count:siteCount[esc]
-				};
-			}
-
-			//组装科目人数统计
-			for (var i = 1; i < result.length; ++i){
-				var subject_count = result[i];
-				re[subject_count.exam_site_code].subjects = {};
-				for(var sc in subject_count.counts){
-					re[subject_count.exam_site_code].subjects[sc] = {
-						name:user_config.exam_plan.exam_sites[subject_count.exam_site_code].subjects[sc].name,
-						total:user_config.exam_plan.exam_sites[subject_count.exam_site_code].subjects[sc].count,
-						count:subject_count.counts[sc]
-					}
-				}
-			}
-
-			callback(re);
-		}
-	});
-}
 
 app.set("view engine", "ejs");
 app.set("view options", {
@@ -104,20 +28,53 @@ app.set("view options", {
 });
 
 //中间件
+//noinspection JSUnresolvedFunction
 app.use('/submit', bodyparser.urlencoded({
 	extended: true
-})); //post请求
+})); //提交请求
 
-app.use('/', express.static(__dirname + '/static')); //处理静态文件
+//处理静态文件
+app.use('/', express.static(__dirname + '/static'));
 
+//session
 app.use(cookieParser());
 app.use(session({ secret: 'myserect',resave:true,saveUninitialized:false }));
 
 //路由
 
+function getRegInfo(callback){
+	dbc.getStatistics(function(err,res){
+		if(err){
+			callback(err);
+			return;
+		}
+		//noinspection JSUnresolvedVariable
+		var re = {};
+		//get count by limit_rules
+		for(var i = 0; i < limit_rules.length; ++i){
+			//for each rule
+			var limit_rule = limit_rules[i];
+			if(!limit_rule){
+				callback(new Error('invalid limit_rule'));
+				return;
+			}
+			var count = 0;
+			for(var j in limit_rule['limit_obj']){
+				//add all limit_obj refered count
+				var limit_obj = limit_rule['limit_obj'][j];
+				//某考点某科目人数 or 考点总人数
+				count += limit_obj.subject_code ? res.subjectCount[limit_obj.exam_site_code][limit_obj.subject_code] : res.sitesCount[limit_obj.exam_site_code];
+			}
+			re[limit_rule.desc] = {limit:limit_rule.limitNum, count:count};
+		}
+		callback(null,re);
+	});
+}
+
 //主页
 app.get('/', function(req, res) {
-	getRegInfo(function(reginfo){
+	getRegInfo(function(err,reginfo){
+		if(err) throw err;
 		res.render('welcome', {
 			reg_info:reginfo
 		});
@@ -137,16 +94,15 @@ app.get('/getinfo', function(req, res) {
 				var out = {};
 				result = result[0];
 				//组装报名信息对象
-				out[tr.data_schema_convert.name] = result.name;
-				out[tr.data_schema_convert.exam_site_code] = user_config.exam_plan.exam_sites[result.exam_site_code].name;
-				out[tr.data_schema_convert.subject_code] = user_config.exam_plan.exam_sites[result.exam_site_code].subjects[result.subject_code].name;
-				out[tr.data_schema_convert.sex] = _.find(tr.sex,function(o){return o.code == result.sex}).name;
-				out[tr.data_schema_convert.id_type] = _.find(tr.id_type,function(o){return o.code == result.id_type}).name;
-				out[tr.data_schema_convert.nationality] = _.find(tr.nationality,function(o){return o.code == result.nationality}).name;
-				out[tr.data_schema_convert.career] = _.find(tr.career,function(o){return o.code == result.career}).name;
-				out[tr.data_schema_convert.degree_of_education] = _.find(tr.degree_of_education,function(o){return o.code == result.degree_of_education}).name;
-				out[tr.data_schema_convert.training_type] = _.find(tr.training_type,function(o){return o.code == result.training_type}).name;
-				out[tr.data_schema_convert.remark] = result.remark;
+				out[tr('exam_site_code')] = sites_info.findName(result.exam_site_code);
+				out[tr('subject_code')] = sites_info.findName(result.exam_site_code,result.subject_code);
+
+				result = _.omit(result,['exam_site_code','subject_code']);
+
+				for (var key in result){
+						out[tr(key)] = codeRef[key] ? codeRef[key].findName(result[key]) : result[key];
+				}
+
 				//console.log(out);
 				res.render('getinfo', {
 					info: out
@@ -168,15 +124,14 @@ app.get('/captcha', function(req, res) {
 
 	var num_captcha = parseInt(Math.random() * 900000 + 100000);
 	req.session.captcha = num_captcha;
-	var captcha = new captchapng(158,37,num_captcha);
+	var captcha = new Captchapng(158,37,num_captcha);
 	captcha.color(255, 255, 255, 255);  // First color: background (red, green, blue, alpha)
 	captcha.color(80, 80, 80, 255); // Second color: paint (red, green, blue, alpha)
 
-	var imgbase64 = new Buffer(captcha.getBase64(),'base64');
 	res.writeHead(200, {
 		'Content-Type': 'image/png'
 	});
-	res.end(imgbase64);
+	res.end(new Buffer(captcha.getBase64(),'base64'));
 
 });
 
@@ -187,9 +142,8 @@ app.get('/captchatest',function(req, res) {
 
 //考生信息填报界面
 app.get('/fillout', function(req, res) {
-	res.render('fillout', {tr:tr, exam_plan:user_config.exam_plan,error_info:''});
+	res.render('fillout', {tr:codeRef, sites_info:sites_info, error_info:''});
 });
-
 
 /*重复检查*/
 app.get('/repeatcheck', function(req, res) {
@@ -228,10 +182,9 @@ app.post('/submit', function(req, res) {
 		}
 		//生成备注
 		if (req.body.is_our_school) {
-			req.body.remark = '' + _.find(tr.department,function(o){return o.code == req.body.department}).name + req.body.student_number;
+			req.body.remark = '' + codeRef.department.findName(req.body.department) + req.body.student_number;
 		} else {
-			if (req.body.school == '01') req.body.remark = req.body.school_name;
-			else req.body.remark = _.find(tr.school,function(o){return o.code == req.body.school}).name;
+			req.body.remark = req.body.school == '01'? req.body.school_name : codeRef.school.findName(req.body.school);
 		}
 		//插入数据
 		dbc.insertInfo(req.body, function(err) {
@@ -274,6 +227,10 @@ app.post('/submit', function(req, res) {
 	}
 });
 
+/*后台*/
+app.get('/admin',function(req, res){
+	res.render('admin/mainPanel',{token:true});
+});
 app.listen(8080, function() {
 	console.log('listening on 8080');
 });

@@ -162,7 +162,7 @@
 			}
 		];
 
-		for(site in sites_info){
+		for(var i = 0; i < sites_info.length; ++i){
 			querylist.push(_.partial(function(site_code, subject_template, cb){
 				getStatisticsByExamSite_AllSubject(site_code,function(err,res){
 					if(err) cb(err);
@@ -172,7 +172,7 @@
 						cb(null,re);
 					}
 				});
-			},sites_info[site].code,subjects_template[sites_info[site].code]));
+			},sites_info[i].code,subjects_template[sites_info[i].code]));
 		}
 
 		//查询

@@ -27,8 +27,8 @@
 			<label for="exam_site_code">考点(必填):</label>
 			<select class="" name="exam_site_code">
 				<option value="0">请选择</option>
-				<% for (var esc in exam_plan.exam_sites) { %>
-					<option value="<%= esc %>"><%= exam_plan.exam_sites[esc].name%></option>
+				<% for (var i = 0; i < sites_info.length; ++i) { %>
+					<option value="<%= sites_info[i].code %>"><%= sites_info[i].name%></option>
 				<% }%>
 			</select>
 		</div>
@@ -37,14 +37,15 @@
 			<label for="subject_code">考试科目(必选):</label>
 			<label>
 				<select class="" name="subject_code">
-					<option value="0">请选择</option>
-
-					<% for (var exam_site_code in exam_plan.exam_sites) { %>
-						<% for( var subject_code in exam_plan.exam_sites[exam_site_code].subjects) { %>
-						<option value="<%= subject_code %>" site="<%= exam_site_code %>">
-							<%= exam_plan.exam_sites[exam_site_code].subjects[subject_code].name %>
-							@<%= exam_plan.exam_sites[exam_site_code].name %>
-						</option>
+					<option value="0" site="0">请选择</option>
+					<% for (var i = 0; i < sites_info.length; ++i) { %>
+						<% var site = sites_info[i]; %>
+						<% for (var j = 0; j < site['subjects'].length; ++j) { %>
+							<% var subject = site['subjects'][j]; %>
+							<option value="<%= subject.code %>" site="<%= site.code %>">
+								<%= subject.name %>
+								@<%= site.name %>
+							</option>
 						<% } %>
 					<% } %>
 
@@ -61,10 +62,10 @@
 
 		<div id="input_sex">
 			<label for="sex">性别(必选):</label>
-			<%for(var i in tr.sex){%>
-				<%= tr.sex[i].name %><input type="radio" name="sex" value="<%= tr.sex[i].code %>">
+			<%tr.sex.each(function(val){%>
+				<%= val.name %><input type="radio" name="sex" value="<%= val.code %>">
 				&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
-			<%}%>
+			<%});%>
 		</div>
 
 		<span class="validated_result"></span>
@@ -72,9 +73,9 @@
 		<div id="input_id_type">
 			<label for="id_type">证件类型(必选):</label>
 			<select name="id_type">
-				<% for (i in tr.id_type) { %>
-					<option value="<%= tr.id_type[i].code %>"><%= tr.id_type[i].name %></option>
-				<% }%>
+				<% tr.id_type.each(function(val){ %>
+					<option value="<%= val.code %>"><%= val.name %></option>
+				<% });%>
 			</select>
 			<span class="validated_result"></span>
 		</div>
@@ -98,9 +99,9 @@
 			<label for="nationality">民族(必选):</label>
 			<select name="nationality">
 				<option value="0">请选择</option>
-				<% for (i in tr.nationality) { %>
-					<option value="<%= tr.nationality[i].code %>"><%= tr.nationality[i].name %></option>
-				<% }%>
+				<% tr.nationality.each(function(val){ %>
+					<option value="<%= val.code %>"><%= val.name %></option>
+				<% });%>
 			</select>
 			<span class="validated_result"></span>
 		</div>
@@ -109,9 +110,9 @@
 			<label for="career">职业(必选):</label>
 			<select class="" name="career">
 				<option value="00">请选择</option>
-				<% for (i in tr.career) { %>
-					<option value="<%= tr.career[i].code %>"><%= tr.career[i].name%></option>
-				<% } %>
+				<% tr.career.each(function(val){ %>
+					<option value="<%= val.code %>"><%= val.name%></option>
+				<% }); %>
 			</select>
 			<span class="validated_result"></span>
 		</div>
@@ -120,9 +121,9 @@
 			<label for="degree_of_education">文化程度(必选):</label>
 			<select class="" name="degree_of_education">
 				<option value="0">请选择</option>
-				<% for (i in tr.degree_of_education) { %>
-					<option value="<%= tr.degree_of_education[i].code %>"><%= tr.degree_of_education[i].name %></option>
-				<% } %>
+				<% tr.degree_of_education.each(function(val){ %>
+					<option value="<%= val.code %>"><%= val.name %></option>
+				<% }); %>
 			</select>
 			<span class="validated_result"></span>
 		</div>
@@ -131,9 +132,9 @@
 			<label for="training_type">培训类型(必选):</label>
 			<select class="" name="training_type">
 				<option value="0">请选择</option>
-				<% for (i in tr.training_type) { %>
-					<option value="<%= tr.training_type[i].code %>"><%= tr.training_type[i].name %></option>
-				<% } %>
+				<% tr.training_type.each(function(val){ %>
+					<option value="<%= val.code %>"><%= val.name %></option>
+				<% }); %>
 			</select>
 			<span class="validated_result"></span>
 		</div>
@@ -171,9 +172,9 @@
 			<div class="" id="input_remark_for_not_our_school">
 				<select class="" name="school">
 					<option value="0">请选择学校</option>
-					<% for (i in tr.school) { %>
-						<option value="<%= tr.school[i].code %>"><%= tr.school[i].name %></option>
-					<% } %>
+					<% tr.school.each(function(val){ %>
+						<option value="<%= val.code %>"><%= val.name %></option>
+					<% }); %>
 				</select>
 				<span>学校(必填):</span>
 				<input type="text" name="school_name" value="">
@@ -183,9 +184,9 @@
 			<div class="" id="input_remark_for_is_our_school">
 				<select class="" name="department">
 					<option value="0">请选择学院</option>
-					<% for (i in tr.department) { %>
-						<option value="<%= tr.department[i].code %>"><%= tr.department[i].name %></option>
-					<% } %>
+					<% tr.department.each(function(val){ %>
+						<option value="<%= val.code %>"><%= val.name %></option>
+					<% }); %>
 				</select>
 				<span>学号(必填):</span>
 				<input type="text" name="student_number" value="">

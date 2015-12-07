@@ -1,9 +1,30 @@
 (function () {
-    module.exports = require("./config/codeReference.json");
+
+    var _ = require("underscore");
+    var codeRef = require("./config/codeReference.json");
+
+    for(var key in codeRef){
+        codeRef[key].findName = function(code){
+            var re = _.find(this,function(o){return o.code == code});
+            return re ? re.name : null;
+        };
+
+        codeRef[key].findCode = function(name){
+            var re = _.find(this,function(o){return o.name == name});
+            return re ? re.code : null;
+        };
+
+        codeRef[key].each = function(cb){
+            for(var i = 0; i < this.length; ++i)cb(this[i]);
+        };
+    }
+
+
+    module.exports.codeRef = codeRef;
     //在信息查询页面显示的信息结构
     //key是数据库中的字段名
     //value是显示时呈现的栏目名称
-    module.exports.data_schema_convert = {
+    var data_schema_convert = {
         exam_site_code: '考点',
         name: '姓名',
         sex: '性别',
@@ -21,5 +42,10 @@
         phone: '联系电话',
         remark: '备注'
     }
+    module.exports.data_schema_convert = data_schema_convert;
+
+    module.exports.tr = function(field){
+      return data_schema_convert[field];
+    };
 
 })();

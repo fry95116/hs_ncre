@@ -1,0 +1,70 @@
+html{
+    height:100%;
+}
+body {
+    font-family:"Microsoft YaHei";
+    font-weight: 400;
+    margin: 0px;
+    height: 100%;
+}
+
+#mainPanel {
+    width:100%;
+    height:100%;
+    //background-color:#66ccff;
+    background-image: url(/img/background.png);
+    position: relative;
+    text-align: center;
+}
+
+#login{
+    position: relative;
+    top:220px;
+    margin:auto;
+    width:320px;
+    height:400px;
+    padding:20px;
+    border-radius: 10px;
+    background: #fff;
+    border: 2px #66ccff solid;
+    box-shadow: rgba(0,0,0,0.3) 1px 1px 4px;
+    text-align: center;
+}
+
+#login img{
+    width:146px;
+    height:146px;
+    margin: 32px auto;
+}
+
+#login input{
+    margin-left: 10px;
+    padding:6px 12px;
+    font-size:14px;
+    line-height: 1.428571;
+    border: #ccc solid 1px;
+    border-radius: 4px;
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+}
+
+#login input[type="submit"]{
+    margin-top: 20px;
+    background-color: #fff;
+    font-family: "Microsoft YaHei";
+
+    font-weight: 400;
+    border: #ccc 1px solid;
+    box-shadow: none;
+    padding:8px 28px;
+}
+
+#login input[type="submit"]:hover{
+    background-color: #e6e6e6;
+    border-color: #adadad;
+}
+
+#login input[type="submit"]:active{
+    background-color: #e6e6e6;
+    border-color: #adadad;
+    box-shadow: inset 0 3px 5px rgba(0,0,0,.125);
+}
