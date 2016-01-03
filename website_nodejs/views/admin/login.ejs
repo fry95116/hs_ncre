@@ -1,11 +1,24 @@
-<div id="login">
-    <img src="/img/icon.png">
+<!doctype html>
+<html>
+<head>
+    <title>后台登陆</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link href="/css/admin/login.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<div id="mainPanel">
+    <div id="login">
+        <img src="/img/icon.png">
 
-    <form action="/admin/login" method="post">
-        <p><label for="username">账号</label><input type="text" name="username" placeholder="用户名"></p>
+        <form action="/admin/api/token" method="get">
+            <p><label for="username">账号</label><input type="text" name="username" placeholder="用户名"></p>
 
-        <p><label for="password">密码</label><input type="password" name="password" placeholder="密码"></p>
+            <p><label for="password">密码</label><input type="password" name="password" placeholder="密码"></p>
 
-        <p><input type="submit" value="登录"></p>
-    </form>
+            <p><input type="submit" value="登录"></p>
+            <input type="hidden" name="fromBrowser" value="true">
+        </form>
+    </div>
 </div>
+</body>
+</html>

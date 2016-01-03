@@ -5,6 +5,8 @@
 
 	exports.MySQLPath = LocalConfig.MySQLPath;
 	exports.db_config = LocalConfig.db_config;
+	exports.admin_passport = LocalConfig.admin_passport;
+
 	exports.op_res_text = config.op_res_text;
 
 	exports.sites_info = config.exam_plan.exam_sites;

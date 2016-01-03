@@ -9,6 +9,10 @@
     "password": "abc7758258",
     "database": "test",
     "table": "data"
-  }
+  },
 
+  "admin_passport":{
+    "username":"admin",
+    "password":"admin"
+  }
 }

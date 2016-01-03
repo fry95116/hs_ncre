@@ -7,9 +7,12 @@
 			user_config = require('./user_config'),
 			db_config = user_config.db_config,
 			sites_info = user_config.sites_info,
-			limit_rules = user_config.limit_rules;
+			limit_rules = user_config.limit_rules,
+			tools = require('./tools');
 
 	var con;
+	//以下代码用于维持mysql的连接
+	//后期可以考虑连接池
 	function handleDisconnect() {
 		con = mysql.createConnection(db_config); // Recreate the connection, since
 														// the old one cannot be reused.
@@ -54,7 +57,7 @@
 
 		// 如果使用的是身份证，则对身份证号码合法性校验
 		if(data_in.id_type == "1") {
-			var id_info = getIdCardInfo(data_in.id_number.toString());
+			var id_info = tools.getIdCardInfo(data_in.id_number.toString());
 			if(!id_info.isTrue) {
 				err['id_number'] = 'invalid data';
 			}
@@ -324,65 +327,5 @@
 			else callback(null, res);
 		});
 	};
-
-	// 身份证校验算法，
-	function getIdCardInfo(cardNo) {
-		var info = {
-			isTrue : false,
-			year : null,
-			month : null,
-			day : null,
-			isMale : false,
-			isFemale : false
-		};
-		if (!cardNo || 18 != cardNo.length) {
-			info.isTrue = false;
-			return info;
-		}
-
-		if (18 == cardNo.length) {
-			var year = cardNo.substring(6, 10);
-			var month = cardNo.substring(10, 12);
-			var day = cardNo.substring(12, 14);
-			var p = cardNo.substring(14, 17);
-			var birthday = new Date(year, parseFloat(month) - 1,
-					parseFloat(day));
-			// 这里用getFullYear()获取年份，避免千年虫问题
-			if (birthday.getFullYear() != parseFloat(year)
-					|| birthday.getMonth() != parseFloat(month) - 1
-					|| birthday.getDate() != parseFloat(day)) {
-				info.isTrue = false;
-				return info;
-			}
-			var Wi = [ 7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2, 1 ];// 加权因子
-			var Y = [ 1, 0, 10, 9, 8, 7, 6, 5, 4, 3, 2 ];// 身份证验证位值.10代表X
-			// 验证校验位
-			var sum = 0; // 声明加权求和变量
-			var _cardNo = cardNo.split("");
-			if (_cardNo[17].toLowerCase() == 'x') {
-				_cardNo[17] = 10;// 将最后位为x的验证码替换为10方便后续操作
-			}
-			for ( var i = 0; i < 17; i++) {
-				sum += Wi[i] * _cardNo[i];// 加权求和
-			}
-			i = sum % 11;// 得到验证码所位置
-			if (_cardNo[17] != Y[i]) {
-				return info.isTrue = false;
-			}
-			info.isTrue = true;
-			info.year = birthday.getFullYear();
-			info.month = birthday.getMonth() + 1;
-			info.day = birthday.getDate();
-			if (p % 2 == 0) {
-				info.isFemale = true;
-				info.isMale = false;
-			} else {
-				info.isFemale = false;
-				info.isMale = true
-			}
-			return info;
-		}
-		return info;
-	}
 
 })();
