@@ -1,30 +1,31 @@
 /**
  * Created by tomtoo on 2015/12/7.
+ * Description ：前台系统的路由，这部分主要是指暴露给报名者的
  */
 
-
-//前端控制器
 (function () {
     var router = require('express').Router(),
-        _ = require('underscore'),
+        _ = require('underscore'),              
         async = require('async'),
+        util = require('util'),
 
         bodyparser = require('body-parser'), //解析post请求用
         cookieParser = require('cookie-parser'),
         session = require('express-session'), //session
+        Captchapng = require('captchapng'),//验证码模块
 
-        dbc = require('./dbc'),
-        translate = require('./tr'),
-        codeRef = translate.codeRef,
-        tr = translate.tr,
+        dbc = require('./dbc'),             //提供各类数据操作
+        translate = require('./tr'),        //各类映射
+        codeRef = translate.codeRef,        //职业,民族,学历等项目的 名称-代码 映射
+        tr = translate.tr,                  //翻译函数， 用于将数据表字段名翻译为实际名称(原tr.js)
 
-        user_config = require('./user_config'),
-        sites_info = user_config.sites_info,
-        limit_rules = user_config.limit_rules,
-        op_res_text = user_config.op_res_text,
+        user_config = require('./user_config'),    //用户设置 
+        sites_info = user_config.sites_info,       //考点，科目信息
+        limit_rules = user_config.limit_rules,     //人数限制规则
+        op_res_text = user_config.op_res_text;     //报名操作的各类结果对应的提示信息
 
-        util = require('util'),
-        Captchapng = require('captchapng');//验证码模块
+        
+        
 
     //中间件
     //noinspection JSUnresolvedFunction
@@ -32,7 +33,7 @@
         extended: true
     })); //提交请求
 
-    //session
+    //session设置
     router.use(cookieParser());
     router.use(session({
         name:'SESSIONID',
@@ -41,7 +42,8 @@
         saveUninitialized:false,
         unset:'destroy'
     }));
-
+    
+    /* 组装报名人数信息，用于主页 */
     function getRegInfo(callback) {
         dbc.getStatistics(function (err, res) {
             if (err) {
@@ -70,8 +72,7 @@
             callback(null, re);
         });
     }
-
-//主页
+    /* 主页 */
     router.get('/', function (req, res) {
         getRegInfo(function (err, reginfo) {
             if (err) throw err;
@@ -81,7 +82,7 @@
         });
     });
 
-//考生信息查询界面
+    /* 考生信息查询界面 */
     router.get('/getinfo', function (req, res) {
         if (req.query.id_number) {
             dbc.getInfo(req.query.id_number, function (err, result) {
@@ -103,7 +104,6 @@
                         out[tr(key)] = codeRef[key] ? codeRef[key].findName(result[key]) : result[key];
                     }
 
-                    //console.log(out);
                     res.render('getinfo', {
                         info: out
                     });
@@ -117,7 +117,7 @@
         }
     });
 
-//获取验证码图片
+    /* 获取验证码图片 */
     router.get('/captcha', function (req, res) {
 
         //六位随机数验证码
@@ -135,17 +135,17 @@
 
     });
 
-//验证码检测
+    /* 验证码检测 */
     router.get('/captchatest', function (req, res) {
         res.send(req.session.captcha == req.param('test').toUpperCase());
     });
 
-//考生信息填报界面
+    /* 考生信息填报界面 */
     router.get('/fillout', function (req, res) {
         res.render('fillout', {tr: codeRef, sites_info: sites_info, error_info: ''});
     });
-
-//重复检查
+    
+    /* 重复检查 */
     router.get('/repeatcheck', function (req, res) {
         if (req.query.id_number) {
             dbc.repeatCheck(req.query.id_number, function (err, result) {
@@ -155,7 +155,7 @@
         }
     });
 
-//处理提交的考生记录
+    /* 处理提交的考生记录 */
     router.post('/submit', function (req, res) {
 
         // 对于每一次请求都做一次日志记录
@@ -186,6 +186,8 @@
             } else {
                 req.body.remark = req.body.school == '01' ? req.body.school_name : codeRef.school.findName(req.body.school);
             }
+            //生成examSite_subject_code
+            req.body.examSite_subject_code = '' + req.body.exam_site_code + '-' + req.body.subject_code;
             //插入数据
             dbc.insertInfo(req.body, function (err) {
                 if (err) {
@@ -202,6 +204,11 @@
                     } else if (err.error_type == 'overflow') {
                         res.render('op_res', {
                             res: op_res_text.overflow,
+                            info: {}
+                        });
+                    } else if (err.error_type == 'blacklist') {
+                        res.render('op_res', {
+                            res: op_res_text.blacklist,
                             info: {}
                         });
                     } else {

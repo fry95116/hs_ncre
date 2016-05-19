@@ -64,12 +64,11 @@
 		}
 
 		// 考点和科目的后端联动验证
-		// 等前端完善了，再试一试
-
-		if(!(data_in.exam_site_code in sites_info.get('$[*].code'))){
+        console.log(_.indexOf(sites_info.get('$[*].code'), parseInt(data_in.exam_site_code)));
+		if(_.indexOf(sites_info.get('$[*].code'), parseInt(data_in.exam_site_code)) == -1){
 			err['exam_site_code'] = 'invalid data';
 		}
-		else if(!(data_in.subject_code in sites_info.get('$[?(@.code=='+data_in.exam_site_code+')].subjects[*].code'))) {
+		else if(_.indexOf(sites_info.get('$[?(@.code=='+data_in.exam_site_code+')].subjects[*].code'), parseInt(data_in.subject_code)) == -1) {
 			err['subject_code'] = 'subject not supported in this site';
 		}
 
@@ -82,63 +81,6 @@
 	};
 
 	exports.check = check;
-
-	//人数统计(同考点)
-	exports.getCount = function(exam_site_code, cb) {
-		con.query(
-				'SELECT count(*) AS \'count\' FROM ' + db_config.table +
-				' WHERE exam_site_code=?',
-				exam_site_code,
-				function(err, res) {
-					if (err) cb(err);
-					else cb(null, res[0].count);
-				});
-	};
-
-	//人数统计(同考点同科目)
-	exports.getCountBySubject = function(exam_site_code, subject_code, cb) {
-		con.query(
-				'SELECT count(*) AS \'count\' FROM ' + db_config.table + ' WHERE exam_site_code=? AND subject_code=?', [exam_site_code, subject_code],
-				function(err, res) {
-					if (err) cb(err);
-					else cb(null, res[0].count);
-				});
-	};
-
-	//人数统计(各考点)
-	var getStatistics_AllSite = function(cb) {
-		con.query(
-				'SELECT exam_site_code, count(exam_site_code) as \'count\' FROM ' + db_config.table +
-				' GROUP BY exam_site_code',
-				function(err, res) {
-					if (err) cb(err);
-					else  {
-						res = _.object( _.map(res,function(row){
-									return [row.exam_site_code,row.count];
-								})
-						);
-						cb(null,res);
-					}
-				});
-	};
-	//人数统计(同考点各科目)
-	var getStatisticsByExamSite_AllSubject = function(exam_site_code, cb) {
-		con.query(
-				'SELECT subject_code, count(subject_code) as \'count\' from ' + db_config.table +
-				' WHERE exam_site_code = ?' +
-				' GROUP BY subject_code',
-				exam_site_code,
-				function(err, res) {
-					if (err) cb(err);
-					else {
-						res = _.object( _.map(res,function(row){
-								return [row.subject_code,row.count];
-							})
-						);
-						cb(null,res);
-					}
-				});
-	};
 
 	//人数统计（一次性返回所有信息）
 	var getStatistics = function(callback){
@@ -153,8 +95,29 @@
 			for (var subject in sites_info[site]['subjects']){
 				subjects_template[ sites_info[site].code ][ sites_info[site]['subjects'][subject].code ] = 0;
 			}
-		}
+        }
 
+        //查询
+        var query_str = 'SELECT exam_site_code, subject_code, count(examSite_subject_code) as \'count\'' +
+            ' from ' + db_config.table +
+			' GROUP BY examSite_subject_code;';
+        con.query(
+            query_str,
+			function (err, res) {
+                if (err) callback(err);
+                else {
+                    for (var i in res) {
+                        sites_template[res[i].exam_site_code] += res[i].count;
+                        subjects_template[res[i].exam_site_code][res[i].subject_code] += res[i].count;
+                    }
+                    callback(null, {
+                        sitesCount: sites_template, 
+                        subjectCount: subjects_template
+                    });
+                }
+            }
+        );
+        /*
 		//构建并行查询
 		var querylist = [
 			function(cb) {
@@ -195,7 +158,7 @@
 
 				callback(null,re);
 			}
-		});
+		});*/
 
 	};
 	exports.getStatistics = getStatistics;
@@ -279,16 +242,33 @@
 						else {
 							if (res === 'false') cb({error_type: 'exist', err_info: 'exist'});
 							else {
-								//插入数据
-								var sql = 'INSERT INTO ' + db_config.table +
-										' SET ?';
-								con.query(sql, data_in, function(err) {
-									cb(err);
-								});
+								
 							}
 						}
 					});
-				}
+                },
+                //插入数据
+                function (cb) { 
+                    var sql = 'INSERT INTO ' + db_config.table + ' SET ?';
+                    con.query(sql, data_in, function (err) {
+                        if (err) cb(err);
+                        else cb();
+                    });
+                },
+                //按规则检查
+                function (cb) {
+                    getStatistics(function (err, res) {
+                        if (err) cb(err);
+                        else {
+                            var overflow = [];
+                            for (var i in limit_rules) {
+                                if (!checkCount(res, limit_rules[i])) overflow.push(i);
+                            }
+                            if (overflow.length > 0) cb({ error_type: 'overflow', err_info: 'Conflict in rule:' + overflow.join(',') });
+                            else cb();
+                        }
+                    });
+                },
 			];
 			//执行
 			async.series(insert_transaction, function(err) {
