@@ -8,6 +8,8 @@
 			db_config = user_config.db_config,
 			sites_info = user_config.sites_info,
 			limit_rules = user_config.limit_rules,
+		
+			blacklist = require('./config/blacklist.json'),
 			tools = require('./tools');
 
 	var con;
@@ -117,48 +119,6 @@
                 }
             }
         );
-        /*
-		//构建并行查询
-		var querylist = [
-			function(cb) {
-				getStatistics_AllSite(function(err, res) {
-					if(err) cb(err);
-					else cb(null, _.defaults(res,sites_template));
-				});
-			}
-		];
-
-		for(var i = 0; i < sites_info.length; ++i){
-			querylist.push(_.partial(function(site_code, subject_template, cb){
-				getStatisticsByExamSite_AllSubject(site_code,function(err,res){
-					if(err) cb(err);
-					else {
-						var re = {};
-						re[site_code] = _.defaults(res,subject_template);
-						cb(null,re);
-					}
-				});
-			},sites_info[i].code,subjects_template[sites_info[i].code]));
-		}
-
-		//查询
-		async.parallel(querylist, function(err, result) {
-			if (err) callback(err);
-			else {
-				var re = {};
-
-				//组装考点人数统计
-				re.sitesCount = result[0];
-
-				//组装科目人数统计
-				re.subjectCount = {};
-				for (var i = 1; i < result.length; ++i){
-					_.extendOwn(re.subjectCount,result[i]);
-				}
-
-				callback(null,re);
-			}
-		});*/
 
 	};
 	exports.getStatistics = getStatistics;
@@ -185,10 +145,12 @@
 	exports.repeatCheck = repeatCheck;
 
 	//按规则检查人数
-	var checkCount = function(counts, limit_rule){
+	var checkCount = function(counts, limit_rule, secondCheck){
+		secondCheck = secondCheck | false;
 		var count = 0;
 		//noinspection JSUnresolvedVariable
-		if(!limit_rule.limit_obj) throw new Error('invalid limit_rule');
+		if(typeof limit_rule.limit_obj == 'undefined')
+			throw new Error('invalid limit_rule');
 		for(var i in limit_rule['limit_obj']){
 			var limit_obj = limit_rule['limit_obj'][i];
 			//某考点某科目人数
@@ -201,7 +163,7 @@
 			}
 		}
 		//noinspection JSUnresolvedVariable
-		return count < limit_rule.limitNum;
+		return secondCheck ? count <= limit_rule.limitNum : count < limit_rule.limitNum;
 
 	};
 	exports.checkCount = checkCount;
@@ -227,13 +189,26 @@
 						if(err) cb(err);
 						else{
 							var overflow = [];
-							for(var i in limit_rules){
-								if(!checkCount(res,limit_rules[i])) overflow.push(i);
+							for(var i = 0; i < limit_rules.length; ++i){
+								if(!checkCount(res,limit_rules[i]))
+									overflow.push(i);
 							}
-							if(overflow.length > 0) cb({error_type: 'overflow', err_info: 'Conflict in rule:' + overflow.join(',')});
+							if(overflow.length > 0) cb({error_type: 'overflow', err_info: 'Conflict in rule:[' + overflow.join(',')+ ']onSecondCheck'});
 							else cb();
 						}
 					});
+				},
+				//黑名单检查
+				function(cb) {
+					if(_.indexOf(blacklist, data_in.id_number) != -1) cb({error_type: 'blacklist', err_info: 'blacklist'})
+					else cb();
+					/*repeatCheck(data_in.id_number, function(err, res) {
+						if (err) cb(err);
+						else {
+							if (res === 'false') cb({error_type: 'exist', err_info: 'exist'});
+							else cb();
+						}
+					});*/
 				},
 				//重复检查
 				function(cb) {
@@ -241,9 +216,7 @@
 						if (err) cb(err);
 						else {
 							if (res === 'false') cb({error_type: 'exist', err_info: 'exist'});
-							else {
-								
-							}
+							else cb();
 						}
 					});
                 },
@@ -261,11 +234,12 @@
                         if (err) cb(err);
                         else {
                             var overflow = [];
-                            for (var i in limit_rules) {
-                                if (!checkCount(res, limit_rules[i])) overflow.push(i);
+                            for (var i = 0; i < limit_rules.length; ++i) {
+                                if (!checkCount(res, limit_rules[i],true))
+									overflow.push(i);
                             }
-                            if (overflow.length > 0) cb({ error_type: 'overflow', err_info: 'Conflict in rule:' + overflow.join(',') });
-                            else cb();
+                            if (overflow.length > 0) cb({ error_type: 'overflow', err_info: 'Conflict in rule:[' + overflow.join(',') + ']onSecondCheck' });
+							else cb();
                         }
                     });
                 },

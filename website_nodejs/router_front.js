@@ -160,8 +160,10 @@
 
         // 对于每一次请求都做一次日志记录
         var now = Date.now();
-        console.log(now.toString() + '  【【请求】】' + '  【IP来源】:' + req.connection.remoteAddress.toString() + '  【提交的报名信息】:' + util.inspect(req.body).replace(/\n/g, ''))
-
+        /*console.log(now.toString() +
+            '  【【请求】】' +
+            '  【IP来源】:' + req.connection.remoteAddress.toString() +
+            '  【提交的报名信息】:' + util.inspect(req.body).replace(/\n/g, ''))*/
 
         if (req.body) {
             //验证验证码
@@ -194,7 +196,7 @@
 
                     // “数据错误”、“已存在”、“考点报滿”、“科目报滿” 而提交失败的日志记录
                     var now = Date.now();
-                    console.log(now.toString() + '【【提交失败】】' + '  【错误类型】：' + err.error_type + '  【错误原因】' + util.inspect(err.err_info).replace(/\n/g, '') + util.inspect(err) + '  【IP来源】:' + req.connection.remoteAddress.toString() + '  【提交的报名信息】：' + util.inspect(req.body).replace(/\n/g, ''))
+                    //console.log(now.toString() + '【【提交失败】】' + '  【错误类型】：' + err.error_type + '  【错误原因】' + util.inspect(err.err_info).replace(/\n/g, '') + util.inspect(err) + '  【IP来源】:' + req.connection.remoteAddress.toString() + '  【提交的报名信息】：' + util.inspect(req.body).replace(/\n/g, ''))
 
                     if (err.error_type == 'exist') {
                         res.render('op_res', {
@@ -223,7 +225,7 @@
 
                     // 提交成功的日志记录
                     var now = Date.now();
-                    console.log(now.toString() + '【【提交成功】】' + '  【IP来源】:' + req.connection.remoteAddress.toString() + '  【提交的报名信息】' + util.inspect(req.body).replace(/\n/g, ''))
+                    //console.log(now.toString() + '【【提交成功】】' + '  【IP来源】:' + req.connection.remoteAddress.toString() + '  【提交的报名信息】' + util.inspect(req.body).replace(/\n/g, ''))
 
                     res.render('op_res', {
                         res: op_res_text.succeed,
