@@ -1,0 +1,54 @@
+﻿.TS_DataGrid {
+    overflow: scroll;
+}
+
+    .TS_DataGrid table {
+        width: 100%;
+    }
+
+        .TS_DataGrid table .handler {
+            width: 1px;
+            cursor: col-resize;
+        }
+
+            .TS_DataGrid table .handler:hover {
+                width: 2px;
+                background-color: #00f;
+            }
+
+        .TS_DataGrid table tr:first-child .handler {
+            background-color: #ccc;
+        }
+
+        .TS_DataGrid table th {
+            height: 31px;
+            background-color: #F0F0F0;
+            font-size: 13px;
+            font-family: 'Microsoft YaHei',Arial;
+            font-weight: lighter;
+        }
+
+        .TS_DataGrid table td {
+            height: 31px;
+            background-color: #ffffff;
+            font-size: 13px;
+            font-family: 'Microsoft YaHei',Arial;
+            font-weight: lighter;
+            text-align: left;
+            padding-left: 8px;
+        }
+
+        .TS_DataGrid table .focus td {
+            background-color: #B3E5FC;
+        }
+
+            .TS_DataGrid table .focus td input {
+                width: 96%;
+                margin-left: -5px;
+            }
+
+        .TS_DataGrid table td select {
+            width: 98%;
+            margin-left: -5px;
+            padding: 1px 0px;
+        }
