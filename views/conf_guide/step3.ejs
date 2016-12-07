@@ -1,0 +1,67 @@
+﻿<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>设置人数限制规则</title>
+    
+    <link href="/css/conf_guide/conf_guide.css" rel="stylesheet" type="text/css" />
+    <link href="/css/conf_guide/step3.css" rel="stylesheet" type="text/css" />
+    <link href="/css/libs/TS_DataGrid.css" rel="stylesheet" type="text/css" />
+
+    <script type="text/javascript" src="/js/libs/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="/js/libs/TS_DataGrid.js"></script>
+    <script type="text/javascript" src="/js/conf_guide/step3.js"></script>
+</head>
+<body>
+    <div class="mainPanel">
+        <h1>Step3:&nbsp;限制规则</h1>
+
+        <div class="codedict">
+            <div class="header">
+                <h2>考点</h2>
+                <a class="newline" href="#">new</a>
+                <a class="delline" href="#">delete</a>
+                <div style="clear:both"></div>
+            </div>
+            <div class ="limit_roles list_content">
+
+            </div>
+        </div>
+        <input type="submit" value="下一步" tabindex="-1"/>
+    </div>
+    <script type="application/json" id="exam_sites">
+        [
+            {
+                "code":410084,
+                "name":"华北水利水电大学（郑东新区）",
+                "subjects":[
+                    {"code": 24, "name": "二级 —— C语言程序设计"},
+                    {"code": 26, "name": "二级 —— VB语言程序设计"},
+                    {"code": 27, "name": "二级 —— VFP据库程序设计"},
+                    {"code": 29, "name": "二级 —— Access数据库程序设计"},
+                    {"code": 35, "name": "三级 —— 网络技术"},
+                    {"code": 36, "name": "三级 —— 数据库技术"},
+                    {"code": 41, "name": "四级 —— 网络工程师"},
+                    {"code": 42, "name": "四级 —— 数据库工程师"}
+                ]
+            },{
+                "code":410067,
+                "name": "华北水利水电大学（北环路36号）",
+                "subjects": [
+                    {"code": 65, "name": "二级 —— MS office"},
+                    {"code": 24, "name": "二级 —— C语言程序设计"},
+                    {"code": 26, "name": "二级 —— VB语言程序设计"},
+                    {"code": 27, "name": "二级 —— VFP据库程序设计"},
+                    {"code": 29, "name": "二级 —— Access数据库程序设计"},
+                    {"code": 35, "name": "三级 —— 网络技术"},
+                    {"code": 36, "name": "三级 —— 数据库技术"},
+                    {"code": 41, "name": "四级 —— 网络工程师"},
+                    {"code": 42, "name": "四级 —— 数据库工程师"}
+                ]
+            }
+        ]
+    </script>
+</body>
+
+</html>
