@@ -14,47 +14,226 @@ $('#input_birthday').hide();
 });
 */
 
-$(document).ready(function(){
+function render($el, condition, errMsg) {
+	if(typeof condition == 'function') {
+		condition = condition($el);
+	}
+
+	$item = $el.parent();
+
+	if(!condition) {
+		$item.removeClass().addClass('has_error');
+		$item.children('.validated_result').text(errMsg);
+		return false;
+	} else {
+		$item.removeClass();
+		$item.children('.validated_result').text('');
+		return true;
+	}
+}
+
+//各个表项的验证逻辑
+var validator = [
+	//考点代码select
+	['exam_site_code', function($el) {
+		render($el, function($el) {
+			return $el.val() != 0;
+		}, '请选择考点');
+	}],
+
+	//科目代码select
+	['subject_code', function($el) {
+		render($el, function($el) {
+			return $el.val() != 0;
+		}, '请选择科目');
+	}],
+
+	//姓名 input
+	['name', function($el) {
+		render($el, function($el) {
+			return $el.val().length >= 2;
+		}, '请输入正确的名字');
+	}],
+
+	//性别 radio
+	['sex', function($el) {
+		render($el, function($el) {
+			return $el.find(':checked').length != 0;
+		}, '请输入正确的名字');
+	}],
+
+	//生日input(format:yyyymmdd)
+	['birthday', function($el) {
+		render($el, function($el) {
+			return /^\d{8}$/.test($el.val());
+		}, '请输入正确的出生日期');
+	}],
+
+	//证件类型 select
+	['id_type', function($el) {
+		render($el, function($el) {
+			return $el.val() != 0;
+		}, '请选择证件类型');
+	}],
+
+	//证件号码 input
+	['id_number', function($el) {
+		render($el, function($el) {
+			return $el.val().length != 0;
+		}, '请输入证件号');
+	}],
+
+	//证件号码 input
+	['id_number', function($el) {
+		render($el, function($el) {
+			if($('[name=id_type]').val() == 1) {
+				return getIdCardInfo($el.val()).isTrue;
+			} else return ture;
+		}, '请输入正确的身份证号');
+	}],
+
+	//民族 select
+	['nationality', function($el) {
+		render($el, function($el) {
+			return $el.val() != 0;
+		}, '请选择民族');
+	}],
+
+	//职业 select
+	['career', function($el) {
+		render($el, function($el) {
+			return $el.val() != 0;
+		}, '请选择职业');
+	}],
+
+	//文化程度 select
+	['degree_of_education', function($el) {
+		render($el, function($el) {
+			return $el.val() != 0;
+		}, '请选择文化程度');
+	}],
+
+	//培训类型
+	['training_type', function($el) {
+		render($el, function($el) {
+			return $el.val() != 0;
+		}, '请选择培训类型');
+	}],
+
+	//邮编 input
+	// 可以为空
+
+	//地址长度 input
+	// 可以不填
+
+	// 电子邮箱 input
+	['email', function($el) {
+		render($el, function($el) {
+			return /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/.test($el.val());
+		}, '请输入正确的电子邮件地址');
+	}],
+
+	// 联系电话 input(格式11位数字)
+	['phone', function($el) {
+		render($el, function($el) {
+			return /^\d{0,11}$/.test($el.val());
+		}, '联系电话输入有误');
+	}],
+
+	/* 备注 */
+	//勾选本校学生的情况
+	['department', function($el) {
+		render($el, function($el) {
+			if($('input[name=is_our_school]').is(':checked')) {
+				return $el.val() != 0;
+			}
+			return true;
+		}, '请选择学院');
+	}],
+	['student_number', function($el) {
+		render($el, function($el) {
+			if($('input[name=is_our_school]').is(':checked')) {
+				return /\d{9}\d*/.test($el.val());
+			}
+			return true;
+		}, '请输入学号');
+	}],
+
+	//不勾选本校学生的情况
+	['school', function($el) {
+		render($el, function($el) {
+			if(!$('input[name=is_our_school]').is(':checked')) {
+				return $el.val() != '0';
+			}
+			return true;
+		}, '请选择学校');
+	}],
+	['school_name', function($el) {
+		render($el, function($el) {
+			if((!$('input[name=is_our_school]').is(':checked')) && $('[name=school]').val() == '01') {
+				return $el.val() !== '';
+			}
+			return true;
+		}, '请输入学校或工作单位');
+	}],
+
+	//验证码 input(使用同步ajax)
+	['captcha', function($el) {
+		render($el, function($el) {
+			var captcha_user = $el.val();
+			var result = $.ajax({
+				url: "/captchatest",
+				data: {
+					test: captcha_user
+				},
+				async: false
+			}).responseJSON;
+			return result;
+		}, '验证码错误');
+	}]
+];
+
+//验证码 与 考点学科联动
+$(document).ready(function() {
 
 	//验证码点击事件
-	$('#captcha').click(function(){
+	$('#captcha').click(function() {
 		this.src = '/captcha?t=' + Math.random();
 	});
-
 
 	//考点选择与学科选择联动
 
 	var subject_selector = $('[name="subject_code"]');
 
 	//隐藏掉科目选项中的考点名后缀
-	subject_selector.children().each(function(){
+	subject_selector.children().each(function() {
 		$(this).text($(this).text().split('@')[0]);
 	});
 
 	//only work at FF or Chrome
-/*
-	subject_selector.children().hide();
-	subject_selector.children('[site = "0"]').show();
-
-	$('[name="exam_site_code"]').change(function(){
-		var esc = $(this).children('option:selected').val();
+	/*
 		subject_selector.children().hide();
-		subject_selector.children('[site = "' + esc + '"]').show();
-	});
-*/
+		subject_selector.children('[site = "0"]').show();
+
+		$('[name="exam_site_code"]').change(function(){
+			var esc = $(this).children('option:selected').val();
+			subject_selector.children().hide();
+			subject_selector.children('[site = "' + esc + '"]').show();
+		});
+	*/
 	//fucking IE
 	var cache_sel = subject_selector.clone();
 	//初始化
 	$('[name="exam_site_code"]').val('0');
-	subject_selector.empty();
-	cache_sel.children('[site = "0"]').each(function(){
+	subject_selector.empty().append('<option value="0" site="0">请选择</option>');
+	cache_sel.children('[site = "0"]').each(function() {
 		subject_selector.append($(this).clone());
 	});
 
-	$('[name="exam_site_code"]').change(function(){
+	$('[name="exam_site_code"]').change(function() {
 		var esc = $(this).children('option:selected').val();
-		subject_selector.empty();
-		cache_sel.children('[site = "' + esc + '"]').each(function(){
+	subject_selector.empty().append('<option value="0" site="0">请选择</option>');
+		cache_sel.children('[site = "' + esc + '"]').each(function() {
 			subject_selector.append($(this).clone());
 		});
 	});
@@ -63,315 +242,37 @@ $(document).ready(function(){
 
 });
 
+//验证 onblur
 $(document).ready(function() {
 
 	// 对于每个 input 标签，填写正确格式的数据后，为每个input 标签添加 validated 类属性
 	$('form :input').blur(function() {
-		// 每次移开鼠标焦点时，先清楚后面的错误提示，以便重新验证
-		var $parent = $(this).parent();
-		// $parent.find('.form_tips').remove(); 这行代码是干嘛的
-
-		// 验证姓名
-		// 正确与否，都在input的兄弟元素.validated_result中添加文本
-		if ($(this).is('[name=name]')) {
-			if (this.value === '' || this.value.length < 2) {
-				$parent.children('.validated_result').text('请输入姓名');
-				$parent.removeClass().addClass('has_error');
-			} else {
-				$parent.children('.validated_result').text('正确');
-				$parent.removeClass().addClass('has_success');
-			}
-		}
-
-		// 证件号
-		if ($(this).is('[name=id_number]')) {
-			if ($('[name=id_type]').val() === '1') {
-				// 是身份证的话
-				if (this.value.length != 18) {
-					// 不够18位
-					$parent.children('.validated_result').text('请输入18位身份证号');
-					$parent.removeClass().addClass('has_error');
-				} else if (!getIdCardInfo(this.value.toString()).isTrue){
-					// 身份证号不符合算法规则
-					$parent.children('.validated_result').text('请仔细检查身份证号是否正确');
-					$parent.removeClass().addClass('has_error');
-				} else {
-					$('input[name="birthday"]').val(this.value.slice(6, 14));
-					// 保证是18位身份证号后，发送异步验证到服务器，确认该身份证号是否已经注册
-					$.get("/repeatcheck", {
-						id_number: $('[name=id_number]').val()
-					}, function(data) {
-						if (data === 'false') {
-							$parent.children('.validated_result').text('不能重复报名');
-							$parent.removeClass().addClass('has_error');
-						} else {
-							$parent.children('.validated_result').text('正确');
-							$parent.removeClass().addClass('has_success');
-						}
-					});
-				}
-			} else {
-				if ($(this).val().length == 0) {
-					$parent.children('.validated_result').text('请输入证件号');
-					$parent.removeClass().addClass('has_error');
-				} else {
-					$.get("/repeatcheck", {
-						id_number: $('[name=id_number]').val()
-					}, function(data) {
-						if (data === 'false') {
-							$parent.children('.validated_result').text('不能重复报名');
-							$parent.removeClass().addClass('has_error');
-						} else {
-							$parent.children('.validated_result').text('正确');
-							$parent.removeClass().addClass('has_success');
-						}
-					});
-				}
-			}
-		}
-
-		// 出生日期
-		if ($(this).is('[name=birthday]')) {
-			if ($('[name=input_birthday]').val() != '1') {
-				if (this.value.length != 8) {
-					$parent.children('.validated_result').text('请输入8位长度的出生日期');
-					$parent.removeClass().addClass('has_error');
-				} else {
-					$parent.children('.validated_result').text('正确');
-					$parent.removeClass().addClass('has_success');
-				}
-			}
-		}
-
-		// 邮政编码
-		// 非必需，不需要非空检测
-		/*
-		if ($(this).is('[name=post_code]')) {
-			if (this.value.length != 6) {
-				$parent.children('.validated_result').text('请输入正确的邮编');
-				$parent.removeClass().addClass('has_error');
-			} else {
-				$parent.children('.validated_result').text('正确');
-				$parent.removeClass().addClass('has_success');
-			}
-		}
-    */
-
-		// 验证地址
-		// 非必需，可为空，并不需要非空检测
-		/*
-		if ($(this).is('[name=address]')) {
-			if (this.value === '') {
-				$parent.children('.validated_result').text('请输入地址');
-				$parent.removeClass().addClass('has_error');
-			} else {
-				$parent.children('.validated_result').text('正确');
-				$parent.removeClass().addClass('has_success');
-			}
-		}
-    */
-
-		// 验证电子邮箱
-		// 非必填项，可为空。
-		/*
-		if ($(this).is('[name=email]')) {
-			if (this.value === '') {
-				$parent.children('.validated_result').text('请输入电子邮箱');
-				$parent.removeClass().addClass('has_error');
-			} else {
-				$parent.children('.validated_result').text('正确');
-				$parent.removeClass().addClass('has_success');
-			}
-		}
-    */
-
-		// 验证联系电话
-		if ($(this).is('[name=phone]')) {
-			if (/^\d+$/.test(this.value) === false || this.value.length > 11) {
-				$parent.children('.validated_result').text('请输入11位手机号码或固定电话');
-				$parent.removeClass().addClass('has_error');
-			} else {
-				$parent.children('.validated_result').text('正确');
-				$parent.removeClass().addClass('has_success');
-			}
-		}
-
-		// 验证备注信息
-		if ($(this).is('[name=student_number]')) {
-			if ($('input:checkbox').is(':checked')) { // 勾选了本校学生
-				if (this.value.length < 9) {
-					$parent.children('.validated_result').text('请填写正确的学号');
-					$parent.removeClass().addClass('has_error');
-				} else {
-					$parent.children('.validated_result').text('正确');
-					$parent.removeClass().addClass('has_success');
-				}
-			}
-		}
-
-
-		//验证码
-		if ($(this).is('[name=captcha]')) {
-			var captcha_user = $('[name=captcha]').val();
-			$.get('/captchatest',{'test':captcha_user}, function(result) {
-				if(result != true ) {
-					// 验证失败
-					$parent.find('.validated_result').text('验证码错误');
-					$parent.removeClass().addClass('has_error');
-				} else {
-					$parent.find('.validated_result').text('正确');
-					$parent.removeClass().addClass('has_success');
-				}
-			})
-		}
-
-		if ($(this).is('[name=school_name]')) {
-			if ($(this).val() == '') {
-				$parent.children('.validated_result').text('请输入学校或工作单位');
-				$parent.removeClass().addClass('has_error');
-			} else {
-				$parent.children('.validated_result').text('正确');
-				$parent.removeClass().addClass('has_success');
+		//找到验证器
+		for(var i = 0; i < validator.length; ++i) {
+			if(validator[i][0] === $(this).attr('name')) {
+				//如果验证失败，跳出
+				if(!validator[i][1]($(this))) return;
 			}
 		}
 	});
-	$('select[name=school]').change(function() {
-		if ($(this).val() == '01') {
-			$('input[name=school_name]').fadeIn('middle').prev().fadeIn('middle');
-		}
-		else{
-			$('input[name=school_name]').fadeOut('middle').prev().fadeOut('middle');
-		}
-	});
+
 });
 
-
+//验证 onsubmit
 $(document).ready(function() {
 	// 绑定submit键，如未通过验证，则返回false，不进行表单提交
 	$('[name=submit_form]').click(function() {
-		if(confirm('您是否确认提交信息?\n一但提交将无法更改!')==false)return false;
-		var error = [];
-		//考点代码
-		if ($('[name=exam_site_code]').val() != 410067 && $('[name=exam_site_code]').val() != 410084) {
-			error.push('请选择考点');
+		if(confirm('您是否确认提交信息?\n一但提交将无法更改!') == false) return false;
+		var hasError = true;
+		for(var i = 0; i < validator.length; ++i) {
+			var $el = $('[name=' + validator[i][0] + ']');
+			hasError = validator[i][1]($el);
 		}
-		//姓名 input
-		if ($('[name=name]').val().length < 2) {
-			error.push('请输入正确的名字');
-		}
-
-		//性别!!!只能为'男'或者'女'改一下 radio
-		if ($('[name=sex]:checked').val() != 'male' && $('[name=sex]:checked').val() != 'famale') {
-			error.push('请选择性别');
-		}
-
-		// 出生日期 input
-		if ($('[name=birthday]').val().length != 8) {
-			error.push('请输入正确的出生日期');
-		}
-
-		//证件类型 select
-		if ($('[name=id_type]').val() < 1 || $('[name=id_type]').val() > 5) {
-			error.push('请选择证件类型');
-		}
-
-		//证件号码 input
-		if($('[name=id_type]').val() == 1) {
-			if(!getIdCardInfo( $('[name=id_number]').val()).isTrue){
-				error.push('请输入正确的身份证号');
-			}
-		}
-		else{
-			if($('[name=id_number]').val().length <= 0){
-				error.push('请输入证件号');
-			}
-		}
-
-		//民族 select
-		if ($('[name=nationality]').val() < 1 || $('[name=nationality]').val() > 98) {
-			error.push('请选择民族');
-		}
-
-		//职业 select
-		if ($('[name=career]').val() < 1 || $('[name=career]').val() > 99) {
-			error.push('请选择职业');
-		}
-
-		//文化程度 select
-		if ($('[name=degree_of_education]').val() < 1 || $('[name=degree_of_education]').val() > 8) {
-			error.push('请选择文化程度');
-		}
-
-		//培训类型
-		if ($('[name=training_type]').val() < 1 || $('[name=training_type]').val() > 3) {
-			error.push('请选择培训类型');
-		}
-
-		//邮编
-		// 可以为空
-		/*
-		if ($('[name=post_code]').val().length != 6) {
-			error.push('请输入邮政编码');
-		}
-		*/
-
-		//地址长度 input
-		// 可以不填
-		/*
-		if ($('[name=address]').val().length === 0 || $('[name=address]').val().length > 64) {
-			error.push('请输入地址');
-		}
-		*/
-
-		// 电子邮箱 input
-		// 可以为空
-		/*
-		if ($('[name=email]').val().length === 0) {
-			error.push('请输入电子邮箱');
-		}
-		*/
-
-		// 联系电话 input
-		// 既不为11位也不为8位则出错
-		if(/^\d+$/.test($('[name=phone]').val()) === false || $('[name=phone]').val().length > 11) {
-			error.push('联系电话输入有误');
-		}
-
-		if ($('input[name=is_our_school]').is(':checked')) {
-			// 勾选本校学生
-			if ($('[name=department]').val() == '0') {
-				error.push('请选择学院');
-			}
-			if (/\d{9}\d*/.test($('[name=student_number]').val()) == false) {
-				error.push('请输入学号');
-			}
-		} else {
-			if ($('[name=school]').val() == '0') {
-				error.push('请选择学校');
-			}
-			if ($('[name=school]').val() == '01' && $('input[name=school_name]').val() == '') {
-				error.push('请输入学校或工作单位');
-			}
-		}
-
-		var captcha_user = $('[name=captcha]').val();
-		var result = $.ajax({url:"/captchatest",data:{test:captcha_user},async:false}).responseJSON;
-		if(result != true ) {
-			// 验证失败
-			error.push('验证码错误');
-		}
-
-		if (error.length === 0) {
-			return true;
-		} else {
-			$('#error_message').text(error);
-			return false;
-		}
-
+		return hasError;
 	});
 });
 
-
+//备注项的显示控制
 $(document).ready(function() {
 	/*var select_department = $('select[name=department]');
   $('select[name=class] > option').hide(); // 在没有选择学院的时候，隐藏所有的专业信息
@@ -383,7 +284,7 @@ $(document).ready(function() {
 
   });*/
 
-	if ($('input[name=is_our_school]').is(':checked')) {
+	if($('input[name=is_our_school]').is(':checked')) {
 		$('div#input_remark_for_not_our_school').hide();
 	} else {
 		$('div#input_remark_for_is_our_school').hide();
@@ -394,7 +295,7 @@ $(document).ready(function() {
 		// 切换是否本校学生时，先全部隐藏
 		//$('div#input_remark_for_is_our_school').hide();
 		//$('div#input_remark_for_not_our_school').hide();
-		if ($('input[name=is_our_school]').is(':checked')) {
+		if($('input[name=is_our_school]').is(':checked')) {
 			// 是本校学生时
 			$('div#input_remark_for_not_our_school').fadeOut('fast', function() {
 				$('div#input_remark_for_is_our_school').fadeIn('middle');
@@ -406,40 +307,48 @@ $(document).ready(function() {
 			});
 		}
 	});
+
+	$('select[name=school]').change(function() {
+		if($(this).val() == '01') {
+			$('input[name=school_name]').fadeIn('middle').prev().fadeIn('middle');
+		} else {
+			$('input[name=school_name]').fadeOut('middle').prev().fadeOut('middle');
+		}
+	});
 });
 
 // 身份证校验算法
 function getIdCardInfo(cardNo) {
 	var info = {
-		isTrue : false,
-		year : null,
-		month : null,
-		day : null,
-		isMale : false,
-		isFemale : false
+		isTrue: false,
+		year: null,
+		month: null,
+		day: null,
+		isMale: false,
+		isFemale: false
 	};
-	if (!cardNo || (15 != cardNo.length && 18 != cardNo.length) ) {
+	if(!cardNo || (15 != cardNo.length && 18 != cardNo.length)) {
 		info.isTrue = false;
 		return info;
 	}
-	if (15 == cardNo.length) {
+	if(15 == cardNo.length) {
 		var year = cardNo.substring(6, 8);
 		var month = cardNo.substring(8, 10);
 		var day = cardNo.substring(10, 12);
 		var p = cardNo.substring(14, 15); //性别位
 		var birthday = new Date(year, parseFloat(month) - 1,
-				parseFloat(day));
+			parseFloat(day));
 		// 对于老身份证中的年龄则不需考虑千年虫问题而使用getYear()方法
-		if (birthday.getYear() != parseFloat(year)
-				|| birthday.getMonth() != parseFloat(month) - 1
-				|| birthday.getDate() != parseFloat(day)) {
+		if(birthday.getYear() != parseFloat(year) ||
+			birthday.getMonth() != parseFloat(month) - 1 ||
+			birthday.getDate() != parseFloat(day)) {
 			info.isTrue = false;
 		} else {
 			info.isTrue = true;
 			info.year = birthday.getFullYear();
 			info.month = birthday.getMonth() + 1;
 			info.day = birthday.getDate();
-			if (p % 2 == 0) {
+			if(p % 2 == 0) {
 				info.isFemale = true;
 				info.isMale = false;
 			} else {

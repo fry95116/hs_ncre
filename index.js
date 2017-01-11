@@ -16,9 +16,13 @@ app.use('/', express.static(__dirname + '/static'));
 
 //app.use('/',front);
 //app.use('/admin',backstage);
-
+/*
 app.use('/',leader);
+*/
+app.get('/',function(req,res){
+    res.render('admin/admin');
+});
 
-app.listen(8080, function() {
-	console.log('listening on 8080');
+app.listen(8081, function() {
+	console.log('listening on 8081');
 });

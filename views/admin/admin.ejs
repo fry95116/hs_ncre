@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>后台管理</title>
+
+		<link href="/css/libs/bootstrap.css" rel="stylesheet" />
+		<!--<link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css"/>-->
+		<link href="/css/libs/bootstrap-table.css" rel="stylesheet" />
+		<link href="/css/libs/bootstrap-editable.css" rel="stylesheet"/>
+		<link href="/css/admin/admin.css" rel="stylesheet"/>
+
+		<script type="text/javascript" src="/js/libs/jquery-1.11.3.min.js"></script>
+		<script type="text/javascript" src="/js/libs/bootstrap.js"></script>
+		<script src="/js/libs/bootstrap-table.js"></script>
+		<script src="/js/libs/bootstrap-table-zh-CN.js"></script>
+		<script src="/js/libs/bootstrap-editable.js"></script>
+
+		<script>
+			$(document).ready(function() {
+				//注销按钮
+				var btn_quit = $('.btn-quit');
+				var hyperlink = btn_quit.children('a');
+
+				hyperlink.mousedown(function() {
+					btn_quit.addClass('active');
+				}).mouseup(function() {
+					btn_quit.removeClass('active');
+				});
+
+				//主页按钮
+				var btn_main = $('.btn-main');
+
+				btn_main.mousedown(function() {
+					btn_main.addClass('active');
+				}).mouseup(function() {
+					btn_main.removeClass('active');
+				});
+
+			});
+		</script>
+	</head>
+
+	<body>
+		<nav class="navbar navbar-inverse" role="navigation">
+			<div class="container-fluid">
+				<!-- Brand and toggle get grouped for better mobile display -->
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+				        <span class="icon-bar"></span>
+				        <span class="icon-bar"></span>
+				        <span class="icon-bar"></span>
+				    </button>
+					<a class="navbar-brand btn-main" href="#">后台管理系统</a>
+				</div>
+
+				<!-- Collect the nav links, forms, and other content for toggling -->
+				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+					<ul class="nav navbar-nav">
+						<li class="active">
+							<a href="#enterManage">报名管理</a>
+						</li>
+						<li>
+							<a href="#logs">系统日志</a>
+						</li>
+
+						<li>
+							<a href="#configs">系统设置</a>
+						</li>
+						<li>
+							<a href="#sort">考场安排</a>
+						</li>
+					</ul>
+
+					<ul class="nav navbar-nav navbar-right">
+						<li class="btn-quit">
+							<a href="/quit">退出</a>
+						</li>
+					</ul>
+					<p class="navbar-text navbar-right">Signed in as
+						<span>Mark Otto</span>
+					</p>
+				</div>
+				<!-- /.navbar-collapse -->
+			</div>
+			<!-- /.container-fluid -->
+		</nav>
+
+		<%- include('functionView',
+				{
+					show:true,
+					name:'报名管理',
+					field:'enterManage',
+					subFunc:[
+						{
+							field:'enterList',
+							name:'报名信息管理',
+							templateName:'enterList'
+						},{
+                            field:'addEnter',
+							name:'添加报名信息',
+							templateName:'addEnter',
+						},{
+							field:'blackList',
+							name:'黑名单',
+							templateName:'blackList'
+						}
+					]
+				}
+		) %>
+
+	</body>
+
+</html>

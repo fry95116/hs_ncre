@@ -1,0 +1,52 @@
+<div class="panel panel-default" style="display: <% if(show){ %>block<% }else{ %> none <% } %>" >
+    <div class="panel-heading">
+        <h3 class="panel-title"><%= name %></h3>
+    </div>
+    <div class="panel-body">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-xs-12 toolbar form-inline" style="margin-bottom:10px;">
+                    <div class="pull-left">
+                        <button class="btn btn-danger"><i class="glyphicon glyphicon-trash"></i> 删除</button>
+                        <div class="form-group">
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-primary"><i class="glyphicon glyphicon-refresh"></i> 刷新</button>
+                                <button type="button" class="btn btn-primary"><i class="glyphicon glyphicon-list-alt icon-list-alt"></i> 切换视图</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pull-right">
+                        <div class="form-inline" role="form">
+                            <div class="form-group">
+                                <input id="search_text" type="text" class="form-control" placeholder="搜索">
+                            </div>
+                            <div class="form-group">
+                                <div class="btn-group">
+                                    <div class="btn-group searchBy">
+                                        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                                            <span class="btn-text">按名字搜索</span> <span class="caret"></span>
+                                        </button>
+                                        <ul class="dropdown-menu" role="menu">
+                                            <li><a href="javascript:void(0);" value="name">按名字搜索</a></li>
+                                            <li><a href="javascript:void(0);" value="id_number">按证件号搜索</a></li>
+                                            <li><a href="javascript:void(0);" value="backmark">按备注搜索</a></li>
+                                        </ul>
+                                        <input name="searchBy" type="hidden" />
+                                    </div>
+                                    <button class="btn btn-primary" type="button"><i class="glyphicon glyphicon-search"></i> 搜索</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div><!-- /pull right -->
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <table id="enterList">
+
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

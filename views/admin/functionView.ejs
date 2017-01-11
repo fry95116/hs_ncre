@@ -1,0 +1,60 @@
+<div class="container-fluid funcContent" id="<%= field %>" style="display: <% if(show){ %>block<% }else{ %> none <% } %>">
+    <script>
+        $(document).ready(function(){
+            $('.subFuncList a').click(function(){
+                var $el = $(this);
+                $el.addClass('active').siblings().removeClass('active');
+                $el.parents('.funcContent').find('.breadcrumb a:eq(1)').text($el.text());
+            });
+        });
+    </script>
+    <div class="row">
+        <div class="col-sm-3 col-lg-2 col-xs-12" id="content_functionList">
+            <div class="panel panel-default">
+                <div class="list-group subFuncList">
+                    <% for(i in subFunc){ %>
+                        <a href="#<%= field %>/<%= subFunc[i].field %>" class="list-group-item <% if(i == 0){ %> active <% } %>"><%= subFunc[i].name %></a>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-9 col-lg-10">
+            <!-- msg -->
+            <div class="row">
+                <div class="col-sm-12 msg-content">
+
+                </div>
+            </div>
+            <!-- end msg -->
+            <!-- nav -->
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="panel panel-default">
+                        <ul class="breadcrumb" style="margin-bottom:0px;">
+                            <li>
+                                <a href="#"><%= name %></a>
+                            </li>
+                            <li>
+                                <a href="#"><%= subFunc[0].name %></a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <!-- end nav -->
+            <!-- content -->
+            <div class="row">
+                <div class="col-sm-12 subFuncContent">
+                    <% for(i in subFunc){ %>
+                        <% if(i == 0){ %>
+                            <%- include(field + '/' + subFunc[i].templateName,{name:subFunc[i].name,show:true}); %>
+                        <% }else{ %>
+                            <%- include(field + '/' + subFunc[i].templateName,{name:subFunc[i].name,show:false}); %>
+                        <% } %>
+                    <% } %>
+                </div>
+            </div>
+            <!-- end content -->
+        </div>
+    </div>
+</div>

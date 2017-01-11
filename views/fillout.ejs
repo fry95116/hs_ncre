@@ -2,9 +2,9 @@
 <head>
 	<title>考生信息录入</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-	<script type="text/javascript" src="/js/libs/jquery-1.11.3.min.js"></script>
-	<script type="text/javascript" src="/js/fillout.js"></script>
-	<link href="/css/fillout.css" rel="stylesheet" type="text/css">
+	<script type="text/javascript" src="js/libs/jquery-1.11.3.min.js"></script>
+	<script type="text/javascript" src="js/fillout.js"></script>
+	<link href="css/fillout.css" rel="stylesheet" type="text/css">
 <style type="text/css"></style>
 </head>
 
@@ -31,26 +31,24 @@
 					<option value="<%= sites_info[i].code %>"><%= sites_info[i].name%></option>
 				<% }%>
 			</select>
+			<span class="validated_result"></span>
 		</div>
 
 		<div class="" id="input_subject_code">
 			<label for="subject_code">考试科目(必选):</label>
-			<label>
-				<select class="" name="subject_code">
-					<option value="0" site="0">请选择</option>
-					<% for (var i = 0; i < sites_info.length; ++i) { %>
-						<% var site = sites_info[i]; %>
-						<% for (var j = 0; j < site['subjects'].length; ++j) { %>
-							<% var subject = site['subjects'][j]; %>
-							<option value="<%= subject.code %>" site="<%= site.code %>">
-								<%= subject.name %>
-								@<%= site.name %>
-							</option>
-						<% } %>
+			<select class="" name="subject_code">
+				<option value="0" site="0">请选择</option>
+				<% for (var i = 0; i < sites_info.length; ++i) { %>
+					<% var site = sites_info[i]; %>
+					<% for (var j = 0; j < site['subjects'].length; ++j) { %>
+						<% var subject = site['subjects'][j]; %>
+						<option value="<%= subject.code %>" site="<%= site.code %>">
+							<%= subject.name %>
+							@<%= site.name %>
+						</option>
 					<% } %>
-
-				</select>
-			</label>
+				<% } %>
+			</select>
 			<span class="validated_result"></span>
 		</div>
 
@@ -64,15 +62,16 @@
 			<label for="sex">性别(必选):</label>
 			<%tr.sex.each(function(val){%>
 				<%= val.name %><input type="radio" name="sex" value="<%= val.code %>">
-				&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+			    <span style="margin-right:3em;"></span>
 			<%});%>
+			<span style="margin-right:5em;"></span>
+			<span class="validated_result"></span>
 		</div>
-
-		<span class="validated_result"></span>
 
 		<div id="input_id_type">
 			<label for="id_type">证件类型(必选):</label>
 			<select name="id_type">
+				<option value="0">请选择</option>
 				<% tr.id_type.each(function(val){ %>
 					<option value="<%= val.code %>"><%= val.name %></option>
 				<% });%>
@@ -87,12 +86,13 @@
 		</div>
 
 		<div class="" id="input_birthday">
-			<label for="birthday">出生日期(必填)</label>
+			<label for="birthday">出生日期(必填):</label>
 			<input type="text" name="birthday">
 			<span class="validated_result"></span>
 			<div class="tips">
 				请填写8位出生日期
-				<br>如:19940123</div>
+				<br>如:19940123
+			</div>
 		</div>
 
 		<div id="input_nationality">
@@ -157,9 +157,13 @@
 		</div>
 
 		<div class="" id="input_email">
-			<label for="email">电子邮箱(非必填):</label>
+			<label for="email">电子邮箱(必填):</label>
 			<input type="text" name="email" value="">
 			<span class="validated_result"></span>
+			<div class="tips">
+				电子邮箱将用于修改报名信息
+				<br>请使用可靠的邮箱地址
+			</div>
 		</div>
 
 		<div id="remark">
@@ -197,13 +201,16 @@
 
 			<label for="captcha">验证码:</label>
 			<input type="text" name="captcha" value="">
+			<span class="validated_result"></span>
 			<img id = "captcha" src="/captcha">
 			<span>看不清？点击图片刷新</span>
-			<div ><span class="validated_result"></span></div>
 		</div>
 		<div id="input_submit">
-			<input type="submit" name="submit_form" value="提交"></div>
-		<span id="error_message"><%= error_info %></span>
+			<input type="submit" name="submit_form" value="提交">
+		</div>
+		<script id="error_message" type="text/template">
+			<%= error_info %>
+		</script>
 	</form>
 </div>
 
