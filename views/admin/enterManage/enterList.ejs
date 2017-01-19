@@ -1,4 +1,4 @@
-<div class="panel panel-default" style="display: <% if(show){ %>block<% }else{ %> none <% } %>" >
+<div id="<%= field %>"  class="subFuncContent panel panel-default" style="display: <% if(show){ %>block<% }else{ %> none <% } %>" >
     <script>
         $(document).ready(function(){
             //搜索条件按钮
@@ -8,7 +8,7 @@
                 $('[name=searchBy]').val($(this).attr('value'));
             });
             //报名信息列表
-            $('#enterList').bootstrapTable({
+            $('#enterTable').bootstrapTable({
                 buttonsClass:'primary',
                 //showRefresh:true,
 
@@ -47,7 +47,7 @@
                     price: '$2'
                 }],
                 onPostBody:function(data){
-                    $('#enterList').find('a.cell').editable({
+                    $('#enterTable').find('a.cell').editable({
                         mode:'inline'
                     });
                 }
@@ -97,7 +97,7 @@
             </div>
             <div class="row">
                 <div class="col-sm-12">
-                    <table id="enterList">
+                    <table id="enterTable">
 
                     </table>
                 </div>

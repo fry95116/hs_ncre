@@ -16,7 +16,7 @@
 		<script src="/js/libs/bootstrap-table.js"></script>
 		<script src="/js/libs/bootstrap-table-zh-CN.js"></script>
 		<script src="/js/libs/bootstrap-editable.js"></script>
-
+		<script src="/js/libs/director.js"></script>
 		<script>
 			$(document).ready(function() {
 				//注销按钮
@@ -38,7 +38,46 @@
 					btn_main.removeClass('active');
 				});
 
+				//路由
+                var showFuncView = function(id){
+                    var $el = $('nav .navbar-nav:eq(0) a[href="#' + id + '"]').parent();
+                    $el.addClass('active').siblings().removeClass('active');
+                    //
+                    var view = $('#' + id);
+                    view.siblings('.funcContent').hide();
+                    view.show();
+                }
+
+                var showSubFuncView = function(id,subid){
+                    //
+                    if(!$('#' + id).is(':visible')) showFuncView(id);
+                    //
+                    var $el = $('#' + id).find('.subFuncList ' + '[value=' + subid + ']');
+                    $el.addClass('active').siblings().removeClass('active');
+                    $el.parents('.funcContent').find('.breadcrumb a:eq(1)').text($el.text());
+                    //
+                    var subView = $('#' + id).find('#' + subid);
+                    subView.siblings('.subFuncContent').hide();
+                    subView.show();
+                }
+
+				var routes={
+				    'enterManage':function(){showFuncView('enterManage')},
+					'enterManage/addEnter':function(){showSubFuncView('enterManage','addEnter')},
+                    'enterManage/blackList':function(){showSubFuncView('enterManage','blackList')},
+                    'enterManage/enterList':function(){showSubFuncView('enterManage','enterList')},
+				    'logs':function(){showFuncView('logs')},
+					'configs':function(){showFuncView('configs')},
+					'testRoomArrange':function(){showFuncView('testRoomArrange')}
+				};
+
+                var router = Router(routes);
+                router.init();
+
+
 			});
+
+			//qi
 		</script>
 	</head>
 
@@ -64,22 +103,21 @@
 						<li>
 							<a href="#logs">系统日志</a>
 						</li>
-
 						<li>
 							<a href="#configs">系统设置</a>
 						</li>
 						<li>
-							<a href="#sort">考场安排</a>
+							<a href="#testRoomArrange">考场安排</a>
 						</li>
 					</ul>
 
 					<ul class="nav navbar-nav navbar-right">
 						<li class="btn-quit">
-							<a href="/quit">退出</a>
+							<a href="/admin/logout">退出</a>
 						</li>
 					</ul>
-					<p class="navbar-text navbar-right">Signed in as
-						<span>Mark Otto</span>
+					<p class="navbar-text navbar-right">Welcome!
+						<span><%= username %></span>
 					</p>
 				</div>
 				<!-- /.navbar-collapse -->
@@ -109,6 +147,20 @@
 					]
 				}
 		) %>
+        <%- include('functionView',
+			{
+				show:false,
+				name:'系统日志',
+				field:'logs',
+				subFunc:[
+					{
+						field:'addEnter',
+						name:'添加报名信息',
+						templateName:'addEnter',
+					}
+				]
+			}
+        ) %>
 
 	</body>
 

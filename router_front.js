@@ -10,11 +10,9 @@
         util = require('util'),
 
         bodyparser = require('body-parser'), //解析post请求用
-        cookieParser = require('cookie-parser'),
-        session = require('express-session'), //session
         Captchapng = require('captchapng'),//验证码模块
 
-        dbc = require('./dbc'),             //提供各类数据操作
+        dbc = require('./dbo'),             //提供各类数据操作
         translate = require('./tr'),        //各类映射
         codeRef = translate.codeRef,        //职业,民族,学历等项目的 名称-代码 映射
         tr = translate.tr,                  //翻译函数， 用于将数据表字段名翻译为实际名称(原tr.js)
@@ -33,16 +31,6 @@
         extended: true
     })); //提交请求
 
-    //session设置
-    router.use(cookieParser());
-    router.use(session({
-        name:'SESSIONID',
-        secret: 'hsjszx2015',
-        resave:true,
-        saveUninitialized:false,
-        unset:'destroy'
-    }));
-    
     /* 组装报名人数信息，用于主页 */
     function getRegInfo(callback) {
         dbc.getStatistics(function (err, res) {

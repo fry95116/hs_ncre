@@ -5,7 +5,8 @@
 
 	exports.MySQLPath = LocalConfig.MySQLPath;
 	exports.db_config = LocalConfig.db_config;
-	exports.admin_passport = LocalConfig.admin_passport;
+    exports.redis_config = LocalConfig.redis_config;
+    exports.admin_passport = LocalConfig.admin_passport;
 
 	exports.op_res_text = config.op_res_text;
 
@@ -16,7 +17,7 @@
 	exports.sites_info.findName = function(esc,sc){
 		if(sc) return jsonPath.eval(this, '$[?(@.code==' + esc + ')].subjects[?(@.code==' + sc + ')].name')[0];
 		else return jsonPath.eval(this, '$[?(@.code==' + esc + ')].name')[0];
-	}
+	};
 	exports.sites_info.each = function(cb){
 		for(var i = 0; i < this.length; ++i)cb(this[i]);
 	};

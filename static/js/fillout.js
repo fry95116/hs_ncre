@@ -14,7 +14,7 @@ $('#input_birthday').hide();
 });
 */
 
-function render($el, condition, errMsg) {
+function msgRender($el, condition, errMsg) {
 	if(typeof condition == 'function') {
 		condition = condition($el);
 	}
@@ -36,56 +36,56 @@ function render($el, condition, errMsg) {
 var validator = [
 	//考点代码select
 	['exam_site_code', function($el) {
-		render($el, function($el) {
+		msgRender($el, function($el) {
 			return $el.val() != 0;
 		}, '请选择考点');
 	}],
 
 	//科目代码select
 	['subject_code', function($el) {
-		render($el, function($el) {
+		msgRender($el, function($el) {
 			return $el.val() != 0;
 		}, '请选择科目');
 	}],
 
 	//姓名 input
 	['name', function($el) {
-		render($el, function($el) {
+		msgRender($el, function($el) {
 			return $el.val().length >= 2;
 		}, '请输入正确的名字');
 	}],
 
 	//性别 radio
 	['sex', function($el) {
-		render($el, function($el) {
+		msgRender($el, function($el) {
 			return $el.find(':checked').length != 0;
 		}, '请输入正确的名字');
 	}],
 
 	//生日input(format:yyyymmdd)
 	['birthday', function($el) {
-		render($el, function($el) {
+		msgRender($el, function($el) {
 			return /^\d{8}$/.test($el.val());
 		}, '请输入正确的出生日期');
 	}],
 
 	//证件类型 select
 	['id_type', function($el) {
-		render($el, function($el) {
+		msgRender($el, function($el) {
 			return $el.val() != 0;
 		}, '请选择证件类型');
 	}],
 
 	//证件号码 input
 	['id_number', function($el) {
-		render($el, function($el) {
+		msgRender($el, function($el) {
 			return $el.val().length != 0;
 		}, '请输入证件号');
 	}],
 
 	//证件号码 input
 	['id_number', function($el) {
-		render($el, function($el) {
+		msgRender($el, function($el) {
 			if($('[name=id_type]').val() == 1) {
 				return getIdCardInfo($el.val()).isTrue;
 			} else return ture;
@@ -94,28 +94,28 @@ var validator = [
 
 	//民族 select
 	['nationality', function($el) {
-		render($el, function($el) {
+		msgRender($el, function($el) {
 			return $el.val() != 0;
 		}, '请选择民族');
 	}],
 
 	//职业 select
 	['career', function($el) {
-		render($el, function($el) {
+		msgRender($el, function($el) {
 			return $el.val() != 0;
 		}, '请选择职业');
 	}],
 
 	//文化程度 select
 	['degree_of_education', function($el) {
-		render($el, function($el) {
+		msgRender($el, function($el) {
 			return $el.val() != 0;
 		}, '请选择文化程度');
 	}],
 
 	//培训类型
 	['training_type', function($el) {
-		render($el, function($el) {
+		msgRender($el, function($el) {
 			return $el.val() != 0;
 		}, '请选择培训类型');
 	}],
@@ -128,14 +128,14 @@ var validator = [
 
 	// 电子邮箱 input
 	['email', function($el) {
-		render($el, function($el) {
+		msgRender($el, function($el) {
 			return /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/.test($el.val());
 		}, '请输入正确的电子邮件地址');
 	}],
 
 	// 联系电话 input(格式11位数字)
 	['phone', function($el) {
-		render($el, function($el) {
+		msgRender($el, function($el) {
 			return /^\d{0,11}$/.test($el.val());
 		}, '联系电话输入有误');
 	}],
@@ -143,7 +143,7 @@ var validator = [
 	/* 备注 */
 	//勾选本校学生的情况
 	['department', function($el) {
-		render($el, function($el) {
+		msgRender($el, function($el) {
 			if($('input[name=is_our_school]').is(':checked')) {
 				return $el.val() != 0;
 			}
@@ -151,7 +151,7 @@ var validator = [
 		}, '请选择学院');
 	}],
 	['student_number', function($el) {
-		render($el, function($el) {
+		msgRender($el, function($el) {
 			if($('input[name=is_our_school]').is(':checked')) {
 				return /\d{9}\d*/.test($el.val());
 			}
@@ -161,7 +161,7 @@ var validator = [
 
 	//不勾选本校学生的情况
 	['school', function($el) {
-		render($el, function($el) {
+		msgRender($el, function($el) {
 			if(!$('input[name=is_our_school]').is(':checked')) {
 				return $el.val() != '0';
 			}
@@ -169,7 +169,7 @@ var validator = [
 		}, '请选择学校');
 	}],
 	['school_name', function($el) {
-		render($el, function($el) {
+		msgRender($el, function($el) {
 			if((!$('input[name=is_our_school]').is(':checked')) && $('[name=school]').val() == '01') {
 				return $el.val() !== '';
 			}
@@ -179,7 +179,7 @@ var validator = [
 
 	//验证码 input(使用同步ajax)
 	['captcha', function($el) {
-		render($el, function($el) {
+		msgRender($el, function($el) {
 			var captcha_user = $el.val();
 			var result = $.ajax({
 				url: "/captchatest",

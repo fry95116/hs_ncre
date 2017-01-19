@@ -9,8 +9,7 @@
 			sites_info = user_config.sites_info,
 			limit_rules = user_config.limit_rules,
 		
-			blacklist = require('./config/blacklist.json'),
-			tools = require('./tools');
+			blacklist = require('./config/blacklist.json');
 
 	var con;
 	//以下代码用于维持mysql的连接
@@ -41,15 +40,76 @@
 	}
 	handleDisconnect();
 
-	//对数据进行检查
-	var check = function(data_in) {
+	//身份证校验算法
+    var getIdCardInfo = function(cardNo){
+        var info = {
+            isTrue : false,
+            year : null,
+            month : null,
+            day : null,
+            isMale : false,
+            isFemale : false
+        };
+        if (!cardNo || 18 != cardNo.length) {
+            info.isTrue = false;
+            return info;
+        }
+
+        if (18 == cardNo.length) {
+            var year = cardNo.substring(6, 10);
+            var month = cardNo.substring(10, 12);
+            var day = cardNo.substring(12, 14);
+            var p = cardNo.substring(14, 17);
+            var birthday = new Date(year, parseFloat(month) - 1,
+                parseFloat(day));
+            // 这里用getFullYear()获取年份，避免千年虫问题
+            if (birthday.getFullYear() != parseFloat(year)
+                || birthday.getMonth() != parseFloat(month) - 1
+                || birthday.getDate() != parseFloat(day)) {
+                info.isTrue = false;
+                return info;
+            }
+            var Wi = [ 7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2, 1 ];// 加权因子
+            var Y = [ 1, 0, 10, 9, 8, 7, 6, 5, 4, 3, 2 ];// 身份证验证位值.10代表X
+            // 验证校验位
+            var sum = 0; // 声明加权求和变量
+            var _cardNo = cardNo.split("");
+            if (_cardNo[17].toLowerCase() == 'x') {
+                _cardNo[17] = 10;// 将最后位为x的验证码替换为10方便后续操作
+            }
+            for ( var i = 0; i < 17; i++) {
+                sum += Wi[i] * _cardNo[i];// 加权求和
+            }
+            i = sum % 11;// 得到验证码所位置
+            if (_cardNo[17] != Y[i]) {
+                return info.isTrue = false;
+            }
+            info.isTrue = true;
+            info.year = birthday.getFullYear();
+            info.month = birthday.getMonth() + 1;
+            info.day = birthday.getDate();
+            if (p % 2 == 0) {
+                info.isFemale = true;
+                info.isMale = false;
+            } else {
+                info.isFemale = false;
+                info.isMale = true
+            }
+            return info;
+        }
+        return info;
+    };
+
+
+    //对数据合法性进行检查
+    exports.check = function(data_in) {
 		var err = {};
 		// 下面的for循环是用正则表达式验证是否合乎规则
 		for (var key in data_schema) {
 			if (!data_schema[key].test(data_in[key])) {
 				// 在 data_schema 中的正则表达式已经为可以为空的key做了匹配规则
 				// 如果data_in[key]不存在，表明提交的表单object被修改过，有的键被删除，则err[key]设为'not exist'
-				// 否则设为'invalid data'
+                // 否则设为'invalid data'
 				err[key] = data_in[key] ? 'invalid data' : 'not exist';
 			}
 		}
@@ -58,15 +118,14 @@
 
 
 		// 如果使用的是身份证，则对身份证号码合法性校验
-		if(data_in.id_type == "1") {
-			var id_info = tools.getIdCardInfo(data_in.id_number.toString());
+		if(typeof err.id_number !== 'undefined' && data_in.id_type == "1") {
+			var id_info = getIdCardInfo(data_in.id_number.toString());
 			if(!id_info.isTrue) {
 				err['id_number'] = 'invalid data';
 			}
 		}
 
 		// 考点和科目的后端联动验证
-        console.log(_.indexOf(sites_info.get('$[*].code'), parseInt(data_in.exam_site_code)));
 		if(_.indexOf(sites_info.get('$[*].code'), parseInt(data_in.exam_site_code)) == -1){
 			err['exam_site_code'] = 'invalid data';
 		}
@@ -82,10 +141,9 @@
 		}
 	};
 
-	exports.check = check;
 
 	//人数统计（一次性返回所有信息）
-	var getStatistics = function(callback){
+    exports.getStatistics = function(callback){
 		//组装模板
 		var sites_template = {};
 		var subjects_template = {};
@@ -121,28 +179,27 @@
         );
 
 	};
-	exports.getStatistics = getStatistics;
 
 	//重复检查
-	var repeatCheck = function(id_number, cb) {
+    exports.repeatCheck = function(id_number, cb) {
 		con.query(
-				'SELECT count(*) AS \'count\' FROM ' + db_config.table +
-				' WHERE id_number=?',
-				id_number,
-				function(err, res) {
-					if (err) cb(err);
-					else {
-						if (res[0].count > 0) {
-							//console.log('false');
-							cb(null, 'false');
-						} else {
-							//console.log('true');
-							cb(null, 'true');
-						}
+			'SELECT count(1) AS \'count\' FROM ' + db_config.table +
+			' WHERE id_number=?',
+			id_number,
+			function(err, res) {
+				if (err) cb(err);
+				else {
+					if (res[0].count > 0) {
+						//console.log('false');
+						cb(null, 'false');
+					} else {
+						//console.log('true');
+						cb(null, 'true');
 					}
-				});
+				}
+			}
+		);
 	};
-	exports.repeatCheck = repeatCheck;
 
 	//按规则检查人数
 	var checkCount = function(counts, limit_rule, secondCheck){
@@ -242,7 +299,7 @@
 							else cb();
                         }
                     });
-                },
+                }
 			];
 			//执行
 			async.series(insert_transaction, function(err) {
