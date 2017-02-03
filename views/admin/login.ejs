@@ -4,6 +4,9 @@
     <title>后台登陆</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <% if(passed){ %>
+    <meta http-equiv="refresh" content="0; url=/admin" />
+    <% } %>
     <link href="/css/libs/bootstrap.css" rel="stylesheet" type="text/css">
     <link href="/css/admin/login.css" rel="stylesheet" type="text/css">
 
@@ -29,6 +32,16 @@
                         <span class="sr-only">Close</span>
                     </button>
                     <strong>Error!</strong> <%= error %>
+                </div>
+                <% } %>
+                <% if(passed){ %>
+                <div class="alert alert-success alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert">
+                        <span aria-hidden="true">&times;</span>
+                        <span class="sr-only">Close</span>
+                    </button>
+                    登录成功，跳转中......<br>
+                    若没有跳转，<a href="/admin">点击此处</a>
                 </div>
                 <% } %>
             </div>

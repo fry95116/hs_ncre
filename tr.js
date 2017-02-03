@@ -9,7 +9,7 @@
 
 (function () {
 
-    var _ = require("underscore");
+    var _ = require("lodash");
     
     /*职业,民族,学历等项目的 名称-代码 映射*/
     var codeRef = require("./config/codeReference.json");

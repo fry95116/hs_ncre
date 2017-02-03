@@ -1,6 +1,6 @@
 (function() {
   var codeRef = require('./tr').codeRef,
-    _ = require('underscore');
+    _ = require('lodash');
 
   module.exports = {
     exam_site_code: /^\d+$/,  // 仅仅检测非空，特殊验证在外面做

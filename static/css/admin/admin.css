@@ -1,71 +1,93 @@
-*{
-	font-family: "microsoft yahei";
+* {
+    font-family: "microsoft yahei";
 }
 
-body{
-	background-color: #eee;
-	font-size:14px ;
+body {
+    background-color: #eee;
+    font-size: 14px;
 }
 
 .navbar-inverse .navbar-text {
-	margin-right: 20px;
-	color:#fff;
+    margin-right: 20px;
+    color: #fff;
 }
 
 .navbar-inverse .navbar-brand {
-	color:#fff;
-	font-size: 20px;
-	margin-right: 20px;
-}
-.navbar-inverse .navbar-brand:hover{
-	background-color: #6FBBF7;
-	color:#fff;
-}
-.navbar-inverse .navbar-brand.active{
-	background-color: #0c7cd5;
+    color: #fff;
+    font-size: 20px;
+    margin-right: 20px;
 }
 
-.navbar-inverse .navbar-collapse .navbar-nav>li>a{
-	color:#fff;
+.navbar-inverse .navbar-brand:hover {
+    background-color: #6FBBF7;
+    color: #fff;
 }
 
-.navbar-inverse .navbar-collapse .navbar-nav>li>a:hover{
-	background-color: #6FBBF7;
-	color:#fff;
+.navbar-inverse .navbar-brand.active {
+    background-color: #0c7cd5;
 }
 
-#content_functionList{
-	text-align: center;
+.navbar-inverse .navbar-collapse .navbar-nav > li > a {
+    color: #fff;
 }
 
-#content_functionList>div{
-	margin:30px auto 0px;
-	text-align: left;
+.navbar-inverse .navbar-collapse .navbar-nav > li > a:hover {
+    background-color: #6FBBF7;
+    color: #fff;
+}
+
+#content_functionList {
+    text-align: center;
+}
+
+#content_functionList > div {
+    margin: 30px auto 0px;
+    text-align: left;
 }
 
 @media (min-width: 992px) {
-	#content_functionList>div{
-		margin-top:30px;
-		max-width: 228px;
-	}
+    #content_functionList > div {
+        margin-top: 30px;
+        max-width: 228px;
+    }
+}
+/*
+.input-group input[type=text] {
+    height: 35px;
+    background-color: #fff;
+    padding-left: 10px;
+    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.4);
+    box-sizing: border-box;
 }
 
-.input-group input[type=text]{
-	height: 35px;
-  background-color: #fff;
-  padding-left: 10px;
-	box-shadow: 1px 1px 4px rgba(0,0,0,0.4);
-	box-sizing:border-box;
+.input-group input[type=text]:focus {
+    z-index: 1;
+    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.4);
+    border-bottom: solid 2px rgb(102, 175, 233);
+}*/
+
+.toolbar input[name="searchText"]{
+    font-size: 12px;
+    width:180px;
+    margin-right: 10px;
 }
 
-.input-group input[type=text]:focus{
-	z-index: 1;
-	box-shadow: 1px 1px 4px rgba(0,0,0,0.4);
-	border-bottom: solid 2px rgb(102,175,233);
+.checkbox{
+    margin-right: 10px;
 }
 
-#enterList input[type="checkbox"]:after{
-	width:16px;
-	height:16px;
-	margin:0px;
+#enterList input[type="checkbox"]:after {
+    width: 16px;
+    height: 16px;
+    margin: 0px;
+}
+
+.cell, .cell input, .cell select {
+    white-space: nowrap;
+    padding-right: 10px;
+}
+
+.cell a, .cell a:hover {
+    border-bottom: hidden;
+    cursor: pointer;
 }

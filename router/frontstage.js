@@ -5,20 +5,19 @@
 
 (function () {
     var router = require('express').Router(),
-        _ = require('underscore'),              
-        async = require('async'),
+        _ = require('lodash'),
         util = require('util'),
 
         bodyparser = require('body-parser'), //解析post请求用
         Captchapng = require('captchapng'),//验证码模块
 
-        dbc = require('./dbo'),             //提供各类数据操作
-        translate = require('./tr'),        //各类映射
+        dbc = require('./../dbo'),             //提供各类数据操作
+        translate = require('./../tr'),        //各类映射
         codeRef = translate.codeRef,        //职业,民族,学历等项目的 名称-代码 映射
         tr = translate.tr,                  //翻译函数， 用于将数据表字段名翻译为实际名称(原tr.js)
 
-        user_config = require('./user_config'),    //用户设置 
-        sites_info = user_config.sites_info,       //考点，科目信息
+        user_config = require('./../user_config'),    //用户设置
+        sites_info = user_config.exam_sites,       //考点，科目信息
         limit_rules = user_config.limit_rules,     //人数限制规则
         op_res_text = user_config.op_res_text;     //报名操作的各类结果对应的提示信息
 
@@ -130,7 +129,7 @@
 
     /* 考生信息填报界面 */
     router.get('/fillout', function (req, res) {
-        res.render('fillout', {tr: codeRef, sites_info: sites_info, error_info: ''});
+        res.render('fillout', {tr: codeRef, exam_sites: sites_info, error_info: ''});
     });
     
     /* 重复检查 */
@@ -176,8 +175,6 @@
             } else {
                 req.body.remark = req.body.school == '01' ? req.body.school_name : codeRef.school.findName(req.body.school);
             }
-            //生成examSite_subject_code
-            req.body.examSite_subject_code = '' + req.body.exam_site_code + '-' + req.body.subject_code;
             //插入数据
             dbc.insertInfo(req.body, function (err) {
                 if (err) {

@@ -3,82 +3,26 @@
 
 	<head>
 		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
 		<title>后台管理</title>
 
 		<link href="/css/libs/bootstrap.css" rel="stylesheet" />
-		<!--<link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css"/>-->
 		<link href="/css/libs/bootstrap-table.css" rel="stylesheet" />
 		<link href="/css/libs/bootstrap-editable.css" rel="stylesheet"/>
 		<link href="/css/admin/admin.css" rel="stylesheet"/>
+		<link href="/css/libs/select2.css" rel="stylesheet" />
+
 
 		<script type="text/javascript" src="/js/libs/jquery-1.11.3.min.js"></script>
 		<script type="text/javascript" src="/js/libs/bootstrap.js"></script>
 		<script src="/js/libs/bootstrap-table.js"></script>
 		<script src="/js/libs/bootstrap-table-zh-CN.js"></script>
 		<script src="/js/libs/bootstrap-editable.js"></script>
+
 		<script src="/js/libs/director.js"></script>
-		<script>
-			$(document).ready(function() {
-				//注销按钮
-				var btn_quit = $('.btn-quit');
-				var hyperlink = btn_quit.children('a');
-
-				hyperlink.mousedown(function() {
-					btn_quit.addClass('active');
-				}).mouseup(function() {
-					btn_quit.removeClass('active');
-				});
-
-				//主页按钮
-				var btn_main = $('.btn-main');
-
-				btn_main.mousedown(function() {
-					btn_main.addClass('active');
-				}).mouseup(function() {
-					btn_main.removeClass('active');
-				});
-
-				//路由
-                var showFuncView = function(id){
-                    var $el = $('nav .navbar-nav:eq(0) a[href="#' + id + '"]').parent();
-                    $el.addClass('active').siblings().removeClass('active');
-                    //
-                    var view = $('#' + id);
-                    view.siblings('.funcContent').hide();
-                    view.show();
-                }
-
-                var showSubFuncView = function(id,subid){
-                    //
-                    if(!$('#' + id).is(':visible')) showFuncView(id);
-                    //
-                    var $el = $('#' + id).find('.subFuncList ' + '[value=' + subid + ']');
-                    $el.addClass('active').siblings().removeClass('active');
-                    $el.parents('.funcContent').find('.breadcrumb a:eq(1)').text($el.text());
-                    //
-                    var subView = $('#' + id).find('#' + subid);
-                    subView.siblings('.subFuncContent').hide();
-                    subView.show();
-                }
-
-				var routes={
-				    'enterManage':function(){showFuncView('enterManage')},
-					'enterManage/addEnter':function(){showSubFuncView('enterManage','addEnter')},
-                    'enterManage/blackList':function(){showSubFuncView('enterManage','blackList')},
-                    'enterManage/enterList':function(){showSubFuncView('enterManage','enterList')},
-				    'logs':function(){showFuncView('logs')},
-					'configs':function(){showFuncView('configs')},
-					'testRoomArrange':function(){showFuncView('testRoomArrange')}
-				};
-
-                var router = Router(routes);
-                router.init();
-
-
-			});
-
-			//qi
-		</script>
+		<script src="/js/libs/underscore.js"></script>
+		<script src="/js/libs/select2.full.js"></script>
+		<script src="/js/admin/admin.js"></script>
 	</head>
 
 	<body>

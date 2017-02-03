@@ -6,9 +6,10 @@
 
     redis_config = require('./config/LocalConfig.json').redis_config,
 
-	front = require('./router_front'),
-    backstage = require('./router_backstage'),
-    leader = require('./router_conf_guide');
+	front = require('./router/frontstage'),
+    backstage = require('./router/backstage'),
+    codeRef = require('./router/codeRef');
+    leader = require('./router/configGuide');
 
 app.set("view engine", "ejs");
 app.set("view options", {
@@ -32,6 +33,7 @@ app.use('/', express.static(__dirname + '/static'));
 
 app.use('/',front);
 app.use('/admin',backstage);
+app.use('/codeRef',codeRef);
 /*
 app.use('/',leader);
 */
