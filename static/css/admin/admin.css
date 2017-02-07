@@ -51,6 +51,10 @@ body {
         max-width: 228px;
     }
 }
+
+i.glyphicon+span{
+    margin-left: 6px;
+}
 /*
 .input-group input[type=text] {
     height: 35px;
