@@ -45,7 +45,7 @@
 							<a href="#enterManage">报名管理</a>
 						</li>
 						<li>
-							<a href="#logs">系统日志</a>
+							<a href="#systemState">系统状态</a>
 						</li>
 						<li>
 							<a href="#configs">系统设置</a>
@@ -94,12 +94,12 @@
         <%- include('functionView',
 			{
 				show:false,
-				name:'系统日志',
-				field:'logs',
+				name:'系统状态',
+				field:'systemState',
 				subFunc:[
 					{
-						field:'addEnter',
-						name:'添加报名信息',
+						field:'logs',
+						name:'系统日志',
 						templateName:'addEnter',
 					}
 				]

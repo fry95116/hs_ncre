@@ -11,9 +11,7 @@
 			user_config = require('./user_config'),
 			db_config = user_config.db_config,
 			exam_sites = user_config.exam_sites,
-			limit_rules = user_config.limit_rules,
-		
-			blacklist = require('./config/blacklist.json');
+			limit_rules = user_config.limit_rules;
 
     /**
      * 没有res参数的回调函数

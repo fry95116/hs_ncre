@@ -49,7 +49,7 @@ $(document).ready(function() {
         'enterManage/addEnter':function(){showSubFuncView('enterManage','addEnter')},
         'enterManage/blackList':function(){showSubFuncView('enterManage','blackList')},
         'enterManage/enterList':function(){showSubFuncView('enterManage','enterList')},
-        'logs':function(){showFuncView('logs')},
+        'systemState':function(){showFuncView('systemState')},
         'configs':function(){showFuncView('configs')},
         'testRoomArrange':function(){showFuncView('testRoomArrange')}
     };

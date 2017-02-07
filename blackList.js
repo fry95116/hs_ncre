@@ -4,8 +4,10 @@
 
 var fs = require('fs'),
     _ = require('lodash'),
-    csv2json = require('csvtojson'),
-    mem_store = require('./config/blacklist.json'),
+    csv = require('csv'),
+    xlsx = require('xlsx'),
+    lowdb = require('lowdb'),
+    mem_store = lowdb('./config/blacklist.json'),
     Promise = require('bluebird');
 
 //身份证校验算法
@@ -68,94 +70,167 @@ var getIdCardInfo = function (cardNo) {
     return info;
 };
 
-//获取黑名单
+/** 获取黑名单 */
 exports.get = function () {
     return new Promise(function (resolve, reject) {
-        resolve(mem_store);
+        resolve(mem_store.get('blackList').value());
     });
 };
 
+/** 添加黑名单项
+ * @param {object} data_in 黑名单项 */
 exports.add = function (data_in) {
     return new Promise(function (resolve, reject) {
-        if (data_in.name && data_in.id_number) {
+        if (data_in.id_number) {
             //重复检查
-            if (_.find(mem_store, function (v) {
-                    return v.id_number == data_in.id_number
-                })) {
+            if (mem_store.find(function (v) {return v.id_number == data_in.id_number}).value()) {
                 reject(new Error('该证件号已存在'));
                 return;
             }
             //对齐省份证号的x为小写x
             data_in.id_number = data_in.id_number.toLowerCase();
             //添加
-            mem_store.push(_.pick(data_in, ['name', 'id_number']));
-            //同步到文件
-            fs.writeFile(__dirname + '/config/blackList.json', JSON.stringify(mem_store), function (err) {
-                if (err) reject(err);
-                else resolve();
-            });
+            mem_store.get('blackList').push(_.pick(data_in, ['name', 'id_number'])).value();
         }
-        else reject(new Error('invalid data'));
+        else reject(new Error('无效的数据'));
     });
 };
-
+/**
+ * 删除黑名单项
+ * @param {string} id_number 要删除的项的证件号 */
 exports.delete = function (id_number) {
     return new Promise(function (resolve, reject) {
         //删除
-        _.remove(mem_store, function (v) {
-            return v.id_number == id_number;
-        });
-        //同步到文件
-        fs.writeFile(__dirname + '/config/blackList.json', JSON.stringify(mem_store), function (err) {
-            if (err) reject(err);
-            else resolve();
-        });
+        mem_store.get('blackList').remove(function (v) {return v.id_number == id_number;}).value();
+        resolve();
     });
 };
 
-exports.importCSV = function (filepath) {
+function importCSV(filepath){
     return new Promise(function (resolve, reject) {
         var tid = _.now();
-        var streamIn = csv2json().fromStream(fs.createReadStream(filepath));
+        var parser = csv.parse();
+        var keys = null;
 
+        //错误处理
         var errHandler = function(err) {
-            streamIn.removeAllListeners();
-            _.remove(mem_store, function (v) {
+            //关闭流
+            parser.removeAllListeners();
+            //回滚
+            mem_store.get('blackList').remove(function (v) {
                 return v.tid == tid
             });
             reject(err);
         };
 
-        streamIn.on('record_parsed', function (val, row, line) {
-            //数据合法性检查
-            if (!(val.id_number && val.name))
-                errHandler(new Error('line(' + line + '):无效的数据'));
-            //重复检查
-            else if (_.find(mem_store, function (v) {return v.id_number == val.id_number})) {
-                errHandler(new Error('line:(' + line + '):该证件号已存在'));
+        parser.on('readable',function(){
+            //空行
+            var row = parser.read();
+            if(row === null) return;
+            //header
+            else if(parser.lines === 1){
+                keys = row;
+                if(_.includes(keys,'name') && _.includes(keys,'id_number') && keys.length === 2) return;
+                else errHandler(new Error('文件格式有误'));
             }
-            //添加过程
+            //文件主体
             else{
-                val.tid = tid;                                              //添加事务号
-                val.id_number = val.id_number.toLowerCase();                //对齐省份证号的x为小写x
-                mem_store.push(_.pick(val, ['name', 'id_number', 'tid']));     //添加
+                var value = _.zipObject(keys,row);
+                //合法性检查
+                if(!value.id_number) errHandler(new Error('line:(' + parser.lines + '):无效的数据'));
+                //重复检查
+                else if (mem_store.get('blackList').find(function (v) {return v.id_number == value.id_number}).value()) {
+                    errHandler(new Error('line:(' + parser.lines + '):该证件号已存在'));
+                }
+                //添加过程
+                else{
+                    value.tid = tid;                                    //添加事务号
+                    value.id_number = value.id_number.toLowerCase();    //对齐省份证号的X为小写x
+                    mem_store.get('blackList').push(value).value();     //添加
+                }
             }
         });
 
-        streamIn.on('done',function(){
-            _.findLast(mem_store,function(v){
+
+        parser.on('end',function(){
+            mem_store.get('blackList').findLast(function(v){
                 if(v.tid) {
                     delete v.tid;
                     return false;
                 }
                 else return true;
-            });
+            }).value();
+            mem_store.write();
             resolve();
+            //同步到文件
         });
-
-        streamIn.on('error',reject);
+        //错误处理
+        parser.on('error',reject);
+        //建立输入流
+        fs.createReadStream(filepath).pipe(parser);
     });
 
+}
+
+function importXLSX(filepath){
+    return new Promise(function (resolve, reject) {
+        var err = null;
+
+        var workbook = xlsx.readFile(filepath);
+        var data = xlsx.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
+
+        //
+        var line = 1;
+        _.find(data,function(row){
+            //合法性检查
+            if(!(_.has(row, 'name') && _.has(row, 'id_number'))){
+                err = new Error('line:(' + line + '):无效的数据');
+                return true;
+            }
+            //重复检查
+            else if (mem_store.get('blackList').find(function (v) {return v.id_number == row.id_number}).value()) {
+                err = new Error('line:(' + line + '):该证件号已存在');
+                return true;
+            }
+            else {
+                var repeatWith = _.findIndex(data,function (v,index) {
+                    return v.id_number === row.id_number && index != line - 1;
+                });
+                if (repeatWith !== -1) {
+                    err = new Error('line:(' + line + '):该证件号与line(' + (repeatWith + 1) + ')重复');
+                    return true;
+                }
+                else{
+                    line++;
+                    return false;
+                }
+            }
+        });
+
+        if(err) reject(err);
+        else{
+            var t = mem_store.get('blackList');
+            _.forEach(data,function(row){
+                t.push(_.pick(row, ['name', 'id_number'])).value();
+            });
+            resolve();
+        }
+    });
+
+}
+
+function importXLS(filepath){
+    return
+    var workbook = xlsx.readFile('./tempData/import/Book1.xlsx');
+    var data = xlsx.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
+}
+
+/**
+ * 导入黑名单
+ * @param {string} type 文件类型 */
+exports.import = function (type) {
+    if(type === 'csv') return importCSV;
+    else if(type === 'xls' || type === 'xlsx') return importXLSX;
 };
 //添加黑名单
 
