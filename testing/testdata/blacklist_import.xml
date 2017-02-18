@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<blackList>
+    <item>
+        <name>张卫</name>
+        <id_number>110102199608313019</id_number>
+    </item>
+    <item>
+        <name>李涛</name>
+        <id_number>110224199606050028</id_number>
+    </item>
+    <item>
+        <name>马妍祎</name>
+        <id_number>110228199603104129</id_number>
+    </item>
+    <item>
+        <name>刘纯玉</name>
+        <id_number>120101199604233025</id_number>
+    </item>
+    <item>
+        <name>郑汉琪</name>
+        <id_number>120102199707131749</id_number>
+    </item>
+</blackList>

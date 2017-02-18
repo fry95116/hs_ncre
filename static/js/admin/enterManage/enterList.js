@@ -95,17 +95,17 @@ $(document).ready(function(){
             formatter:formatter_text
         }, {
             field:'exam_site_code',
-            title:'考点代码',
+            title:'考点名称(代码)',
             sortable:true,
             formatter:formatter_select
         }, {
             field:'subject_code',
-            title:'学科代码',
+            title:'学科名称(代码)',
             sortable:true,
             formatter:formatter_select
         }, {
             field:'sex',
-            title:'性别',
+            title:'性别(代码)',
             sortable:true,
             formatter:formatter_select
         }, {
@@ -115,27 +115,27 @@ $(document).ready(function(){
             formatter:formatter_text
         }, {
             field:'id_type',
-            title:'证件类型',
+            title:'证件类型(代码)',
             sortable:true,
             formatter:formatter_select
         }, {
             field:'nationality',
-            title:'民族',
+            title:'民族(代码)',
             sortable:true,
             formatter:formatter_select
         }, {
             field:'career',
-            title:'职业',
+            title:'职业(代码)',
             sortable:true,
             formatter:formatter_select
         }, {
             field:'degree_of_education',
-            title:'文化程度',
+            title:'文化程度(代码)',
             sortable:true,
             formatter:formatter_select
         }, {
             field:'training_type',
-            title:'培训类型',
+            title:'培训类型(代码)',
             sortable:true,
             formatter:formatter_select
         }, {

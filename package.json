@@ -24,6 +24,7 @@
     "node-schedule": "^0.5.1",
     "node-uuid": "^1.4.7",
     "redis": "^2.6.5",
+    "sax": "^1.2.2",
     "xlsx": "^0.8.2"
   },
   "devDependencies": {},

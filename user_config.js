@@ -8,7 +8,6 @@
     exports.admin_passport = LocalConfig.admin_passport;
 
 	exports.op_res_text = config.op_res_text;
-
 	exports.exam_sites = config.exam_plan.exam_sites;
 	exports.limit_rules = config.exam_plan.limit_rules;
 

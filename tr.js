@@ -52,7 +52,7 @@
         email: '电子邮箱',
         phone: '联系电话',
         remark: '备注'
-    }
+    };
     module.exports.data_schema_convert = data_schema_convert;
 
     /* 翻译函数，用于将数据表字段名翻译为实际名称(原tr.js) */

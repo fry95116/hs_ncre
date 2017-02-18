@@ -1,6 +1,17 @@
-var fs = require('fs'),
-    _ = require('lodash'),
-    xlsx = require('xlsx');
+var XML_Reader = require('./XML_reader');
 
-    var t = _.has({name: "聂涵畅", id_number: "410421196001016000"},'name');
-    console.log(t);
+var reader = new XML_Reader();
+reader.on('item',function(item){
+    console.log(item);
+});
+
+reader.on('error',function(err){
+    console.log(err.message);
+    reader.removeAllListeners();
+});
+
+reader.on('end',function(){
+    console.log('end');
+});
+
+reader.fromFile('./test.xml');

@@ -7,10 +7,10 @@
         multer = require('multer'),
         diskStore = multer.diskStorage({
             destination: function (req, file, cb) {
-                cb(null, './tempData/import');
+                cb(null, './tempData');
             },
             filename: function (req, file, cb) {
-                cb(null,'tempData');
+                cb(null,'import');
             }
         }),
         upload = multer({
@@ -53,13 +53,20 @@
     router.post('/', upload.single('file'), function (req, res, next) {
         //文件导入
         if (req.file) {
-            blackList.import(req.file.suffix)(req.file.path)
-                .then(function(){
-                    res.send('succeed');
-                })
-                .catch(function(err){
-                    res.status(400).send(err.message);
-                });
+            var read = blackList.import(req.file.suffix);
+            if(read){
+                read(req.file.path)
+                    .then(function(){
+                        res.send('succeed');
+                    })
+                    .catch(function(err){
+                        res.status(400).send(err.message);
+                    });
+            }
+            else{
+                res.status(400).send('不受支持的文件类型');
+            }
+
         }
         else next();
     });
@@ -91,8 +98,8 @@
             .then(function () {
                 res.send('succeed');
             }).catch(function (err) {
-            res.status(400).send('Error:' + err.message);
-        });
+                res.status(400).send('Error:' + err.message);
+            });
     });
 
     module.exports = router;

@@ -1,6 +1,7 @@
 /**
  * 数据合法性检查与数据库操作
- * @method dbo*/
+ * @module dbo
+ * */
 
 (function() {
 	var mysql = require('mysql'),
@@ -50,7 +51,7 @@
                 setTimeout(handleDisconnect, 2000);
             }
             else{
-                console.log('连接成功。');
+                console.log('数据库连接成功。');
                 setTransactionIsolationLevel();
             }
         });
@@ -74,7 +75,6 @@
                 console.log('设置事务隔离级别成功。');
                 con.query('select @@TX_ISOLATION;',function(err,res){
                     if(err) console.log('ERROR:' + err);
-
                     console.log('当前事务隔离级别：' + res[0]['@@TX_ISOLATION']);
                 });
             }
@@ -383,6 +383,7 @@
             opt = _.extend(opt,option);
             opt.keys = cols.join(',');
             opt.table = db_config.table;
+            opt.searchText = _.trim(opt.searchText);
 
             //option合法性检查
             if(!_.includes(cols,opt.searchBy) && opt.searchBy !== 'remark')  opt.searchBy = '';
