@@ -41,7 +41,7 @@ body {
 }
 
 #content_functionList > div {
-    margin: 30px auto 0px;
+    margin: 23px auto;
     text-align: left;
 }
 
@@ -94,4 +94,17 @@ i.glyphicon+span{
 .cell a, .cell a:hover {
     border-bottom: hidden;
     cursor: pointer;
+    color:#0c84e4;
+}
+
+#crontabGenerator .content{
+    border:solid 1px #aaa;
+    border-radius:20px;
+    padding:20px;
+    margin-top: 20px;
+    display:none;
+}
+#crontabGenerator .content input[type="radio"]{
+    vertical-align: middle;
+    margin-right:10px;
 }

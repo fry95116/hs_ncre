@@ -29,7 +29,7 @@ $(document).ready(function() {
         var view = $('#' + id);
         view.siblings('.funcContent').hide();
         view.show();
-    }
+    };
 
     var showSubFuncView = function(id,subid){
         //
@@ -42,20 +42,35 @@ $(document).ready(function() {
         var subView = $('#' + id).find('#' + subid);
         subView.siblings('.subFuncContent').hide();
         subView.show();
-    }
+    };
 
     var routes={
         'enterManage':function(){showFuncView('enterManage')},
         'enterManage/addEnter':function(){showSubFuncView('enterManage','addEnter')},
         'enterManage/blackList':function(){showSubFuncView('enterManage','blackList')},
         'enterManage/enterList':function(){showSubFuncView('enterManage','enterList')},
+
         'systemState':function(){showFuncView('systemState')},
+        'systemState/overView':function(){showSubFuncView('systemState','overView')},
+        'systemState/logs':function(){showSubFuncView('systemState','logs')},
+
         'configs':function(){showFuncView('configs')},
+        'configs/dbBackup':function(){showSubFuncView('configs','dbBackup')},
+        'configs/authentication':function(){showSubFuncView('configs','authentication')},
+
         'testRoomArrange':function(){showFuncView('testRoomArrange')}
     };
 
     var router = Router(routes);
     router.init();
 
+    //show message
+    window.showMsg = function(content,status,info){
+        var template = '<div class="alert alert-' + status + ' alert-dismissible" role="alert">'+
+            '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' +
+            info +
+            '</div>';
+        content.html(template);
+    };
 
 });

@@ -6,14 +6,6 @@ $(document).ready(function(){
     //命名空间
     var $root = $('#enterList');
 
-    //message
-    function showMsg(status,info){
-        var template = '<div class="alert alert-' + status + ' alert-dismissible" role="alert">'+
-            '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' +
-            info +
-        '</div>';
-        $('.message',$root).html(template);
-    }
     //搜索条件按钮
     var btn_searchBy = $('.searchBy',$root);
     btn_searchBy.find("a").click(function(){
@@ -27,7 +19,7 @@ $(document).ready(function(){
 
     //选择器
     var formatter_select = function(val,col,index){
-        var url = '/admin/enterInfo/' + col.id_number + '/' + this.field;
+        var url = '/admin/enterManage/enterInfo/' + col.id_number + '/' + this.field;
         var source = '/codeRef/' + this.field;
 
         return  '<div class="cell">' +
@@ -37,7 +29,7 @@ $(document).ready(function(){
 
     //文本框
     var formatter_text = function(val,col,index){
-        var url = '/admin/enterInfo/' + col.id_number + '/' + this.field;
+        var url = '/admin/enterManage/enterInfo/' + col.id_number + '/' + this.field;
         var source = '/codeRef/' + this.field;
         return  '<div class="cell">' +
                     '<a data-url="' + url + '" data-pk = "' + col.id_number + '" data-type="text" data-source="' + source + '" data-value="' + val + '"></a>' +
@@ -50,7 +42,7 @@ $(document).ready(function(){
     };
 
     $enterTable.bootstrapTable({
-        url:'/admin/enterInfo',     //数据URL
+        url:'/admin/enterManage/enterInfo',     //数据URL
         idField:'id_number',
         /* 翻页 */
         pagination:true,
@@ -188,12 +180,12 @@ $(document).ready(function(){
         var succeed = 0;
         _.each(data_del,function(row){
             $.ajax({
-                url:'/admin/enterInfo/' + row.id_number,
+                url:'/admin/enterManage/enterInfo/' + row.id_number,
                 type:'delete',
                 success:function(){
                     succeed++;
                     if(succeed = data_del.length) {
-                        showMsg('success','删除成功');
+                        showMsg($('.message',$root),'success','删除成功');
                     }
                     $enterTable.bootstrapTable('refresh');
                 },

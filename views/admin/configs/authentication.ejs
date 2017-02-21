@@ -1,0 +1,38 @@
+<div id="<%= field %>" class="subFuncContent panel panel-default" style="display: <% if(show){ %>block<% }else{ %> none <% } %>" >
+    <script src="/js/admin/configs/authentication.js"></script>
+    <div class="panel-heading">
+        <h3 class="panel-title"><%= name %></h3>
+    </div>
+    <div class="panel-body center-block">
+        <div style="margin: 30px auto;max-width: 380px;">
+            <form class="form-horizontal" action="/admin/configs/authentication/password" method="post">
+                <div class="form-group message">
+
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label" for="host">旧密码</label>
+                    <div class="col-sm-9">
+                        <input name="old_password" type="password" class="form-control" placeholder="123456">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label" for="password">新密码</label>
+                    <div class="col-sm-9">
+                        <input name="password" type="password" class="form-control" placeholder="123456">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label" for="password">重复新密码</label>
+                    <div class="col-sm-9">
+                        <input name="repeat_password" type="password" class="form-control" placeholder="123456">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-6 col-sm-6" style="text-align: right">
+                        <button type="submit" class="btn btn-primary">保存</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

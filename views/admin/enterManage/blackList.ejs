@@ -22,6 +22,10 @@
         </div>
 
         <div class="row">
+            <div class="col-xs-12 message">
+            </div>
+        </div>
+        <div class="row">
             <div class="col-xs-12">
                 <table></table>
             </div>
@@ -31,7 +35,7 @@
         <div class="modal fade addItem" tabindex="-1" role="dialog">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
-                    <form class="form" action="/admin/blackList" method="post">
+                    <form class="form" action="/admin/enterManager/blackList" method="post">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                             <h5 class="modal-title">添加黑名单项</h5>
@@ -62,7 +66,7 @@
         <div class="modal fade import" tabindex="-1" role="dialog">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
-                    <form action="/admin/blackList" enctype="multipart/form-data" method="post">
+                    <form action="/admin/enterManager/blackList" enctype="multipart/form-data" method="post">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                             <h4 class="modal-title" id="myModalLabel">数据导入</h4>

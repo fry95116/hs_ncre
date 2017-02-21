@@ -10,9 +10,7 @@
         redis_config = require('./../config/LocalConfig.json').redis_config,
         redis_client = redis.createClient(redis_config),
 
-        admin_passport = require('./../user_config').admin_passport,
-        router_enterInfo = require('./backstage/enterInfo'),
-        router_blackList = require('./backstage/blackList');
+        admin_passport = require('./../user_config').admin_passport;
 
     redis_client.on("error", function (err) {
         console.log("redis error: " + err);
@@ -50,7 +48,7 @@
      * @param {bool} keepLogin 是否保持登陆
      * @param {string} captcha 验证码
      * */
-    router.post('/', bodyParser.urlencoded({extended: true}), function (req, res) {
+    router.post('/', bodyParser.urlencoded({extended: true}), function (req, res, next) {
         if (req.body) {
             if (!(req.session && req.session.captcha && req.session.captcha.toString() === req.body.captcha)) {
                 res.render('admin/login', {error: '验证码错误', passed: false});
@@ -110,7 +108,10 @@
         else res.status(401).send('validate failed');
     });
 
-    router.use('/enterInfo',router_enterInfo);
-    router.use('/blackList',router_blackList);
+    router.use('/enterManage/enterInfo',require('./enterManage/enterInfo'));
+    router.use('/enterManage/blackList',require('./enterManage/blackList'));
+
+    router.use('/configs/authentication',require('./configs/authentication'));
+    router.use('/configs/dbBackup',require('./configs/dbBackup'));
     module.exports = router;
 })();

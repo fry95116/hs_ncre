@@ -1,17 +1,9 @@
-var XML_Reader = require('./XML_reader');
+var admin_passport = require('./user_config').admin_passport;
 
-var reader = new XML_Reader();
-reader.on('item',function(item){
-    console.log(item);
-});
+console.log(admin_passport.username);
+console.log(admin_passport.password);
 
-reader.on('error',function(err){
-    console.log(err.message);
-    reader.removeAllListeners();
-});
+admin_passport.password = 'test';
 
-reader.on('end',function(){
-    console.log('end');
-});
-
-reader.fromFile('./test.xml');
+console.log(admin_passport.username);
+console.log(admin_passport.password);

@@ -4,15 +4,6 @@
 $(document).ready(function(){
     var $root = $('#blackList');
 
-    //message
-    function showMsg(content,status,info){
-        var template = '<div class="alert alert-' + status + ' alert-dismissible" role="alert">'+
-            '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' +
-            info +
-            '</div>';
-        $('.message',$root).html(template);
-    }
-
     //添加对话框
 
     //导入对话框
@@ -29,7 +20,7 @@ $(document).ready(function(){
 
     //添加\导入表单
     $('.addItem form',$root).ajaxForm({
-        url:'/admin/blackList',
+        url:'/admin/enterManage/blackList',
         type:'post',
         success:function(msg){
             showMsg($('.addItem .message',$root),'success','添加成功：' + msg);
@@ -41,9 +32,22 @@ $(document).ready(function(){
         }
     });
 
+    $('.import form',$root).ajaxForm({
+        url:'/admin/enterManage/blackList',
+        type:'post',
+        success:function(msg){
+            showMsg($('.import .message',$root),'success','添加成功：' + msg);
+            $('table',$root).bootstrapTable('refresh');
+        },
+        error:function(xhr){
+            showMsg($('.import .message',$root),'danger','Error：' + xhr.responseText);
+            $('table',$root).bootstrapTable('refresh');
+        }
+    });
+
 
     $('.import form',$root).ajaxForm({
-        url:'/admin/blackList',
+        url:'/admin/enterManage/blackList',
         type:'post',
         success:function(msg){
             showMsg($('.import .message',$root),'success','添加成功：' + msg);
@@ -63,12 +67,12 @@ $(document).ready(function(){
         var succeed = 0;
         _.each(data_del,function(row){
             $.ajax({
-                url:'/admin/blackList/' + row.id_number,
+                url:'/admin/enterManage/blackList/' + row.id_number,
                 type:'delete',
                 success:function(){
                     succeed++;
                     if(succeed = data_del.length) {
-                        showMsg('success','删除成功');
+                        showMsg($('.message:eq(0)',$root),'success','删除成功');
                     }
                     $('table',$root).bootstrapTable('refresh');
                 },
@@ -80,7 +84,7 @@ $(document).ready(function(){
     });
 
     $('table',$root).bootstrapTable({
-        url:'/admin/blackList',     //数据URL
+        url:'/admin/enterManage/blackList',     //数据URL
         idField:'id_number',
         /* 翻页 */
         pagination:true,

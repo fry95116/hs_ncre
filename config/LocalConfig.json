@@ -8,14 +8,11 @@
     "database": "test",
     "table": "data"
   },
+
   "redis_config":{
     "host":"localhost",
     "port": 6379,
     "password":"7758258",
     "ttl": 600
-  },
-  "admin_passport":{
-    "username":"admin",
-    "password":"admin"
   }
 }

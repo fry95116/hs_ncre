@@ -207,39 +207,39 @@ function importJSON(filepath){
             }
             try{
                 data_in = JSON.parse(data_in);
+                if(!_.isArray(data_in)){
+                    reject(new Error('无效的数据格式'));
+                    return;
+                }
+                //
+                var tid = _.now();
+                var line = 1;
+                _.find(data_in,function(row){
+                    err = __add(row,tid,line);
+                    if(err) return true;
+                    else {
+                        line++;
+                        return false;
+                    }
+                });
+
+                if(err){
+                    //回滚
+                    mem_store.get('blackList').remove(function (v) {
+                        return v.tid == tid
+                    }).value();
+                    reject(err);
+                }
+                else {
+                    mem_store.get('blackList').forEachRight(function(v){
+                        if(v.tid == tid)delete v.tid;
+                    }).value();
+                    mem_store.write();
+                    resolve();
+                }
             }
             catch (err){
                 reject(err);
-            }
-            if(!_.isArray(data_in)){
-                reject(new Error('无效的数据格式'));
-                return;
-            }
-            //
-            var tid = _.now();
-            var line = 1;
-            _.find(data_in,function(row){
-                err = __add(row,tid,line);
-                if(err) return true;
-                else {
-                    line++;
-                    return false;
-                }
-            });
-
-            if(err){
-                //回滚
-                mem_store.get('blackList').remove(function (v) {
-                    return v.tid == tid
-                }).value();
-                reject(err);
-            }
-            else {
-                mem_store.get('blackList').forEachRight(function(v){
-                    if(v.tid == tid)delete v.tid;
-                }).value();
-                mem_store.write();
-                resolve();
             }
         });
 

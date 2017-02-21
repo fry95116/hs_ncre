@@ -7,12 +7,13 @@
 		<title>后台管理</title>
 
 		<link href="/css/libs/bootstrap.css" rel="stylesheet" />
+		<link href="/css/libs/bootstrap-theme.css" rel="stylesheet" />
 		<link href="/css/libs/bootstrap-table.css" rel="stylesheet" />
 		<link href="/css/libs/bootstrap-editable.css" rel="stylesheet"/>
 		<link href="/css/libs/bootstrap-dialog.css" rel="stylesheet"/>
 		<link href="/css/admin/admin.css" rel="stylesheet"/>
 
-		<script src="/js/libs/jquery-1.11.3.min.js"></script>
+		<script src="/js/libs/jquery-3.1.1.js"></script>
 		<script src="/js/libs/bootstrap.js"></script>
 		<script src="/js/libs/bootstrap-table.js"></script>
 		<script src="/js/libs/bootstrap-table-zh-CN.js"></script>
@@ -82,7 +83,7 @@
 						},{
                             field:'addEnter',
 							name:'添加报名信息',
-							templateName:'addEnter',
+							templateName:'addEnter'
 						},{
 							field:'blackList',
 							name:'黑名单',
@@ -92,20 +93,41 @@
 				}
 		) %>
         <%- include('functionView',
-			{
-				show:false,
-				name:'系统状态',
-				field:'systemState',
-				subFunc:[
-					{
-						field:'logs',
-						name:'系统日志',
-						templateName:'addEnter',
-					}
-				]
-			}
+				{
+					show:false,
+					name:'系统状态',
+					field:'systemState',
+					subFunc:[
+						{
+							field:'overView',
+							name:'状态摘要',
+							templateName:'overView'
+						},{
+							field:'logs',
+							name:'系统日志',
+							templateName:'logs'
+						}
+					]
+				}
         ) %>
-
+        <%- include('functionView',
+				{
+					show:false,
+					name:'系统设置',
+					field:'configs',
+					subFunc:[
+						{
+							field:'dbBackup',
+							name:'数据库备份计划',
+							templateName:'dbBackup'
+						},{
+							field:'authentication',
+							name:'管理员密码设置',
+							templateName:'authentication'
+						}
+					]
+				}
+        ) %>
 	</body>
 
 </html>
