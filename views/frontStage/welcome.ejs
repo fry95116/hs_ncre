@@ -1,0 +1,37 @@
+﻿<html>
+<head>
+	<title>hs_ncre</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<script src="/js/libs/jquery-3.1.1.js"></script>
+	<script type="text/javascript" src="/js/welcome.js"></script>
+	<link href="/css/welcome.css" rel="stylesheet" type="text/css">
+	<style type="text/css"></style>
+</head>
+
+<body>
+	<div id="nav">
+		<img src="./img/school.png">
+		<h1>全国计算机等级考试</h1>
+	</div>
+	<div id="header">
+		<h2>网上预报名系统</h2>
+		<ul id="RegNum">
+			<%for (var desc in reg_info) { %>
+			<li><%= desc %>:限报<%= reg_info[desc].limit %>人&nbsp已报<%= reg_info[desc].count %>人</li>
+			<%}%>
+		</ul>
+		<button id="read_info" onclick="window.location = '/instructions'">开始报名</button>
+		
+		<button id="get_info">报名结果查询</button>
+		<form id="get_id_number" action="getinfo" method="GET">
+			<h3>请输入你的证件号码</h3>
+			<input id="id_number" name="id_number" type="text">
+			<input type="submit" value="检索">
+		</form> 
+		<div id="question">
+			<div>考试信息咨询QQ群: <br><b>北环考点：437252399</b><br><b>郑东新区考点：437306317 / 437312687 / 437314632</b></div>
+			<div>报名咨询电话: 86551362</div>
+		</div>
+	</div>
+</body>
+</html>

@@ -13,15 +13,7 @@
 		</div>
 	</div>
 	<div id='mainPanel'>
-		<h4><%- res %></h4>
-			<%if(info){%>
-				<ul>
-					<%for (key in info){%>
-					<li><%= "" + data_schema_convert[key] + ":" + info[key]%></li>
-					<%}%>
-				</ul>
-			<%}%>
-		<a href="/">点此返回首页</a>
+		<%- include('./op_res/' + type)%>
 	</div>
 </body>
 </html>

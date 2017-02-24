@@ -1,0 +1,73 @@
+body {
+    text-align: center;
+    font-family: Microsoft YaHei;
+    margin: 0px;
+
+}
+
+#header{
+    background-color: #66ccff;
+    text-align: center;
+}
+
+#header div{
+    width: 960px;
+    margin: 0 auto 1em;
+    text-align: right;
+    padding: 1em;
+    color: #fff;
+    font-weight: lighter;
+    background-color: inherit;
+}
+
+#header img{
+    height: 48px;
+    margin: 24px 32px;
+}
+
+#mainPanel {
+    width: 704px;
+    margin: 20px auto;
+    background-color: #f7f7f7;
+    padding: 32px 128px;
+    border: 2px solid #eee;
+    border-radius: 10px;
+    text-align: left;
+}
+
+#info{
+    width:600px;
+    margin: 0 auto;
+    text-align: center;
+}
+#content{
+    text-align: left;
+}
+
+#content+a>button{
+    margin:32px 0px 48px;
+}
+
+button,input[type="submit"]{
+    font-size: 16px;
+    padding: 1em;
+    border: 1px solid #2e6da4;
+    border-radius: 12px;
+    color: #fff;
+    background-color: #337ab7;
+}
+
+button:hover{
+    background-color: #286090;
+    border-color: #204d74;
+}
+button:active{
+    background-color: #286090;
+    border-color: #204d74;
+    box-shadow: inset 0 3px 5px rgba(0,0,0,.125);
+}
+
+button:focus{
+    background-color: #286090;
+    border-color: #122b40;
+}

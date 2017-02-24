@@ -33,89 +33,110 @@ function msgRender($el, condition, errMsg) {
 }
 
 //各个表项的验证逻辑
+
 var validator = [
 	//考点代码select
 	['exam_site_code', function($el) {
-		msgRender($el, function($el) {
+		return msgRender($el, function($el) {
 			return $el.val() != 0;
 		}, '请选择考点');
 	}],
 
 	//科目代码select
 	['subject_code', function($el) {
-		msgRender($el, function($el) {
+		return msgRender($el, function($el) {
 			return $el.val() != 0;
 		}, '请选择科目');
 	}],
 
 	//姓名 input
 	['name', function($el) {
-		msgRender($el, function($el) {
-			return $el.val().length >= 2;
+		return msgRender($el, function($el) {
+			return /^...*$/.test($el.val());
 		}, '请输入正确的名字');
 	}],
 
 	//性别 radio
 	['sex', function($el) {
-		msgRender($el, function($el) {
-			return $el.find(':checked').length != 0;
-		}, '请输入正确的名字');
+		return msgRender($el, function($el) {
+            return $el.val() != 0;
+		}, '请选择性别');
 	}],
 
 	//生日input(format:yyyymmdd)
 	['birthday', function($el) {
-		msgRender($el, function($el) {
+		return msgRender($el, function($el) {
 			return /^\d{8}$/.test($el.val());
 		}, '请输入正确的出生日期');
 	}],
 
 	//证件类型 select
 	['id_type', function($el) {
-		msgRender($el, function($el) {
+		return msgRender($el, function($el) {
 			return $el.val() != 0;
 		}, '请选择证件类型');
 	}],
 
 	//证件号码 input
 	['id_number', function($el) {
-		msgRender($el, function($el) {
+		return msgRender($el, function($el) {
 			return $el.val().length != 0;
 		}, '请输入证件号');
 	}],
 
 	//证件号码 input
 	['id_number', function($el) {
-		msgRender($el, function($el) {
-			if($('[name=id_type]').val() == 1) {
+		return msgRender($el, function($el) {
+			if($('[name="id_type"]').val() == 1) {
 				return getIdCardInfo($el.val()).isTrue;
-			} else return ture;
-		}, '请输入正确的身份证号');
+			} else return true;
+		}, '请仔细检查证件号是否正确');
+	}],
+
+	['id_number', function($el){
+        // 保证是18位身份证号后，发送异步验证到服务器，确认该身份证号是否已经注册
+        var captcha_user = $el.val();
+        var result = $.ajax({
+            url: "/repeatcheck",
+            timeout : 1000,
+            data: {
+                id_number: $el.val()
+            },
+            async: false
+        }).responseJSON;
+        if (result === false) {
+            msgRender($el, false,'不能重复报名 ');
+        }
+        else if($('[name="id_type"]').val() == 1){
+            //生日的自动填写
+            $('[name="birthday"]').val($el.val().slice(6, 14)).trigger('blur');
+        }
 	}],
 
 	//民族 select
 	['nationality', function($el) {
-		msgRender($el, function($el) {
+		return msgRender($el, function($el) {
 			return $el.val() != 0;
 		}, '请选择民族');
 	}],
 
 	//职业 select
 	['career', function($el) {
-		msgRender($el, function($el) {
+		return msgRender($el, function($el) {
 			return $el.val() != 0;
 		}, '请选择职业');
 	}],
 
 	//文化程度 select
 	['degree_of_education', function($el) {
-		msgRender($el, function($el) {
+		return msgRender($el, function($el) {
 			return $el.val() != 0;
 		}, '请选择文化程度');
 	}],
 
 	//培训类型
 	['training_type', function($el) {
-		msgRender($el, function($el) {
+		return msgRender($el, function($el) {
 			return $el.val() != 0;
 		}, '请选择培训类型');
 	}],
@@ -128,22 +149,22 @@ var validator = [
 
 	// 电子邮箱 input
 	['email', function($el) {
-		msgRender($el, function($el) {
+		return msgRender($el, function($el) {
 			return /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/.test($el.val());
 		}, '请输入正确的电子邮件地址');
 	}],
 
 	// 联系电话 input(格式11位数字)
 	['phone', function($el) {
-		msgRender($el, function($el) {
-			return /^\d{0,11}$/.test($el.val());
+		return msgRender($el, function($el) {
+			return /^\d{1,11}$/.test($el.val());
 		}, '联系电话输入有误');
 	}],
 
 	/* 备注 */
 	//勾选本校学生的情况
 	['department', function($el) {
-		msgRender($el, function($el) {
+		return msgRender($el, function($el) {
 			if($('input[name=is_our_school]').is(':checked')) {
 				return $el.val() != 0;
 			}
@@ -151,7 +172,7 @@ var validator = [
 		}, '请选择学院');
 	}],
 	['student_number', function($el) {
-		msgRender($el, function($el) {
+		return msgRender($el, function($el) {
 			if($('input[name=is_our_school]').is(':checked')) {
 				return /\d{9}\d*/.test($el.val());
 			}
@@ -161,7 +182,7 @@ var validator = [
 
 	//不勾选本校学生的情况
 	['school', function($el) {
-		msgRender($el, function($el) {
+		return msgRender($el, function($el) {
 			if(!$('input[name=is_our_school]').is(':checked')) {
 				return $el.val() != '0';
 			}
@@ -169,7 +190,7 @@ var validator = [
 		}, '请选择学校');
 	}],
 	['school_name', function($el) {
-		msgRender($el, function($el) {
+		return msgRender($el, function($el) {
 			if((!$('input[name=is_our_school]').is(':checked')) && $('[name=school]').val() == '01') {
 				return $el.val() !== '';
 			}
@@ -179,10 +200,11 @@ var validator = [
 
 	//验证码 input(使用同步ajax)
 	['captcha', function($el) {
-		msgRender($el, function($el) {
+		return msgRender($el, function($el) {
 			var captcha_user = $el.val();
 			var result = $.ajax({
 				url: "/captchatest",
+                timeout : 1000,
 				data: {
 					test: captcha_user
 				},
@@ -192,6 +214,36 @@ var validator = [
 		}, '验证码错误');
 	}]
 ];
+
+//如有初始数据，组装之
+$(document).ready(function(){
+	//
+	var errMessage = $('#error_message').html();
+    $('#error_message').empty();
+	//
+    var formData = $('#last_formData').html();
+    $('#last_formData').empty();
+
+    try{
+        errMessage = JSON.parse(errMessage);
+        formData = JSON.parse(formData);
+	}
+	catch(err){}
+
+    for(var key in errMessage){
+		if(errMessage[key] == 'invalid data'){
+			msgRender($('input[name="' + key + '"],select[name="' + key + '"]'),false,'请填写正确的值');
+		}
+		else if(errMessage[key] == 'not exist'){
+            msgRender($('input[name="' + key + '"],select[name="' + key + '"]'),false,'该字段不能为空');
+		}
+	}
+
+	for(var key in formData){
+        $('input[name="' + key + '"],select[name="' + key + '"]').val(formData[key]);
+	}
+
+});
 
 //验证码 与 考点学科联动
 $(document).ready(function() {
@@ -246,7 +298,7 @@ $(document).ready(function() {
 $(document).ready(function() {
 
 	// 对于每个 input 标签，填写正确格式的数据后，为每个input 标签添加 validated 类属性
-	$('form :input').blur(function() {
+	$('form input,form select').blur(function() {
 		//找到验证器
 		for(var i = 0; i < validator.length; ++i) {
 			if(validator[i][0] === $(this).attr('name')) {
@@ -255,20 +307,21 @@ $(document).ready(function() {
 			}
 		}
 	});
-
 });
 
 //验证 onsubmit
 $(document).ready(function() {
 	// 绑定submit键，如未通过验证，则返回false，不进行表单提交
-	$('[name=submit_form]').click(function() {
+	$('[name="submit_form"]').click(function() {
 		if(confirm('您是否确认提交信息?\n一但提交将无法更改!') == false) return false;
-		var hasError = true;
+		var noError = true;
 		for(var i = 0; i < validator.length; ++i) {
 			var $el = $('[name=' + validator[i][0] + ']');
-			hasError = validator[i][1]($el);
+            var res = validator[i][1]($el)
+			noError = noError && res;
 		}
-		return hasError;
+		if(!noError) $(window).scrollTop(0);
+        return noError;
 	});
 });
 

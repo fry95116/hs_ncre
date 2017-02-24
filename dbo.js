@@ -12,7 +12,9 @@
 			user_config = require('./user_config'),
 			db_config = user_config.db_config,
 			exam_sites = user_config.exam_sites,
-			limit_rules = user_config.limit_rules;
+			limit_rules = user_config.limit_rules,
+            ERR = require('./ApplicationError');
+
 
     /**
      * 没有res参数的回调函数
@@ -24,17 +26,6 @@
      * @callback callbackWithRes
      * @param {Error} err 异常对象，为null或者undefined时说明没有异常
 	 * @param {Object} res 返回结果 */
-
-    /**
-	 * 错误代码
-	 * @readonly
-	 * @enum {number} */
-
-    var ERRORCODE = {
-    	INVALID_DATA:0,
-		REPEAT_INFO:1,
-		COUNT_OVERFLOW:2
-	};
 
     _.templateSettings.interpolate = /\{\{(.+?)\}\}/g;
 
@@ -141,12 +132,48 @@
         return info;
     };
 
+    /**
+     * 开始事务
+     * */
+    exports.begin = function() {
+        return new Promise(function(resolve,reject){
+            con.beginTransaction(function(err){
+                if(err) reject(err);
+                else resolve();
+            });
+        });
+    };
+
+    /**
+     * 回滚事务
+     * */
+    exports.rollback = function() {
+        return new Promise(function(resolve,reject){
+            con.rollback(function(err){
+                if(err) reject(err);
+                else resolve();
+            });
+        });
+    };
+
+    /**
+     * 提交事务
+     * */
+    exports.commit = function() {
+        return new Promise(function(resolve,reject){
+            con.commit(function(err){
+                if(err) reject(err);
+                else resolve();
+            });
+        });
+    };
+
 	/**
 	 * 对数据合法性进行检查
 	 * check函数的同步版本
 	 * @param {Object} data_in 输入的数据
 	 * @return {Error} 为null时说明没有异常 */
-    exports.checkSync = function(data_in) {
+    var checkSync = function(data_in) {
 
     	var err = {};
 
@@ -185,14 +212,9 @@
 		}
 
 		if(_.isEmpty(err)) return null;
-		else{
-			var re = new Error();
-			re.code = ERRORCODE.INVALID_DATA;
-			re.message = err.toString();
-			return re;
-        }
+		else return new ERR.InvalidDataError(JSON.stringify(err));
 	};
-
+    exports.checkSync = checkSync;
     /**
 	 * 对数据合法性进行检查
      * @param {Object} data_in 输入的数据
@@ -225,9 +247,9 @@
                 subjectCount: {}
             });
             //查询
-            var query_str = 'SELECT exam_site_code AS \'esc\', subject_code AS \'sc\', count(examSite_subject_code) as \'count\'' +
+            var query_str = 'SELECT exam_site_code AS \'esc\', subject_code AS \'sc\', concat(exam_site_code,subject_code) AS \'esc_sc\',count(concat(exam_site_code,subject_code)) as \'count\'' +
                 ' from ' + db_config.table +
-                ' GROUP BY examSite_subject_code;';
+                ' GROUP BY esc_sc;';
             con.query(
                 query_str,
                 function (err, res) {
@@ -262,7 +284,7 @@
                     if (err) reject(err);
                     else {
                         if (res[0].count > 0) {
-                            reject(new Error(ERRORCODE.REPEAT_INFO,'user already exist'));
+                            reject(new ERR.RepeatInfoError('user already exist'));
                         } else {
                             resolve();
                         }
@@ -282,17 +304,24 @@
 		equalAllowed = equalAllowed | false;
 		var count = 0;
 		//noinspection JSUnresolvedVariable
-		if(typeof limit_rule.limit_obj == 'undefined')
-			throw new Error('invalid limit_rule');
+		if(_.isNil(limit_rule.limit_obj))
+			throw new Error('无效的limit_rule:limit_obj不存在. limit_rule:' + JSON.stringify(limit_rule));
 		for(var i in limit_rule['limit_obj']){
 			var limit_obj = limit_rule['limit_obj'][i];
-			//某考点某科目人数
-			if(limit_obj.subject_code){
-				count += counts.subjectCount[limit_obj.exam_site_code][limit_obj.subject_code];
+            //考点总人数
+			if(_.isNil(limit_obj.subject_code)){
+                if(_.isNil(counts.sitesCount[limit_obj.exam_site_code]))
+                    throw new ERR.CountCheckError('无效的limit_rule:该考点不存在. limit_rule:' + JSON.stringify(limit_rule));
+                else
+                    count += counts.sitesCount[limit_obj.exam_site_code];
 			}
-			//考点总人数
-			else{
-				count += counts.sitesCount[limit_obj.exam_site_code];
+            //某考点某科目人数
+            else{
+                if(_.isNil(counts.subjectCount[limit_obj.exam_site_code][limit_obj.subject_code]))
+                    throw new ERR.CountCheckError('无效的limit_rule:该考点无该科目. limit_rule:' + JSON.stringify(limit_rule));
+                else
+                    count += counts.subjectCount[limit_obj.exam_site_code][limit_obj.subject_code];
+
 			}
 		}
 		return equalAllowed ? count <= limit_rule.limitNum : count < limit_rule.limitNum;
@@ -305,17 +334,22 @@
 	 * @return {Promise} Promise对象 */
     exports.checkCount = function(counts, equalAllowed){
     	return new Promise(function(resolve,reject){
-            var violateRule = _.find(limit_rules,function(limit_rule){
-                //检查各条规则
-                return !checkCountSync(counts,limit_rule,equalAllowed);
-            });
-            if(typeof violateRule === 'undefined') resolve();
-            else{
-                var err = new Error();
-                err.code = ERRORCODE.COUNT_OVERFLOW;
-                err.message = violateRule;
+    	    equalAllowed = equalAllowed || false;
+
+    	    try{
+                var violateRule = _.find(limit_rules,function(limit_rule){
+                    //检查各条规则
+                    return !checkCountSync(counts,limit_rule,equalAllowed);
+                });
+                if(typeof violateRule === 'undefined') resolve();
+                else{
+                    reject(new ERR.CountOverFlowError(JSON.stringify(violateRule)));
+                }
+            }
+            catch(err){
                 reject(err);
             }
+
         });
 	};
 
@@ -333,9 +367,6 @@
             if (data_in.id_type == 1) {
                 data_in.id_number = data_in.id_number.toUpperCase();
             }
-
-            //添加examsite_subject_code
-            data_in.examsite_subject_code = data_in.exam_site_code + data_in.subject_code;
 
             //组装key-value对
             data_in = _.map(data_in,function(v,k){
@@ -488,9 +519,6 @@
                                 return;
                             }
                         }
-
-                        //添加examsite_subject_code
-                        newData.examsite_subject_code = '' + subject_code + subject_code;
                     }
 
 

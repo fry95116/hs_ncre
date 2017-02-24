@@ -9,13 +9,13 @@ var fs = require('fs'),
     xlsx = require('xlsx'),
     XML_reader = require('./XML_reader'),
     lowdb = require('lowdb'),
-    mem_store = lowdb('./config/blacklist.json');
+    mem_store = lowdb('./config/blacklist.json')
+    ERR = require('./ApplicationError');
 
 function checkData(data_in){
     data_in = _.pick(data_in, ['name', 'id_number']);
     if(data_in.id_number && data_in.name) return data_in;
 }
-
 function __add(data_in,tid,line){
     data_in = checkData(data_in);
     if (typeof data_in === 'undefined') {
@@ -38,6 +38,15 @@ function __add(data_in,tid,line){
 exports.get = function () {
     return new Promise(function (resolve, reject) {
         resolve(mem_store.get('blackList').value());
+    });
+};
+
+/** 检查是否在黑名单中 */
+exports.check = function(id_number){
+    return new Promise(function(resolve,reject){
+        var found = mem_store.get('blackList').find(function(v){ return id_number === v.id_number;}).value();
+        if(found) reject(new ERR.BlacklistError('id_number in blackList'));
+        else resolve();
     });
 };
 

@@ -21,7 +21,7 @@
 </div>
 
 <div id='mainPanel'>
-	<form name="info_form" action="submit" method="post">
+	<form name="info_form" action="fillout" method="post">
 
 		<div class="" id="input_exam_site_code">
 			<label for="exam_site_code">考点(必填):</label>
@@ -60,11 +60,12 @@
 
 		<div id="input_sex">
 			<label for="sex">性别(必选):</label>
-			<%tr.sex.each(function(val){%>
-				<%= val.name %><input type="radio" name="sex" value="<%= val.code %>">
-			    <span style="margin-right:3em;"></span>
-			<%});%>
-			<span style="margin-right:5em;"></span>
+			<select name="sex">
+				<option value="0">请选择</option>
+                <% tr.sex.each(function(val){ %>
+				<option value="<%= val.code %>"><%= val.name %></option>
+                <% });%>
+			</select>
 			<span class="validated_result"></span>
 		</div>
 
@@ -208,8 +209,11 @@
 		<div id="input_submit">
 			<input type="submit" name="submit_form" value="提交">
 		</div>
-		<script id="error_message" type="text/template">
-			<%= error_info %>
+		<div id="error_message" type="text/template">
+			<%- error_info %>
+		</div>
+		<script id="last_formData" type="text/template">
+            <%- formData %>
 		</script>
 	</form>
 </div>
