@@ -15,18 +15,6 @@
 			limit_rules = user_config.limit_rules,
             ERR = require('./ApplicationError');
 
-
-    /**
-     * 没有res参数的回调函数
-     * @callback callbackWithoutRes
-     * @param {Error} err 异常对象，为null或者undefined时说明没有异常*/
-
-    /**
-     * 有res参数的回调函数
-     * @callback callbackWithRes
-     * @param {Error} err 异常对象，为null或者undefined时说明没有异常
-	 * @param {Object} res 返回结果 */
-
     _.templateSettings.interpolate = /\{\{(.+?)\}\}/g;
 
 	var con;

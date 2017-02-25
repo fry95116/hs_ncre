@@ -22,9 +22,15 @@ $(document).ready(function(){
         var url = '/admin/enterManage/enterInfo/' + col.id_number + '/' + this.field;
         var source = '/codeRef/' + this.field;
 
-        return  '<div class="cell">' +
-                    '<a data-url="' + url + '" data-pk = "' + col.id_number + '" data-type="select" data-source="' + source + '" data-value="' + val + '"></a>' +
-                '</div>';
+        return '<div class="cell">' +
+            '<a ' +
+            'data-url="' + url + '" ' +
+            'data-pk = "' + col.id_number + '" ' +
+            'data-type="select" ' +
+            'data-source="' + source + '" ' +
+            'data-sourceCache="false" ' +
+            'data-value="' + val + '"></a>' +
+            '</div>';
     };
 
     //文本框

@@ -1,8 +1,183 @@
 <div id="<%= field %>" class="subFuncContent panel panel-default" style="display: <% if(show){ %>block<% }else{ %> none <% } %>" >
+    <script>
+        $(document).ready(function(){
+            var $root = $('#addEnter');
+
+            var $form = $('form.manuallyAdd',$root);
+            /** 装填select */
+            function render_select($el){
+                var source = $el.attr('data-source');
+                if(source == '') return;
+                $.ajax({
+                    url: source,
+                    timeout : 1000,
+                    dataType:'json',
+                    success:function(data){
+                        $el.siblings('span.select_err_msg').remove();
+                        $.each(data,function(index,item){
+                            //[{text,children:[{value,text}]}]
+                            if(item.children){
+                                var $group = $('<optgroup label="' + item.text + '"></optgroup>');
+                                $.each(item.children,function(index,sub_item){
+                                    $group.append('<option value="' + sub_item.value + '">' + sub_item.text + '</option>');
+                                })
+                                $el.append($group);
+                            }
+                            //[{value,text}]
+                            else{
+                                $el.append('<option value="' + item.value + '">' + item.text + '</option>');
+                            }
+                        })
+                    },
+                    error:function(){
+                        $el.parent().append('<span class="select_err_msg">无法获取信息</span>');
+                    }
+                });
+            }
+            /** 装填select */
+            $form.find('select').each(function(){
+                render_select($(this));
+            });
+
+            /** 提交表单 */
+            $('.forceAdd',$root).click(function(){
+                $form.find('input[name="force"]').val('true');
+            });
+            $('.add',$root).click(function(){
+                $form.find('input[name="force"]').val('false');
+            });
+            $form.ajaxForm({
+                success:function(data){
+                    showMsg($('.err_msg',$root),'success',data);
+                },
+                error:function(xhr){
+                    showMsg($('.err_msg',$root),'danger',xhr.responseText);
+                },
+                resetForm:true
+            });
+        });
+
+    </script>
     <div class="panel-heading">
         <h3 class="panel-title"><%= name %></h3>
     </div>
     <div class="panel-body">
-        <table></table>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-4">
+                    <h4>添加报名信息</h4>
+                    <hr>
+                    <div class="err_msg"></div>
+                    <form class="manuallyAdd form-horizontal center-block" action="/admin//enterManage/enterInfo" method="post">
+                        <div class="form-group">
+                            <label class="col-xs-3 control-label">考点</label>
+                            <div class="col-xs-9">
+                                <select name="exam_site_code" class="form-control" data-source="/codeRef/exam_site_code"></select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-xs-3 control-label">考试科目</label>
+                            <div class="col-xs-9">
+                                <select name="subject_code" class="form-control" data-source="/codeRef/subject_code"></select>
+                            </div>
+
+                        </div>
+                        <div class="form-group">
+                            <label class="col-xs-3 control-label">姓名</label>
+                            <div class="col-xs-9">
+                                <input name="name" type="text" class="form-control" required="required">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-xs-3 control-label">性别</label>
+                            <div class="col-xs-9">
+                                <select name="sex" type="text" class="form-control" data-source="/codeRef/sex"></select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-xs-3 control-label">证件类型</label>
+                            <div class="col-xs-9">
+                                <select name="id_type" type="text" class="form-control" data-source="/codeRef/id_type"></select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-xs-3 control-label">证件号码</label>
+                            <div class="col-xs-9">
+                                <input name="id_number" type="text" class="form-control" required="required">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-xs-3 control-label">出生日期</label>
+                            <div class="col-xs-9">
+                                <input name="birthday" type="text" class="form-control" required="required">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-xs-3 control-label">民族</label>
+                            <div class="col-xs-9">
+                                <select name="nationality" type="text" class="form-control" data-source="/codeRef/nationality"></select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-xs-3 control-label">职业</label>
+                            <div class="col-xs-9">
+                                <select name="career" type="text" class="form-control" data-source="/codeRef/career"></select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-xs-3 control-label">文化程度</label>
+                            <div class="col-xs-9">
+                                <select name="degree_of_education" type="text" class="form-control" data-source="/codeRef/degree_of_education"></select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-xs-3 control-label">培训类型</label>
+                            <div class="col-xs-9">
+                                <select name="training_type" type="text" class="form-control" data-source="/codeRef/training_type"></select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-xs-3 control-label">联系电话</label>
+                            <div class="col-xs-9">
+                                <input name="phone" type="text" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-xs-3 control-label">邮编</label>
+                            <div class="col-xs-9">
+                                <input name="post_code" type="text" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-xs-3 control-label">地址</label>
+                            <div class="col-xs-9">
+                                <input name="address" type="text" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-xs-3 control-label">电子邮箱</label>
+                            <div class="col-xs-9">
+                                <input name="email" type="text" class="form-control" required="required">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-xs-3 control-label">备注</label>
+                            <div class="col-xs-9">
+                                <input name="remark" type="text" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group" style="text-align: right;padding-right:15px;">
+                                <input name="force" type="hidden" value="false">
+                                <button class="btn btn-primary add" type="submit" title="会检查是否符合报名人数限制">添加</button>
+                                <button class="btn btn-primary forceAdd" type="submit" title="不检查报名人数限制,直接添加">强制添加</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-lg-8">
+                    <h4>导入报名信息</h4>
+                    <hr>
+                </div>
+            </div>
+        </div>
     </div>
 </div>

@@ -58,13 +58,21 @@ $(document).ready(function() {
         'configs/dbBackup':function(){showSubFuncView('configs','dbBackup')},
         'configs/authentication':function(){showSubFuncView('configs','authentication')},
 
-        'testRoomArrange':function(){showFuncView('testRoomArrange')}
+        'testArrange':function(){showFuncView('testArrange')},
+        'testArrange/examSite_subject':function(){showSubFuncView('testArrange','examSite_subject')},
+        'testArrange/limitRule':function(){showSubFuncView('testArrange','limitRule')},
+        'testArrange/testDate':function(){showSubFuncView('testArrange','testDate')},
+        'testArrange/testRoomArrange':function(){showSubFuncView('testArrange','testRoomArrange')},
+        'testArrange/scoreImport':function(){showSubFuncView('testArrange','scoreImport')}
     };
 
     var router = Router(routes);
     router.init();
 
-    //show message
+    /** 添加消息框
+     * @param {object} content 容器元素
+     * @param {string} status 情境样式
+     * @param {string} info 要显示的信息 */
     window.showMsg = function(content,status,info){
         var template = '<div class="alert alert-' + status + ' alert-dismissible" role="alert">'+
             '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' +

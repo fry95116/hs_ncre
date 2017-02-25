@@ -49,7 +49,7 @@
 							<a href="#configs">系统管理</a>
 						</li>
 						<li>
-							<a href="#testRoomArrange">考场安排</a>
+							<a href="#testArrange">考务安排</a>
 						</li>
 					</ul>
 
@@ -111,6 +111,36 @@
 							field:'authentication',
 							name:'管理员密码设置',
 							templateName:'authentication'
+						}
+					]
+				}
+        ) %>
+        <%- include('functionView',
+				{
+					show:false,
+					name:'考务安排',
+					field:'testArrange',
+					subFunc:[
+						{
+							field:'examSite_subejct',
+							name:'考点/科目管理',
+							templateName:'examSite_subejct'
+						},{
+							field:'limitRule',
+							name:'报名人数限制管理',
+							templateName:'limitRule'
+						},{
+							field:'testDate',
+							name:'考试日程管理',
+							templateName:'testDate'
+						},{
+							field:'testRoomArrange',
+							name:'考场安排',
+							templateName:'testRoomArrange'
+						},{
+							field:'scoreImport',
+							name:'分数导入',
+							templateName:'scoreImport'
 						}
 					]
 				}
