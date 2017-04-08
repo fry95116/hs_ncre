@@ -82,6 +82,16 @@ $(document).ready(function(){
             align: 'center',
             valign: 'middle'
         }, {
+	        field:'create_time',
+	        title:'创建时间',
+	        sortable:true,
+	        formatter:formatter_disable
+        }, {
+	        field:'latest_revise_time',
+	        title:'最后修改时间',
+	        sortable:true,
+	        formatter:formatter_disable
+        }, {
             field:'id_number',
             title:'证件号',
             sortable:true,
@@ -181,24 +191,48 @@ $(document).ready(function(){
 
     //删除按钮
     $toolbar.find('.delete').click(function(){
+
         var data_del = $enterTable.bootstrapTable('getSelections'); //要删除的数据
-        //并行删除
-        var succeed = 0;
-        _.each(data_del,function(row){
-            $.ajax({
-                url:'/admin/enterManage/enterInfo/' + row.id_number,
-                type:'delete',
-                success:function(){
-                    succeed++;
-                    if(succeed = data_del.length) {
-                        showMsg($('.message',$root),'success','删除成功');
+        if(data_del.length != 0){
+            if(!confirm('确定删除所选信息?')) return;
+            //并行删除
+            var succeed = 0;
+            _.each(data_del,function(row){
+                $.ajax({
+                    url:'/admin/enterManage/enterInfo/' + row.id_number,
+                    type:'delete',
+                    success:function(){
+                        succeed++;
+                        if(succeed = data_del.length) {
+                            showMsg($('.message',$root),'success','删除成功');
+                            $enterTable.bootstrapTable('refresh');
+                        }
+                    },
+                    error:function(){
+                        console.log('删除失败:' + row.id_number);
                     }
-                    $enterTable.bootstrapTable('refresh');
-                },
-                error:function(){
-                    console.log('删除失败:' + row.id_number);
-                }
+                });
             });
+        }
+
+    });
+    //删除全部按钮
+    $toolbar.find('.deleteAll').click(function(){
+        if(prompt('确定删除所有信息?输入"确认删除"以确认。','') !== '确认删除'){
+            return;
+        }
+        //删除
+        $.ajax({
+            url:'/admin/enterManage/enterInfo/',
+            type:'delete',
+            success:function(){
+                showMsg($('.message',$root),'success','删除成功');
+                $enterTable.bootstrapTable('refresh');
+            },
+            error:function(){
+                console.log('删除失败:' + row.id_number);
+                $enterTable.bootstrapTable('refresh');
+            }
         });
     });
 });

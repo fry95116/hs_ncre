@@ -4,6 +4,7 @@
 (function () {
     var router = require('express').Router(),
         uuid = require('node-uuid'),
+	    Captchapng = require('captchapng'),             //验证码模块
         bodyParser = require('body-parser'),
 
         redis = require('redis'),
@@ -39,6 +40,24 @@
         //session和cookies.token都不存在，返回登陆界面
         else res.render('admin/login', {error: null, passed: false});
     });
+
+    /* 获取验证码图片 */
+	router.get('/captcha', function (req, res) {
+
+		//六位随机数验证码
+
+		var num_captcha = parseInt(Math.random() * 900000 + 100000);
+		req.session.captcha = num_captcha;
+		var captcha = new Captchapng(158, 37, num_captcha);
+		captcha.color(255, 255, 255, 255);  // First color: background (red, green, blue, alpha)
+		captcha.color(80, 80, 80, 255); // Second color: paint (red, green, blue, alpha)
+
+		res.writeHead(200, {
+			'Content-Type': 'image/png'
+		});
+		res.end(new Buffer(captcha.getBase64(), 'base64'));
+
+	});
 
     /**
      * 登陆验证逻辑

@@ -8,6 +8,7 @@
 	module.exports = {
         MySQLPath:localConfig.MySQLPath,
         db_config:localConfig.db_config,
+		table_names:localConfig.table_names,
         redis_config:localConfig.redis_config,
 
         admin_passport:{

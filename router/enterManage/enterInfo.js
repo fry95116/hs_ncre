@@ -4,9 +4,9 @@
 (function () {
     var router = require('express').Router(),
         bodyParser = require('body-parser'),
-        dbo = require('../../dbo'),
+        dbo = require('../../model/EnterInfo'),
         _ = require('lodash'),
-        blackList = require('../../blackList');
+        blackList = require('../../model/blackList');
 
     /**
      * 浏览报名信息
@@ -129,7 +129,7 @@
             newData[req.params.field] = req.body.value;
             dbo.updateInfo(req.params.id_number, newData)
                 .then(function () {
-                    res.send('success');
+                    res.send('修改成功');
                 })
                 .catch(function (err) {
                     console.log(err);
@@ -142,17 +142,28 @@
     });
 
     /**
-     * 删除报名信息
+     * 删除所有报名信息
      * @method DELETE
      * */
-    router.delete('/:id_number', function (req, res, next) {
-        dbo.deleteInfo(req.params.id_number)
+    router.delete('/', function (req, res, next) {
+        dbo.deleteAllInfo()
             .then(function () {
-                res.send('succeed');
+                res.send('删除成功');
             })
             .catch(function (err) {
                 console.log(err);
-                res.status(400).send('修改失败：' + err.message);
+                res.status(400).send('删除失败：' + err.message);
+            })
+    });
+
+    router.delete('/:id_number', function (req, res, next) {
+        dbo.deleteInfo(req.params.id_number)
+            .then(function () {
+                res.send('删除成功');
+            })
+            .catch(function (err) {
+                console.log(err);
+                res.status(400).send('删除失败：' + err.message);
             })
     });
 

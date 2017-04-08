@@ -1,9 +1,6 @@
-var admin_passport = require('./user_config').admin_passport;
+var _ = require('lodash');
 
-console.log(admin_passport.username);
-console.log(admin_passport.password);
+var a = {a:1,b:2};
+var b = {a:1,b:2};
 
-admin_passport.password = 'test';
-
-console.log(admin_passport.username);
-console.log(admin_passport.password);
+console.log(_.isEqual(b,a));

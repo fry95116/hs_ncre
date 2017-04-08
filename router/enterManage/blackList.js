@@ -30,7 +30,7 @@
                 cb(null,suffix in acceptType);
             }
         }),
-        blackList = require('../../blackList');
+        blackList = require('../../model/blackList');
 
 
     /**

@@ -12,10 +12,10 @@
                 <i class="glyphicon glyphicon-trash"></i><span>删除</span>
             </button>
             <div class="btn-group">
-                <button type="button" class="btn btn-primary" title="添加黑名单项" data-toggle="modal" data-target=".addItem">
+                <button type="button" class="btn btn-primary" title="添加黑名单项" data-toggle="modal" data-target=".blackList-addItem">
                     <i class="glyphicon glyphicon glyphicon-plus"></i><span>添加</span>
                 </button>
-                <button type="button" class="btn btn-primary" title="导入黑名单项" data-toggle="modal" data-target=".import">
+                <button type="button" class="btn btn-primary" title="导入黑名单项" data-toggle="modal" data-target=".blackList-import">
                     <i class="glyphicon glyphicon glyphicon-import"></i><span>导入</span>
                 </button>
             </div>
@@ -32,7 +32,7 @@
         </div>
 
         <!-- 添加对话框 -->
-        <div class="modal fade addItem" tabindex="-1" role="dialog">
+        <div class="modal fade blackList-addItem" tabindex="-1" role="dialog">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <form class="form" action="/admin/enterManager/blackList" method="post">
@@ -63,7 +63,7 @@
         </div>
 
         <!-- 导入对话框 -->
-        <div class="modal fade import" tabindex="-1" role="dialog">
+        <div class="modal fade blackList-import" tabindex="-1" role="dialog">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <form action="/admin/enterManager/blackList" enctype="multipart/form-data" method="post">

@@ -1,61 +1,238 @@
-<div id="<%= field %>" class="subFuncContent panel panel-default" style="display: <% if(show){ %>block<% }else{ %> none <% } %>" >
+<div id="<%= field %>" class="subFuncContent panel panel-default"
+     style="display: <% if(show){ %>block<% }else{ %> none <% } %>">
     <script>
-        $(document).ready(function(){
-            var $root = $('#addEnter');
+		$(document).ready(function () {
+			var $root = $('#addEnter');
 
-            var $form = $('form.manuallyAdd',$root);
-            /** 装填select */
-            function render_select($el){
-                var source = $el.attr('data-source');
-                if(source == '') return;
-                $.ajax({
-                    url: source,
-                    timeout : 1000,
-                    dataType:'json',
-                    success:function(data){
-                        $el.siblings('span.select_err_msg').remove();
-                        $.each(data,function(index,item){
-                            //[{text,children:[{value,text}]}]
-                            if(item.children){
-                                var $group = $('<optgroup label="' + item.text + '"></optgroup>');
-                                $.each(item.children,function(index,sub_item){
-                                    $group.append('<option value="' + sub_item.value + '">' + sub_item.text + '</option>');
-                                })
-                                $el.append($group);
-                            }
-                            //[{value,text}]
-                            else{
-                                $el.append('<option value="' + item.value + '">' + item.text + '</option>');
-                            }
-                        })
-                    },
-                    error:function(){
-                        $el.parent().append('<span class="select_err_msg">无法获取信息</span>');
-                    }
-                });
-            }
-            /** 装填select */
-            $form.find('select').each(function(){
-                render_select($(this));
-            });
 
-            /** 提交表单 */
-            $('.forceAdd',$root).click(function(){
-                $form.find('input[name="force"]').val('true');
+			/** 导入缓冲区 */
+				//选择器
+			var formatter_select = function (val, col, index) {
+					var url = '/admin/enterManage/enterInfo/' + col.id_number + '/' + this.field;
+					var source = '/codeRef/' + this.field;
+
+					return '<div class="cell">' +
+						'<a ' +
+						'data-pk = "' + col.id_number + '" ' +
+						'data-type="select" ' +
+						'data-source="' + source + '" ' +
+						'data-value="' + val + '"></a>' +
+						'</div>';
+				};
+
+			//文本框
+			var formatter_text = function (val, col, index) {
+				var url = '/admin/enterManage/enterInfo/' + col.id_number + '/' + this.field;
+				var source = '/codeRef/' + this.field;
+				return '<div class="cell">' +
+					'<a data-pk = "' + col.id_number + '" data-type="text" data-source="' + source + '" data-value="' + val + '"></a>' +
+					'</div>';
+			};
+
+			var $importBuffer = $('.importBuffer', $root);
+			$importBuffer.bootstrapTable({
+				idField: 'tid',
+                /* 翻页 */
+				pagination: true,
+
+                /* x-editable */
+				onPostBody: function (data) {
+					$importBuffer.find('a').editable({
+						mode: 'inline',
+						ajaxOptions: {
+							type: 'PUT'
+						}
+					});
+				},
+				columns: [{
+					field: 'state',
+					checkbox: true,
+					align: 'center',
+					valign: 'middle'
+				}, {
+					field: 'id_number',
+					title: '证件号',
+					sortable: true,
+					formatter: formatter_text
+				}, {
+					field: 'name',
+					title: '姓名',
+					sortable: true,
+					formatter: formatter_text
+				}, {
+					field: 'exam_site_code',
+					title: '考点名称(代码)',
+					sortable: true,
+					formatter: formatter_select
+				}, {
+					field: 'subject_code',
+					title: '学科名称(代码)',
+					sortable: true,
+					formatter: formatter_select
+				}, {
+					field: 'sex',
+					title: '性别(代码)',
+					sortable: true,
+					formatter: formatter_select
+				}, {
+					field: 'birthday',
+					title: '出生日期',
+					sortable: true,
+					formatter: formatter_text
+				}, {
+					field: 'id_type',
+					title: '证件类型(代码)',
+					sortable: true,
+					formatter: formatter_select
+				}, {
+					field: 'nationality',
+					title: '民族(代码)',
+					sortable: true,
+					formatter: formatter_select
+				}, {
+					field: 'career',
+					title: '职业(代码)',
+					sortable: true,
+					formatter: formatter_select
+				}, {
+					field: 'degree_of_education',
+					title: '文化程度(代码)',
+					sortable: true,
+					formatter: formatter_select
+				}, {
+					field: 'training_type',
+					title: '培训类型(代码)',
+					sortable: true,
+					formatter: formatter_select
+				}, {
+					field: 'post_code',
+					title: '邮编',
+					sortable: true,
+					formatter: formatter_text
+				}, {
+					field: 'address',
+					title: '地址',
+					sortable: true,
+					formatter: formatter_text
+				}, {
+					field: 'email',
+					title: '电子邮箱',
+					sortable: true,
+					formatter: formatter_text
+				}, {
+					field: 'phone',
+					title: '联系电话',
+					sortable: true,
+					formatter: formatter_text
+				}, {
+					field: 'remark',
+					title: '备注',
+					sortable: true,
+					formatter: formatter_text
+				}]
+			});
+
+			$('.delete', $root).click(function () {
+				$importBuffer.bootstrapTable('remove', {
+					field: 'tid',
+					values: _.pluck($importBuffer.bootstrapTable('getAllSelections'), 'tid')
+				});
+			});
+
+			$('.deleteAll', $root).click(function () {
+				$importBuffer.bootstrapTable('removeAll');
+			});
+
+			$('.toggle', $root).click(function () {
+				$importBuffer.bootstrapTable('toggleView');
+			});
+
+			/** 手动添加 */
+			var $form = $('form.manuallyAdd', $root);
+
+			/** 装填select */
+			function render_select($el) {
+				var source = $el.attr('data-source');
+				if (source == '') return;
+				$.ajax({
+					url: source,
+					timeout: 1000,
+					dataType: 'json',
+					success: function (data) {
+						$el.siblings('span.select_err_msg').remove();
+						$.each(data, function (index, item) {
+							//[{text,children:[{value,text}]}]
+							if (item.children) {
+								var $group = $('<optgroup label="' + item.text + '"></optgroup>');
+								$.each(item.children, function (index, sub_item) {
+									$group.append('<option value="' + sub_item.value + '">' + sub_item.text + '</option>');
+								})
+								$el.append($group);
+							}
+							//[{value,text}]
+							else {
+								$el.append('<option value="' + item.value + '">' + item.text + '</option>');
+							}
+						})
+					},
+					error: function () {
+						$el.parent().append('<span class="select_err_msg">无法获取信息</span>');
+					}
+				});
+			}
+
+			/** 装填select */
+			$form.find('select').each(function () {
+				render_select($(this));
+			});
+			/** 添加信息 */
+			$form.submit(function () {
+				var data = _.reduce($form.serializeArray(), function (memo, iter) {
+					memo[iter.name] = iter.value;
+					return memo;
+				}, {});
+
+				//添加逻辑
+				data.tid = _.now();
+				$importBuffer.bootstrapTable('append', data);
+				$importBuffer.bootstrapTable('scrollTo', 'bottom');
+
+				return false;
+			});
+
+			/** 导入逻辑 */
+			$('#file_addEnter').change(function(e){
+				var files = e.target.files;
+				if(files.length === 0)return;
+				//读取第一个文件
+				var file = files[0];
+					var reader = new FileReader();
+					reader.onload = function(e) {
+						var data = e.target.result;
+						var workbook = XLSX.read(data, {type: 'binary'});
+                        /* DO SOMETHING WITH workbook HERE */
+						var worksheet = workbook.Sheets[workbook.SheetNames[0]];
+						console.log(XLSX.utils.sheet_to_json(worksheet));
+					};
+					reader.readAsBinaryString(file);
             });
-            $('.add',$root).click(function(){
-                $form.find('input[name="force"]').val('false');
-            });
-            $form.ajaxForm({
-                success:function(data){
-                    showMsg($('.err_msg',$root),'success',data);
-                },
-                error:function(xhr){
-                    showMsg($('.err_msg',$root),'danger',xhr.responseText);
-                },
-                resetForm:true
-            });
-        });
+			/** 提交表单 */
+            /*$('.forceAdd',$root).click(function(){
+             $form.find('input[name="force"]').val('true');
+             });
+             $('.add',$root).click(function(){
+             $form.find('input[name="force"]').val('false');
+             });
+             $form.ajaxForm({
+             success:function(data){
+             showMsg($('.err_msg',$root),'success',data);
+             },
+             error:function(xhr){
+             showMsg($('.err_msg',$root),'danger',xhr.responseText);
+             },
+             resetForm:true
+             });*/
+		});
 
     </script>
     <div class="panel-heading">
@@ -64,21 +241,27 @@
     <div class="panel-body">
         <div class="container-fluid">
             <div class="row">
-                <div class="col-lg-4">
-                    <h4>添加报名信息</h4>
-                    <hr>
-                    <div class="err_msg"></div>
-                    <form class="manuallyAdd form-horizontal center-block" action="/admin//enterManage/enterInfo" method="post">
+                <div class="col-xs-12 err_msg"></div>
+            </div>
+            <div class="row">
+                <div class="col-lg-3">
+                    <div class="page-header">
+                        <h4>添加报名信息</h4>
+                    </div>
+
+                    <form class="manuallyAdd form-horizontal center-block">
                         <div class="form-group">
                             <label class="col-xs-3 control-label">考点</label>
                             <div class="col-xs-9">
-                                <select name="exam_site_code" class="form-control" data-source="/codeRef/exam_site_code"></select>
+                                <select name="exam_site_code" class="form-control"
+                                        data-source="/codeRef/exam_site_code"></select>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-xs-3 control-label">考试科目</label>
                             <div class="col-xs-9">
-                                <select name="subject_code" class="form-control" data-source="/codeRef/subject_code"></select>
+                                <select name="subject_code" class="form-control"
+                                        data-source="/codeRef/subject_code"></select>
                             </div>
 
                         </div>
@@ -97,7 +280,8 @@
                         <div class="form-group">
                             <label class="col-xs-3 control-label">证件类型</label>
                             <div class="col-xs-9">
-                                <select name="id_type" type="text" class="form-control" data-source="/codeRef/id_type"></select>
+                                <select name="id_type" type="text" class="form-control"
+                                        data-source="/codeRef/id_type"></select>
                             </div>
                         </div>
                         <div class="form-group">
@@ -115,25 +299,29 @@
                         <div class="form-group">
                             <label class="col-xs-3 control-label">民族</label>
                             <div class="col-xs-9">
-                                <select name="nationality" type="text" class="form-control" data-source="/codeRef/nationality"></select>
+                                <select name="nationality" type="text" class="form-control"
+                                        data-source="/codeRef/nationality"></select>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-xs-3 control-label">职业</label>
                             <div class="col-xs-9">
-                                <select name="career" type="text" class="form-control" data-source="/codeRef/career"></select>
+                                <select name="career" type="text" class="form-control"
+                                        data-source="/codeRef/career"></select>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-xs-3 control-label">文化程度</label>
                             <div class="col-xs-9">
-                                <select name="degree_of_education" type="text" class="form-control" data-source="/codeRef/degree_of_education"></select>
+                                <select name="degree_of_education" type="text" class="form-control"
+                                        data-source="/codeRef/degree_of_education"></select>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-xs-3 control-label">培训类型</label>
                             <div class="col-xs-9">
-                                <select name="training_type" type="text" class="form-control" data-source="/codeRef/training_type"></select>
+                                <select name="training_type" type="text" class="form-control"
+                                        data-source="/codeRef/training_type"></select>
                             </div>
                         </div>
                         <div class="form-group">
@@ -166,16 +354,186 @@
                                 <input name="remark" type="text" class="form-control">
                             </div>
                         </div>
-                        <div class="form-group" style="text-align: right;padding-right:15px;">
-                                <input name="force" type="hidden" value="false">
-                                <button class="btn btn-primary add" type="submit" title="会检查是否符合报名人数限制">添加</button>
-                                <button class="btn btn-primary forceAdd" type="submit" title="不检查报名人数限制,直接添加">强制添加</button>
+                        <div class="form-group">
+                            <div class="col-xs-offset-8 col-xs-4">
+                                <button type="submit" class="addIntoBuffer btn btn-primary">加入缓冲区</button>
+                            </div>
                         </div>
                     </form>
                 </div>
-                <div class="col-lg-8">
-                    <h4>导入报名信息</h4>
-                    <hr>
+                <div class="col-lg-9">
+                    <div class="page-header">
+                        <h4>导入缓冲区</h4>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 toolbar form-inline" style="margin-bottom:10px;">
+                            <div class="pull-left">
+                                <div class="form-inline" role="form">
+                                    <div class="form-group">
+                                        <div class="btn-group">
+                                            <button class="btn btn-danger delete" data-toggle="tooltip"
+                                                    data-placement="bottom"
+                                                    title="删除选中的行">
+                                                <i class="glyphicon glyphicon-trash"></i> 删除
+                                            </button>
+                                            <button class="btn btn-danger deleteAll" data-toggle="tooltip"
+                                                    data-placement="bottom"
+                                                    title="清空缓冲区">
+                                                <i class="glyphicon glyphicon-trash"></i> 清空
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="btn-group">
+                                            <button type="button" class="btn btn-primary toggle" title="切换为表格/卡片视图">
+                                                <i class="glyphicon glyphicon-list-alt icon-list-alt"></i> 切换视图
+                                            </button>
+                                            <button class="btn btn-primary forceAdd" title="清空缓冲区" data-toggle="modal"
+                                                    data-target=".addEnter-import">
+                                                <i class="glyphicon glyphicon-import"></i> 导入
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="pull-right">
+                                <div class="form-inline" role="form">
+                                    <div class="btn-group">
+                                        <button class="btn btn-primary add" data-toggle="tooltip"
+                                                data-placement="bottom"
+                                                title="删除选中的行">
+                                            <i class="glyphicon glyphicon-cloud-upload"></i> 添加
+                                        </button>
+                                        <button class="btn btn-primary forceAdd" data-toggle="tooltip"
+                                                data-placement="bottom"
+                                                title="清空缓冲区">
+                                            <i class="glyphicon glyphicon-cloud-upload"></i> 强制添加
+                                        </button>
+                                    </div>
+                                </div>
+                            </div><!-- /pull right -->
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <table class="importBuffer"></table>
+                        </div>
+                    </div>
+                    <!-- 导入对话框 -->
+                    <div class="modal fade addEnter-import" tabindex="-1" role="dialog">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <form action="/admin/enterManager/blackList" enctype="multipart/form-data"
+                                      method="post">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span></button>
+                                        <h4 class="modal-title" id="myModalLabel">数据导入</h4>
+                                    </div>
+                                    <div class="modal-body form">
+                                        <div class="form-group">
+                                            <h5>文件：</h5>
+                                            <hr>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" placeholder="File Name"
+                                                       disabled>
+                                                <span class="input-group-btn">
+                                                    <label for="file_addEnter" class="btn btn-primary">选择文件</label>
+                                                    <input id="file_addEnter" name="file" type="file" style="position:absolute;clip:rect(0 0 0 0);">
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <h5>导入说明</h5>
+                                            <hr>
+                                            <h6><b>支持的文件类型:</b></h6>
+                                            <p>
+                                                xls,xlsx,dbf,csv,json
+                                            </p>
+                                            <h6><b>各个数据项对应的表头名称:</b></h6>
+                                            <table class="table table-bordered table-striped table-condensed"
+                                                   style="max-width: 320px">
+                                                <tr>
+                                                    <th>数据项名称</th>
+                                                    <th>表头名称</th>
+                                                </tr>
+                                                <tr>
+                                                    <td>exam_site_code</td>
+                                                    <td>考点(代码)</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>subject_code</td>
+                                                    <td>考试科目(代码)</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>name</td>
+                                                    <td>姓名</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>sex</td>
+                                                    <td>性别(代码)</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>birthday</td>
+                                                    <td>出生日期</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>id_type</td>
+                                                    <td>证件类型(代码)</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>id_number</td>
+                                                    <td>证件号码</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>nationality</td>
+                                                    <td>民族(代码)</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>career</td>
+                                                    <td>职业(代码)</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>degree_of_education</td>
+                                                    <td>文化程度(代码)</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>training_type</td>
+                                                    <td>培训类型(代码)</td>
+                                                </tr>
+
+                                                <tr>
+                                                    <td>post_code</td>
+                                                    <td>邮政编码</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>address</td>
+                                                    <td>地址</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>email</td>
+                                                    <td>电子邮箱</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>phone</td>
+                                                    <td>联系电话</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>remark</td>
+                                                    <td>备注</td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                                        <button type="submit" class="btn btn-primary">上传</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

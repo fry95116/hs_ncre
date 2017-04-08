@@ -11,7 +11,7 @@
         bodyparser = require('body-parser'),            //解析post请求用
         Captchapng = require('captchapng'),             //验证码模块
 
-        dbo = require('../dbo'),                      //提供各类数据操作
+        dbo = require('../model/EnterInfo'),                      //提供各类数据操作
         translate = require('../tr'),                 //各类映射
         codeRef = translate.codeRef,                    //职业,民族,学历等项目的 名称-代码 映射
         tr = translate.tr,                              //翻译函数， 用于将数据表字段名翻译为实际名称(原tr.js)
@@ -20,7 +20,7 @@
         sites_info = user_config.exam_sites,            //考点，科目信息
         limit_rules = user_config.limit_rules,          //人数限制规则
 
-        blackList = require('../blackList'),
+        blackList = require('../model/blackList'),
         ERR = require('../ApplicationError');
 
 

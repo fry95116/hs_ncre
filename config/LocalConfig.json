@@ -6,7 +6,13 @@
     "user": "root",
     "password": "abc7758258",
     "database": "test",
-    "table": "data"
+    "table": "data",
+    "dateStrings":true
+  },
+
+  "table_names":{
+    "enterInfo":"data",
+    "blackList":"blackList"
   },
 
   "redis_config":{
@@ -14,5 +20,8 @@
     "port": 6379,
     "password":"7758258",
     "ttl": 600
-  }
+  },
+
+  "Port_frontStage":8080,
+  "Port_backStage":8081
 }

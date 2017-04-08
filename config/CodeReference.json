@@ -1,7 +1,7 @@
 {
   "sex": [
-    {"code": "male", "name": "男"},
-    {"code": "famale", "name": "女"}
+    {"code": "1", "name": "男"},
+    {"code": "2", "name": "女"}
   ],
 
   "degree_of_education": [
