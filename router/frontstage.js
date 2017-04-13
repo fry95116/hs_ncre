@@ -15,7 +15,6 @@
         translate = require('../tr'),                 //各类映射
         codeRef = translate.codeRef,                    //职业,民族,学历等项目的 名称-代码 映射
         tr = translate.tr,                              //翻译函数， 用于将数据表字段名翻译为实际名称(原tr.js)
-
         user_config = require('../user_config'),      //用户设置
         sites_info = user_config.exam_sites,            //考点，科目信息
         limit_rules = user_config.limit_rules,          //人数限制规则
@@ -196,7 +195,7 @@
                 dbo.rollback()
                     .then(function(){
                         //日志
-                        console.log(err.toString());
+                        req.log.info(err.toString());
                         //无效的提交数据
                         if(err instanceof ERR.InvalidDataError){
                             res.render('frontStage/fillout', {
@@ -225,7 +224,7 @@
                     })
                     .catch(function(err){
                         //日志
-                        console.error(err.toString());
+                        req.log.error(err.toString());
                         //未知错误
                         res.render('frontStage/op_res',{type:'unknown'});
                     });

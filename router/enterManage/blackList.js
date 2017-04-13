@@ -38,8 +38,9 @@
      * @method GET*/
     router.get('/', function (req, res) {
         blackList.get()
-            .then(function (result) {
-                res.send(result);
+            .then(function (result) {res.send(result);})
+            .catch(function (err){
+                req.log.error({err:err},"黑名单获取失败");
             });
     });
 
@@ -57,10 +58,12 @@
             if(read){
                 read(req.file.path)
                     .then(function(){
-                        res.send('succeed');
+                        req.log.info('黑名单_导入_成功');
+                        res.send('导入成功');
                     })
                     .catch(function(err){
-                        res.status(400).send(err.message);
+                        req.log.error({err:err},'黑名单_导入_失败');
+                        res.status(400).send('导入失败:' + err.message);
                     });
             }
             else{
@@ -82,10 +85,12 @@
         //直接添加
         else blackList.add(req.body)
             .then(function () {
-                res.send('succeed');
+                req.log.info('黑名单_添加_成功',{id_number:req.body.id_number});
+                res.send('添加成功');
             })
             .catch(function (err) {
-                res.status(400).send(err.message);
+                req.log.error({err:err},'黑名单_添加_失败');
+                res.status(400).send('添加失败:' +err.message);
             });
     });
 
@@ -96,9 +101,11 @@
     router.delete('/:id_number', function (req, res) {
         blackList.delete(req.params.id_number)
             .then(function () {
-                res.send('succeed');
+                req.log.info('黑名单_删除_成功',{id:req.params.id_number});
+                res.send('删除成功');
             }).catch(function (err) {
-                res.status(400).send('Error:' + err.message);
+            req.log.error({err:err},'黑名单_删除_失败');
+                res.status(400).send('删除失败:' + err.message);
             });
     });
 

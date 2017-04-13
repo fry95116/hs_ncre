@@ -10,11 +10,12 @@
         redis = require('redis'),
         redis_config = require('./../config/LocalConfig.json').redis_config,
         redis_client = redis.createClient(redis_config),
+        log = require('../Logger'),
 
         admin_passport = require('./../user_config').admin_passport;
 
     redis_client.on("error", function (err) {
-        console.log("redis error: " + err);
+        log.info("redis error: " + err);
     });
 
 
@@ -27,7 +28,7 @@
         //session不存在，检查cookie.token
         else if (req.cookies && req.cookies.token) {
             redis_client.exists('token:' + req.cookies.token, function (err, reply) {
-                if (err) console.log(err);
+                if (err) req.log.info(err);
                 //如果token有效，设置session，返回主界面
                 else if (reply === 1) {
                     res.render('admin/admin', {username: admin_passport.username});
@@ -112,11 +113,11 @@
         else if (req.cookies && req.cookies.token) {
             var key = 'token:' + req.cookies.token;
             redis_client.exists(key, function (err, reply) {
-                if (err) console.log(err);
+                if (err) req.log.info(err);
                 //如果token有效,重设过期时间
                 else if (reply === 1) {
                     redis_client.expire(key,10800,function(err){
-                        if(err) console.log(err);
+                        if(err) req.log.info(err);
                         else next();
                     });
                 }

@@ -24,7 +24,7 @@
                 res.send(result);
             })
             .catch(function (err) {
-                console.log(err);
+                req.log.error({err:err},'报名信息_获取_失败');
                 res.status(400).send(err);
             });
     });
@@ -38,23 +38,27 @@
             //前期检查
             dbo.check(req.body)
                 .then(_.partial(dbo.repeatCheck, req.body.id_number))
-                .then(_.partial(blackList.check, req.body.id_number))
                 //添加过程
                 .then(_.partial(dbo.insertInfo, req.body))
                 .then(function () {
                     //日志
+                    req.log.info('报名信息_强制添加_成功',{id_number:req.body.id_number});
                     res.send('添加成功。');
                 })
                 .catch(function (err) {
                     //日志
-                    console.log(err.toString());
+                    req.log.error({err:err},'报名信息_强制添加_失败',{id_number:req.body.id_number});
                     //无效的提交数据
                     if (err instanceof ERR.InvalidDataError) {
-                        res.status(400).send('无效的提交数据:' + err.message);
+
+                        res.status(400).send('无效的提交数据:' +
+                            _.map(_.toPairs(JSON.parse(err.message)),function(pair){
+                                return pair.join('=');
+                            }).join('&'));
                     }
                     //重复提交
                     else if (err instanceof ERR.RepeatInfoError) {
-                        res.status(400).send('证件号重复。');
+                        res.status(400).send(err.message);
                     }
                     //未知错误
                     else {
@@ -78,28 +82,32 @@
                 .then(dbo.commit)
                 .then(function () {
                     //日志
+                    req.log.info('报名信息_添加_成功',{id_number:req.body.id_number});
                     res.send('添加成功。');
                 })
                 .catch(function (err) {
                     dbo.rollback()
                         .then(function () {
                             //日志
-                            console.log(err.toString());
+                            req.log.error({err:err},'报名信息_添加_失败',{id_number:req.body.id_number});
                             //无效的提交数据
                             if (err instanceof ERR.InvalidDataError) {
-                                res.status(400).send('无效的提交数据:' + err.message);
+                                res.status(400).send('无效的提交数据:' +
+                                    _.map(_.toPairs(JSON.parse(err.message)),function(pair){
+                                        return pair.join('=');
+                                    }).join('&'));
                             }
                             //重复提交
                             else if (err instanceof ERR.RepeatInfoError) {
-                                res.status(400).send('证件号重复。');
+                                res.status(400).send(err.message);
                             }
                             //人数超出
                             else if (err instanceof ERR.CountOverFlowError) {
-                                res.status(400).send('人数超出:' + err.message);
+                                res.status(400).send('人数超出:' + JSON.parse(err.message).desc);
                             }
                             //在黑名单中
                             else if (err instanceof ERR.BlacklistError) {
-                                res.status(400).send('此人在黑名单中。');
+                                res.status(400).send(err.message);
                             }
                             //未知错误
                             else {
@@ -108,14 +116,13 @@
                         })
                         .catch(function (err) {
                             //日志
-                            console.error(err.toString());
+                            req.log.error(err.toString());
                             //未知错误
                             res.status(400).send('未知错误:' + err.message);
                         });
                 });
         }
     });
-
 
     /**
      * 更新报名信息
@@ -129,10 +136,11 @@
             newData[req.params.field] = req.body.value;
             dbo.updateInfo(req.params.id_number, newData)
                 .then(function () {
+                    req.log.info('报名信息_修改_成功',{id_number:req.params.id_number});
                     res.send('修改成功');
                 })
                 .catch(function (err) {
-                    console.log(err);
+                    req.log.error({err:err,id_number:req.params.id_number},'报名信息_修改_失败');
                     res.status(400).send('修改失败：' + err.message);
                 });
         }
@@ -148,10 +156,11 @@
     router.delete('/', function (req, res, next) {
         dbo.deleteAllInfo()
             .then(function () {
+                req.log.info('报名信息_清空_成功');
                 res.send('删除成功');
             })
             .catch(function (err) {
-                console.log(err);
+                req.log.error({err:err},'报名信息_清空_失败');
                 res.status(400).send('删除失败：' + err.message);
             })
     });
@@ -159,10 +168,11 @@
     router.delete('/:id_number', function (req, res, next) {
         dbo.deleteInfo(req.params.id_number)
             .then(function () {
+                req.log.info('报名信息_删除_成功',{id_number:req.params.id_number});
                 res.send('删除成功');
             })
             .catch(function (err) {
-                console.log(err);
+                req.log.error({err:err,id_number:req.params.id_number},'报名信息_删除_失败');
                 res.status(400).send('删除失败：' + err.message);
             })
     });
