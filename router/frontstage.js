@@ -195,7 +195,7 @@
                 dbo.rollback()
                     .then(function(){
                         //日志
-                        req.log.info(err.toString());
+                        req.log.error(err);
                         //无效的提交数据
                         if(err instanceof ERR.InvalidDataError){
                             res.render('frontStage/fillout', {
@@ -224,7 +224,7 @@
                     })
                     .catch(function(err){
                         //日志
-                        req.log.error(err.toString());
+                        req.log.error(err);
                         //未知错误
                         res.render('frontStage/op_res',{type:'unknown'});
                     });

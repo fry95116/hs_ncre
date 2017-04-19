@@ -6,8 +6,7 @@
     "user": "root",
     "password": "abc7758258",
     "database": "test",
-    "table": "data",
-    "dateStrings":true
+    "table": "data"
   },
 
   "table_names":{

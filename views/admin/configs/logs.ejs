@@ -1,7 +1,132 @@
 <div id="<%= field %>" class="subFuncContent panel panel-default" style="display: <% if(show){ %>block<% }else{ %> none <% } %>" >
+    <style>
+
+    </style>
+    <script>
+        $(document).ready(function(){
+            var $root = $('#logs');
+            var $logs = $('.logs', $root);
+
+            var formatter_date = function(val,col,index){
+                return new Date(val).toLocaleString();
+            }
+
+            //参数列表
+            var $form = $('.form-inline',$root);
+
+            var $from = $form.find('input[name="from"]',$root);
+            var $until = $form.find('input[name="until"]',$root);
+            var $limit = $form.find('input[name="limit"]',$root);
+
+            $from.datetimepicker({
+                format:'YYYY-MM-DDTHH:mm:ssZZ',
+                showTodayButton:true,
+                defaultDate: new Date(_.now() - 24 * 3600 * 1000)
+            }).on('dp.change',function(e){
+                if(e.date.toDate() > $until.data('DateTimePicker').date().toDate()){
+                    $until.data('DateTimePicker').date(e.date.toDate());
+                }
+                else if(e.date.toDate() > new Date()){
+                    $from.data('DateTimePicker').date(new Date());
+                }
+            });
+
+            $until.datetimepicker({
+                format:'YYYY-MM-DDTHH:mm:ssZZ',
+                showTodayButton:true,
+                defaultDate: new Date()
+            }).on('dp.change',function(e){
+                if($from.data('DateTimePicker').date().toDate() > e.date.toDate()){
+                    $from.data('DateTimePicker').date(e.date.toDate());
+                }
+                else if(e.date.toDate() > new Date()){
+                    $until.data('DateTimePicker').date(new Date());
+                }
+            });
+
+
+            $logs.bootstrapTable({
+                url:'/admin/configs/logs',     //数据URL
+                classes:'table table-no-bordered table-condensed',
+                /* 组装查询参数 */
+                queryParams:function(params){
+
+                    return {
+                        from:$from.val(),
+                        until:$until.val(),
+                        limit:$limit.val()
+                    }
+                },
+                rowStyle:function(row,index){
+                    switch(row.level){
+                        case 'warn': return {classes:'warning text-nowrap'};
+                        case 'error': return {classes:'danger text-nowrap'};
+                    }
+                    return {classes:'text-nowrap'};
+                },
+                columns: [{
+                    field: 'level',
+                    title: '级别'
+                }, {
+                    field: 'timestamp',
+                    title: '时间',
+                    formatter:formatter_date
+                }, {
+                    field: 'remoteAddress',
+                    title: '请求IP'
+                }, {
+                    field: 'method',
+                    title: '请求类型'
+                }, {
+                    field: 'url',
+                    title: 'URL'
+                },  {
+                    field: 'message',
+                    title: '信息'
+                }]
+            });
+
+            $form.find('button').click(function(){
+                $logs.bootstrapTable('refresh');
+            });
+
+
+
+        });
+    </script>
     <div class="panel-heading">
         <h3 class="panel-title"><%= name %></h3>
     </div>
     <div class="panel-body">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-xs-12 toolbar form-inline" style="margin-bottom:10px;">
+                    <div class="pull-left">
+                        <form class="form-inline" role="form" action="/admin/configs/logs" method="get">
+                            <div class="form-group">
+                                <label for="from">开始时间:</label>
+                                <input type='text' name="from" class="form-control" />
+                            </div>
+                            <div class="form-group">
+                                <label for="from">结束时间:</label>
+                                <input type='text' name="until" class="form-control" />
+                            </div>
+                            <div class="form-group">
+                                <label for="from">日志数</label>
+                                <input name="limit" value="100" class="form-control" type="number" min="0">
+                            </div>
+                            <button type="button" class="btn btn-primary fetch">
+                                获取/刷新
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <table class="logs"></table>
+                </div>
+            </div>
+        </div>
     </div>
 </div>

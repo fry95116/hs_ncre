@@ -16,7 +16,7 @@
 			limit_rules = user_config.limit_rules,
 
             ERR = require('./../ApplicationError'),
-            log = require('../Logger');
+            log = require('../Logger').getLogger();
 
     _.templateSettings.interpolate = /\{\{(.+?)\}\}/g;
 
@@ -30,12 +30,10 @@
         con.connect(function(err) {
             if(err) {
                 if(err.code = 'ECONNREFUSED'){
-                	log.error('ERROR:无法连接到数据库，请检查数据库配置');
-	                log.error(err);
+                	log.error('ERROR:无法连接到数据库，请检查数据库配置',{err:err});
                 }
                 else{
-	                log.info('ERROR:未知错误');
-	                log.error(err);
+	                log.error('ERROR:未知错误',{err:err});
                 }
             }
             else{
@@ -58,12 +56,14 @@
     function setTransactionIsolationLevel(){
         log.info('设置事务隔离级别...');
         con.query('SET session TRANSACTION ISOLATION LEVEL Read committed;',function(err,res){
-            if(err) log.info('ERROR:' + err);
+            if(err) log.error('ERROR:未知错误',{err:err});
             else{
                 log.info('设置事务隔离级别成功。');
                 con.query('select @@TX_ISOLATION;',function(err,res){
-                    if(err) log.info('ERROR:' + err);
-                    log.info('当前事务隔离级别：' + res[0]['@@TX_ISOLATION']);
+                    if(err)
+                        log.error('ERROR:未知错误',{err:err});
+                    else
+                        log.info('当前事务隔离级别：' + res[0]['@@TX_ISOLATION']);
                 });
             }
         });

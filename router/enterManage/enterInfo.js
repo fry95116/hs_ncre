@@ -24,7 +24,7 @@
                 res.send(result);
             })
             .catch(function (err) {
-                req.log.error({err:err},'报名信息_获取_失败');
+                req.log.error('报名信息_获取_失败',{err:err});
                 res.status(400).send(err);
             });
     });
@@ -47,7 +47,7 @@
                 })
                 .catch(function (err) {
                     //日志
-                    req.log.error({err:err},'报名信息_强制添加_失败',{id_number:req.body.id_number});
+                    req.log.error('报名信息_强制添加_失败',{id_number:req.body.id_number,err:err});
                     //无效的提交数据
                     if (err instanceof ERR.InvalidDataError) {
 
@@ -89,7 +89,7 @@
                     dbo.rollback()
                         .then(function () {
                             //日志
-                            req.log.error({err:err},'报名信息_添加_失败',{id_number:req.body.id_number});
+                            req.log.error('报名信息_添加_失败',{id_number:req.body.id_number,err:err});
                             //无效的提交数据
                             if (err instanceof ERR.InvalidDataError) {
                                 res.status(400).send('无效的提交数据:' +
@@ -116,7 +116,7 @@
                         })
                         .catch(function (err) {
                             //日志
-                            req.log.error(err.toString());
+                            req.log.error(err);
                             //未知错误
                             res.status(400).send('未知错误:' + err.message);
                         });
@@ -140,7 +140,7 @@
                     res.send('修改成功');
                 })
                 .catch(function (err) {
-                    req.log.error({err:err,id_number:req.params.id_number},'报名信息_修改_失败');
+                    req.log.error('报名信息_修改_失败',{err:err,id_number:req.params.id_number});
                     res.status(400).send('修改失败：' + err.message);
                 });
         }
@@ -160,7 +160,7 @@
                 res.send('删除成功');
             })
             .catch(function (err) {
-                req.log.error({err:err},'报名信息_清空_失败');
+                req.log.error('报名信息_清空_失败',{err:err});
                 res.status(400).send('删除失败：' + err.message);
             })
     });
@@ -172,7 +172,7 @@
                 res.send('删除成功');
             })
             .catch(function (err) {
-                req.log.error({err:err,id_number:req.params.id_number},'报名信息_删除_失败');
+                req.log.error('报名信息_删除_失败',{err:err,id_number:req.params.id_number});
                 res.status(400).send('删除失败：' + err.message);
             })
     });

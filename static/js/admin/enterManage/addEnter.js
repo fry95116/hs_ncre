@@ -238,6 +238,11 @@ $(document).ready(function () {
             Upload(false,$importBuffer,$('.err_msg',$root));
     });
 
+    $('.forceAdd',$root).click(function(){
+        if(confirm('确定添加？'))
+            Upload(true,$importBuffer,$('.err_msg',$root));
+    });
+
     /** 中断处理对话框 */
     var showInterruptHandler = (function(){
         var self = this;

@@ -40,7 +40,7 @@
         blackList.get()
             .then(function (result) {res.send(result);})
             .catch(function (err){
-                req.log.error({err:err},"黑名单获取失败");
+                req.log.error("黑名单获取失败",{err:err});
             });
     });
 
@@ -62,7 +62,7 @@
                         res.send('导入成功');
                     })
                     .catch(function(err){
-                        req.log.error({err:err},'黑名单_导入_失败');
+                        req.log.error('黑名单_导入_失败',{err:err});
                         res.status(400).send('导入失败:' + err.message);
                     });
             }
@@ -89,7 +89,7 @@
                 res.send('添加成功');
             })
             .catch(function (err) {
-                req.log.error({err:err},'黑名单_添加_失败');
+                req.log.error('黑名单_添加_失败',{err:err});
                 res.status(400).send('添加失败:' +err.message);
             });
     });
@@ -104,7 +104,7 @@
                 req.log.info('黑名单_删除_成功',{id:req.params.id_number});
                 res.send('删除成功');
             }).catch(function (err) {
-            req.log.error({err:err},'黑名单_删除_失败');
+            req.log.error('黑名单_删除_失败',{err:err});
                 res.status(400).send('删除失败:' + err.message);
             });
     });

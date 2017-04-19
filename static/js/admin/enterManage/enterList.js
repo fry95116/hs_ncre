@@ -32,6 +32,10 @@ $(document).ready(function(){
             'data-value="' + val + '"></a>' +
             '</div>';
     };
+    //日期
+    var formatter_date = function(val,col,index){
+        return '<div class="cell">' + new Date(val).toLocaleString() + '</div>';
+    };
 
     //文本框
     var formatter_text = function(val,col,index){
@@ -85,12 +89,12 @@ $(document).ready(function(){
 	        field:'create_time',
 	        title:'创建时间',
 	        sortable:true,
-	        formatter:formatter_disable
+	        formatter:formatter_date
         }, {
 	        field:'latest_revise_time',
 	        title:'最后修改时间',
 	        sortable:true,
-	        formatter:formatter_disable
+	        formatter:formatter_date
         }, {
             field:'id_number',
             title:'证件号',

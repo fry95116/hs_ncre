@@ -97,6 +97,15 @@ i.glyphicon+span{
     color:#0c84e4;
 }
 
+#logs .logs.table-condensed > thead > tr > th,
+#logs .logs.table-condensed > tbody > tr > th,
+#logs .logs.table-condensed > tfoot > tr > th,
+#logs .logs.table-condensed > thead > tr > td,
+#logs .logs.table-condensed > tbody > tr > td,
+#logs .logs.table-condensed > tfoot > tr > td {
+    padding: 0px;
+}
+
 #crontabGenerator .content{
     border:solid 1px #aaa;
     border-radius:20px;
@@ -108,3 +117,4 @@ i.glyphicon+span{
     vertical-align: middle;
     margin-right:10px;
 }
+

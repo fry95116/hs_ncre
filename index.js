@@ -3,7 +3,7 @@
     session = require('express-session'), //session
     redisStore = require('connect-redis')(session),
 
-	log = require('./Logger');
+	log = require('./Logger').getLogger();
 
 	local_config = require('./config/LocalConfig.json'),
     redis_config = local_config.redis_config,
@@ -18,7 +18,7 @@ function getClientIp(req) {
         req.socket.remoteAddress ||
         req.connection.socket.remoteAddress ||
 		'unknown'
-};
+}
 
 //前台和后台放在一个端口
 if(local_config.Port_frontStage === local_config.Port_backStage){
@@ -41,11 +41,11 @@ if(local_config.Port_frontStage === local_config.Port_backStage){
 	app.use('/', express.static(__dirname + '/static'));
 	//日志记录
 	app.use(function(req,res,next){
-        req.log = log.child({
+		req.log = log.child({
             method:req.method,
             url:req.originalUrl,
             remoteAddress:getClientIp(req)
-        });
+		});
 		next();
 	});
 	//各个路由

@@ -50,11 +50,11 @@ $(document).ready(function() {
         'enterManage/blackList':function(){showSubFuncView('enterManage','blackList')},
         'enterManage/enterList':function(){showSubFuncView('enterManage','enterList')},
 
-        'systemState':function(){showFuncView('systemState')},
-        'systemState/overView':function(){showSubFuncView('systemState','overView')},
-        'systemState/logs':function(){showSubFuncView('systemState','logs')},
+
 
         'configs':function(){showFuncView('configs')},
+        'configs/overView':function(){showSubFuncView('configs','overView')},
+        'configs/logs':function(){showSubFuncView('configs','logs')},
         'configs/dbBackup':function(){showSubFuncView('configs','dbBackup')},
         'configs/authentication':function(){showSubFuncView('configs','authentication')},
 
