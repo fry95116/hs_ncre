@@ -2,7 +2,9 @@
 	//var LocalConfig = require('./config/LocalConfig.json');
 	var lowdb = require('lowdb'),
 		_ = require('lodash'),
-		config = lowdb('./config/config.json'),
+		Promise = require('bluebird'),
+
+        config = lowdb('./config/config.json'),
 		localConfig = require('./config/LocalConfig.json');
 
 	module.exports = {
@@ -25,6 +27,105 @@
 
         op_res_text:config.get('op_res_text').value(),
 		exam_sites:config.get('exam_sites').value(),
+
+		exam_sites_operator:{
+
+			addSite:function(examSite){
+                return new Promise(function(resolve,reject){
+                    //类型检查
+                    if(_.has(examSite,'code') && _.has(examSite,'name')){
+                        examSite = _.pick(examSite,['code','name']);			//过滤无用属性
+						//重复检查
+                        var i = config.get('exam_sites').findIndex(function(e){
+                            return e.code == examSite.code;
+                        }).value();
+                        if(i == -1){
+                        	examSite.subjects = [];
+                            config.get('exam_sites').push(examSite).value();
+                            resolve();
+                        }
+                        else reject(new Error('该考点号已经存在'));
+                    }
+					else reject(new Error('非法的类型'));
+
+                });
+
+			},
+            updateSite:function(exam_site_code,key,value){
+                return new Promise(function(resolve,reject){
+                    //类型检查
+                    if(key !== 'code' && key !== 'name') {
+                        reject(new Error('无效的属性'));
+                        return;
+                    }
+
+                    var examSites = config.get('exam_sites');
+                    if(key === 'code' && exam_site_code !== value){
+                        //重复检查(新的考点代码)
+                        if(examSites.findIndex(function(e){return e.code == value;}).value() != -1){
+                            reject(new Error('该考点号已经存在'));
+                            return;
+                        }
+                    }
+                    //更新信息
+                    var oldVal = examSites.find(function(e){
+                        return e.code == exam_site_code;
+                    }).value();
+                    oldVal[key] = value;
+                    config.write();
+                    resolve();
+                });
+
+            },
+
+			removeSite:function(exam_site_code){
+                return new Promise(function(resolve,reject){
+                    config.get('exam_sites').remove(function(e){
+                        return e.code == exam_site_code
+                    }).value();
+                    resolve();
+                });
+			},
+			addSubject:function(exam_site_code,subject){
+                return new Promise(function(resolve,reject){
+                	if(_.has(subject,'code') && _.has(subject,'name') && _.has(subject,'duration')){		//类型检查
+						subject = _.pick(subject,['code','name','duration']);			//过滤无用属性
+
+                        var examSiteIndex = config.get('exam_sites').findIndex(function(e){
+                            return e.code == exam_site_code;
+                        }).value();
+                        //考点重复检查
+                        if(examSiteIndex == -1) reject(new Error('该考点不存在'));
+                        else{
+                            var i = config.get('exam_sites['+ examSiteIndex +'].subjects').findIndex(function(e){
+                                return e.code == subject.code;
+                            }).value();
+                            //科目重复检查
+                            if(i != -1) reject(new Error('该科目代码已存在'));
+							else {
+                            	config.get('exam_sites['+ examSiteIndex +'].subjects').push(subject).value();
+                            	resolve();
+                            }
+                        }
+					}
+					else{
+                		reject(new Error('非法的类型'));
+					}
+                });
+			},
+			removeSubject:function(exam_site_code,subject_code){
+                return new Promise(function(resolve,reject){
+                    var i = config.get('exam_sites').findIndex(function(e){
+                        return e.code == exam_site_code;
+                    }).value();
+                    if(i !== -1) config.get('exam_sites['+ i +'].subjects').remove(function(e){
+                        return e.code == subject_code;
+                    }).value();
+                    resolve();
+                });
+			}
+		},
+
 		limit_rules:config.get('limit_rules').value()
 
 	};

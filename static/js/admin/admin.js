@@ -59,8 +59,7 @@ $(document).ready(function() {
         'configs/authentication':function(){showSubFuncView('configs','authentication')},
 
         'testArrange':function(){showFuncView('testArrange')},
-        'testArrange/examSite_subject':function(){showSubFuncView('testArrange','examSite_subject')},
-        'testArrange/limitRule':function(){showSubFuncView('testArrange','limitRule')},
+        'testArrange/examPlan':function(){showSubFuncView('testArrange','examPlan')},
         'testArrange/testDate':function(){showSubFuncView('testArrange','testDate')},
         'testArrange/testRoomArrange':function(){showSubFuncView('testArrange','testRoomArrange')},
         'testArrange/scoreImport':function(){showSubFuncView('testArrange','scoreImport')}

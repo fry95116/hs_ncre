@@ -23,11 +23,12 @@
 		<script src="/js/libs/bootstrap-editable.js"></script>
 		<script src="/js/libs/bootstrap-dialog.js"></script>
 		<script src="/js/libs/bootbox.js"></script>
+		<script src="/js/libs/myDialog.js"></script>
 
 		<script src="/js/libs/director.js"></script>
 		<script src="/js/libs/underscore.js"></script>
 		<script src="/js/libs/jquery.form.js"></script>
-		<script src="/js/libs/xlsx.core.min.js"></script>
+		<script src="/js/libs/xlsx.full.min.js"></script>
 		<script src="/js/admin/admin.js"></script>
 	</head>
 
@@ -127,13 +128,9 @@
 					field:'testArrange',
 					subFunc:[
 						{
-							field:'examSite_subejct',
-							name:'考点/科目管理',
-							templateName:'examSite_subejct'
-						},{
-							field:'limitRule',
-							name:'报名人数限制管理',
-							templateName:'limitRule'
+							field:'examPlan',
+							name:'考点计划管理',
+							templateName:'examPlan'
 						},{
 							field:'testDate',
 							name:'考试日程管理',

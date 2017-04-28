@@ -1,82 +1,110 @@
 {
   "exam_sites": [
     {
-      "code": 410084,
+      "code": "410084",
       "name": "华北水利水电大学（郑东新区）",
       "subjects": [
         {
           "code": 24,
-          "name": "二级 —— C语言程序设计"
+          "name": "二级 —— C语言程序设计",
+          "duration": 120
         },
         {
           "code": 26,
-          "name": "二级 —— VB语言程序设计"
+          "name": "二级 —— VB语言程序设计",
+          "duration": 120
         },
         {
           "code": 27,
-          "name": "二级 —— VFP据库程序设计"
+          "name": "二级 —— VFP据库程序设计",
+          "duration": 120
         },
         {
           "code": 29,
-          "name": "二级 —— Access数据库程序设计"
+          "name": "二级 —— Access数据库程序设计",
+          "duration": 120
         },
         {
           "code": 35,
-          "name": "三级 —— 网络技术"
+          "name": "三级 —— 网络技术",
+          "duration": 120
         },
         {
           "code": 36,
-          "name": "三级 —— 数据库技术"
+          "name": "三级 —— 数据库技术",
+          "duration": 120
         },
         {
           "code": 41,
-          "name": "四级 —— 网络工程师"
+          "name": "四级 —— 网络工程师",
+          "duration": 120
         },
         {
           "code": 42,
-          "name": "四级 —— 数据库工程师"
+          "name": "四级 —— 数据库工程师",
+          "duration": 120
         }
       ]
     },
     {
-      "code": 410067,
+      "code": "410067",
       "name": "华北水利水电大学（北环路36号）",
       "subjects": [
         {
           "code": 65,
-          "name": "二级 —— MS office"
+          "name": "二级 —— MS office",
+          "duration": 120
         },
         {
           "code": 24,
-          "name": "二级 —— C语言程序设计"
+          "name": "二级 —— C语言程序设计",
+          "duration": 120
         },
         {
           "code": 26,
-          "name": "二级 —— VB语言程序设计"
+          "name": "二级 —— VB语言程序设计",
+          "duration": 120
         },
         {
           "code": 27,
-          "name": "二级 —— VFP据库程序设计"
+          "name": "二级 —— VFP据库程序设计",
+          "duration": 120
         },
         {
           "code": 29,
-          "name": "二级 —— Access数据库程序设计"
+          "name": "二级 —— Access数据库程序设计",
+          "duration": 120
         },
         {
           "code": 35,
-          "name": "三级 —— 网络技术"
+          "name": "三级 —— 网络技术",
+          "duration": 120
         },
         {
           "code": 36,
-          "name": "三级 —— 数据库技术"
+          "name": "三级 —— 数据库技术",
+          "duration": 120
         },
         {
           "code": 41,
-          "name": "四级 —— 网络工程师"
+          "name": "四级 —— 网络工程师",
+          "duration": 120
         },
         {
           "code": 42,
-          "name": "四级 —— 数据库工程师"
+          "name": "四级 —— 数据库工程师",
+          "duration": 120
+        }
+      ]
+    },
+    {
+      "code": "410086",
+      "name": "rewew",
+      "subjects": [
+        {
+          "code": "25",
+          "name": "test2",
+          "duration": "120"
         }
       ]
     }
@@ -136,6 +164,22 @@
     "path": "/dump",
     "schedule": "0 */40 * * *"
   },
+  "examDate":{
+    "enterStart":0,
+    "enterEnd":0,
+    "printStart":0,
+    "printEnd":0,
+    "queryStart":0,
+    "queryEnd":0
+
+  },
+
+  "functionControl":{
+    "enter":true,
+    "print":true,
+    "query":true
+  },
+
   "admin_passport": {
     "username": "admin",
     "password": "admin"
