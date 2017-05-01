@@ -20,6 +20,8 @@
 
     _.templateSettings.interpolate = /\{\{(.+?)\}\}/g;
 
+
+
 	var con;
 	//以下代码用于维持mysql的连接
 	//后期可以考虑连接池

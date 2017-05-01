@@ -7,6 +7,23 @@ body {
     font-size: 14px;
 }
 
+.form-inline .form-group{
+    margin-right:10px;
+}
+.form-inline .form-group label{
+    margin-left:5px;
+    margin-right:5px;
+}
+
+.my-heading>h4+button{
+    margin-top: 7px;
+}
+
+.my-heading+.clearfix>hr{
+    margin-top:10px;
+    margin-bottom:15px;
+}
+
 .navbar-inverse .navbar-text {
     margin-right: 20px;
     color: #fff;

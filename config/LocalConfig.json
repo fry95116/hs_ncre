@@ -5,13 +5,13 @@
     "host": "localhost",
     "user": "root",
     "password": "abc7758258",
-    "database": "test",
-    "table": "data"
+    "database": "test"
   },
 
   "table_names":{
-    "enterInfo":"data",
-    "blackList":"blackList"
+    "enterInfo":"enterInfo",
+    "blackList":"blackList",
+    "score":"score"
   },
 
   "redis_config":{

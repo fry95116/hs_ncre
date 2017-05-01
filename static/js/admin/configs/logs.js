@@ -46,6 +46,21 @@ $(document).ready(function(){
     $logs.bootstrapTable({
         url:'/admin/configs/logs',     //数据URL
         classes:'table table-no-bordered table-condensed',
+        detailView:true,
+        detailFormatter:function(index, row, element) {
+            if(row.err) {
+                var content = _.map(row.err,function(v,k){
+                    if(k === "stack") v = v.replace(/\n/g,'<br>');
+                    var re =
+                    '<div class="row">' +
+                        '<label class="col-sm-1">' + k + ':</label>' +
+                        '<div class="col-sm-11">' + v + '</div>' +
+                    '</div>';
+                    return re;
+                }).join('');
+            }
+            return '<div class="container-fluid">' + content + '</div>';
+        },
         /* 组装查询参数 */
         queryParams:function(params){
 

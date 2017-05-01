@@ -6,32 +6,50 @@
     <div class="panel-body">
         <div class="container-fluid">
             <div class="row">
-                <div class="col-lg-8">
-                    <div class="container-fluid">
-                        <div class="row">
-                            <div class="col-md-5 examSites">
-                                <h4>考点管理</h4>
-                                <hr>
-                                <table></table>
-                                <br>
-                                <button type="button" class="btn btn-primary btn-lg btn-block addSite">添加考点</button>
-                            </div>
-                            <div class="col-md-7 subjects">
-                                <h4>科目管理</h4>
-                                <hr>
-                                <table></table>
-                                <br>
-                                <button type="button" class="btn btn-primary btn-lg btn-block addSubject">添加科目</button>
-                            </div>
+                <div class="col-lg-8 examSitesAndSubjects">
+                    <div class="row">
+                        <div class="col-xs-12 my-heading">
+                            <h4 class="pull-left">考点 & 科目管理</h4>
+                            <button class="refresh pull-right btn btn-primary">
+                                <span class="glyphicon glyphicon-refresh"></span>
+                            </button>
+                        </div>
+                        <div class="col-xs-12 clearfix"><hr></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-5 examSites">
+                            <table></table>
+                            <br>
+                            <button type="button" class="btn btn-primary btn-lg btn-block addSite">添加考点</button>
+                        </div>
+                        <div class="col-md-7 subjects">
+                            <table></table>
+                            <br>
+                            <button type="button" class="btn btn-primary btn-lg btn-block addSubject">添加科目</button>
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-4 limitRules">
-                    <h4>人数限制规则管理</h4>
-                    <hr>
-                    <table></table>
-                    <br>
-                    <button type="button" class="btn btn-primary btn-lg btn-block addSubject">添加人数限制规则</button>
+                    <div class="row">
+                        <div class="col-xs-12 my-heading">
+                            <h4 class="pull-left">人数限制规则管理</h4>
+                            <button class="refresh pull-right btn btn-primary">
+                                <span class="glyphicon glyphicon-refresh"></span>
+                            </button>
+                        </div>
+                        <div class="col-xs-12 clearfix"><hr></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <table></table>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <br>
+                            <button type="button" class="btn btn-primary btn-lg btn-block addLimitRule">添加人数限制规则</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

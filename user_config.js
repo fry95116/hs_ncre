@@ -77,7 +77,6 @@
                 });
 
             },
-
 			removeSite:function(exam_site_code){
                 return new Promise(function(resolve,reject){
                     config.get('exam_sites').remove(function(e){
@@ -86,6 +85,7 @@
                     resolve();
                 });
 			},
+
 			addSubject:function(exam_site_code,subject){
                 return new Promise(function(resolve,reject){
                 	if(_.has(subject,'code') && _.has(subject,'name') && _.has(subject,'duration')){		//类型检查
@@ -126,7 +126,50 @@
 			}
 		},
 
-		limit_rules:config.get('limit_rules').value()
+		limit_rules:config.get('limit_rules').value(),
+        limit_rules_operator:{
+            addRule:function(rule){
+                return new Promise(function(resolve,reject){
+                    rule = _.pick(rule,['desc','limitNum','limit_obj']);
+                    //类型检查
+                    if(!(_.isString(rule.desc) && _.isString('string') && _.isArray(rule.limit_obj))){
+                        reject(new Error('非法的数据'));
+                    }
+                    else {
+                        var erron = _.findIndex(rule.limit_obj,function(limit_obj){
+                            //考点代码检查
+                            if(_.isUndefined(limit_obj.exam_site_code)) return true;
+
+                            var examSite = config.get('exam_sites').find(function(el){
+                                return el.code == limit_obj.exam_site_code;
+                            }).value();
+                            if(_.isUndefined(examSite)) return true;
+                            //如果不存在学科代码，检查通过
+                            if(_.isUndefined(limit_obj.subject_code)) return false;
+                            //如果存在学科代码，检查之
+                            var subject = _.find(examSite.subjects,function(el){
+                                return el.code == limit_obj.subject_code;
+                            });
+                            return _.isUndefined(subject);
+                        });
+
+                        if(erron != -1) reject(new Error('非法的限制科目（index：' + erron + '）'));
+                        else {
+                            config.get('limit_rules').push(rule).value();
+                            resolve();
+                        }
+                    }
+                });
+            },
+            removeRule:function(index){
+                return new Promise(function(resolve,reject){
+                    config.get('limit_rules').remove(function(e,i){
+                        return i == index;
+                    }).value();
+                    resolve();
+                });
+            }
+        }
 
 	};
 

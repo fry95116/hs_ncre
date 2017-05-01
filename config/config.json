@@ -35,14 +35,14 @@
           "duration": 120
         },
         {
-          "code": 41,
+          "code": "41",
           "name": "四级 —— 网络工程师",
-          "duration": 120
+          "duration": "90"
         },
         {
-          "code": 42,
+          "code": "42",
           "name": "四级 —— 数据库工程师",
-          "duration": 120
+          "duration": "90"
         }
       ]
     },
@@ -86,25 +86,14 @@
           "duration": 120
         },
         {
-          "code": 41,
+          "code": "41",
           "name": "四级 —— 网络工程师",
-          "duration": 120
+          "duration": "90"
         },
         {
-          "code": 42,
+          "code": "42",
           "name": "四级 —— 数据库工程师",
-          "duration": 120
-        }
-      ]
-    },
-    {
-      "code": "410086",
-      "name": "rewew",
-      "subjects": [
-        {
-          "code": "25",
-          "name": "test2",
-          "duration": "120"
+          "duration": "90"
         }
       ]
     }
@@ -164,22 +153,15 @@
     "path": "/dump",
     "schedule": "0 */40 * * *"
   },
-  "examDate":{
-    "enterStart":0,
-    "enterEnd":0,
-    "printStart":0,
-    "printEnd":0,
-    "queryStart":0,
-    "queryEnd":0
-
+  "examDate": {
+    "enterStart": 0,
+    "enterEnd": 0
   },
-
-  "functionControl":{
-    "enter":true,
-    "print":true,
-    "query":true
+  "functionControl": {
+    "enter": true,
+    "printID": true,
+    "socrequery": true
   },
-
   "admin_passport": {
     "username": "admin",
     "password": "admin"
