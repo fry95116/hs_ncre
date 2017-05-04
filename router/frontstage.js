@@ -19,7 +19,7 @@
         sites_info = user_config.exam_sites,            //考点，科目信息
         limit_rules = user_config.limit_rules,          //人数限制规则
 
-        blackList = require('../model/blackList'),
+        blackList = require('../model/BlackList'),
         ERR = require('../ApplicationError');
 
 

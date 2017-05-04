@@ -32,19 +32,6 @@ $(document).ready(function(){
         }
     });
 
-    $('.import form',$root).ajaxForm({
-        url:'/admin/enterManage/blackList',
-        type:'post',
-        success:function(msg){
-            showMsg($('.import .message',$root),'success','添加成功：' + msg);
-            $('table',$root).bootstrapTable('refresh');
-        },
-        error:function(xhr){
-            showMsg($('.import .message',$root),'danger','Error：' + xhr.responseText);
-            $('table',$root).bootstrapTable('refresh');
-        }
-    });
-
 
     $('.import form',$root).ajaxForm({
         url:'/admin/enterManage/blackList',

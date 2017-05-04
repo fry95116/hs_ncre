@@ -62,7 +62,7 @@ $(document).ready(function() {
         'testArrange/examPlan':function(){showSubFuncView('testArrange','examPlan')},
         'testArrange/testDate':function(){showSubFuncView('testArrange','testDate')},
         'testArrange/testRoomArrange':function(){showSubFuncView('testArrange','testRoomArrange')},
-        'testArrange/scoreImport':function(){showSubFuncView('testArrange','scoreImport')}
+        'testArrange/scoreManage':function(){showSubFuncView('testArrange','scoreManage')}
     };
 
     var router = Router(routes);

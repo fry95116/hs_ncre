@@ -1,0 +1,83 @@
+<div id="<%= field %>" class="subFuncContent panel panel-default" style="display: <% if(show){ %>block<% }else{ %> none <% } %>" >
+    <script type="text/javascript" src="/js/admin/testArrange/scoreManage.js"></script>
+    <div class="panel-heading">
+        <h3 class="panel-title"><%= name %></h3>
+    </div>
+    <div class="panel-body">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-xs-12 message">
+
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 toolbar form-inline" style="margin-bottom:10px;">
+                    <div class="pull-left">
+                        <div class="form-inline" role="form">
+                            <div class="form-group">
+                                <div class="btn-group">
+                                    <button class="btn btn-danger delete" data-toggle="tooltip" data-placement="bottom"
+                                            title="删除选中的行">
+                                        <i class="glyphicon glyphicon-trash"></i> 删除
+                                    </button>
+                                    <button class="btn btn-danger deleteAll" data-toggle="tooltip" data-placement="bottom"
+                                            title="删除选中的行">
+                                        <i class="glyphicon glyphicon-trash"></i> 删除全部
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-primary refresh"  title="刷新表格"><i
+                                                class="glyphicon glyphicon-refresh"></i> 刷新
+                                    </button>
+                                    <button type="button" class="btn btn-primary import" title="导入分数,支持xls、xlsx文件"><i
+                                                class="glyphicon glyphicon-import"></i> 导入
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="pull-right">
+                        <div class="form-inline" role="form">
+                            <div class="form-group">
+                                <input name="searchText" type="text" class="form-control" placeholder="搜索">
+                            </div>
+                            <div class="checkbox">
+                                <label title="选中后，结果搜索内容严格匹配">
+                                    <input type="checkbox" name="strictMode" > 严格匹配模式
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <div class="btn-group">
+                                    <div class="btn-group searchBy">
+                                        <button type="button" class="btn btn-primary dropdown-toggle"
+                                                data-toggle="dropdown">
+                                            <span class="btn-text">按名字搜索</span> <span class="caret"></span>
+                                        </button>
+                                        <ul class="dropdown-menu" role="menu">
+                                            <li><a href="javascript:void(0);" value="name">按名字搜索</a></li>
+                                            <li><a href="javascript:void(0);" value="id_number">按证件号搜索</a></li>
+                                        </ul>
+                                        <input name="searchBy" type="hidden" value="name"/>
+                                    </div>
+                                    <button class="btn btn-primary search" type="button"><i
+                                                class="glyphicon glyphicon-search"></i> 搜索
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div><!-- /pull right -->
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <table class="scoreTable">
+
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

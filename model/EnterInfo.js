@@ -32,20 +32,20 @@
         con.connect(function(err) {
             if(err) {
                 if(err.code = 'ECONNREFUSED'){
-                	log.error('ERROR:无法连接到数据库，请检查数据库配置',{err:err});
+                	log.error('报名信息_ERROR:无法连接到数据库，请检查数据库配置',{err:err});
                 }
                 else{
-	                log.error('ERROR:未知错误',{err:err});
+	                log.error('报名信息_ERROR:未知错误',{err:err});
                 }
             }
             else{
-                log.info('数据库连接成功。');
+                log.info('报名信息_数据库连接成功。');
                 setTransactionIsolationLevel();
             }
         });
         con.on('error', function(err) {
             if(err.code === 'PROTOCOL_CONNECTION_LOST') {
-                log.error('数据库连接中断.重连中...');
+                log.error('报名信息_数据库连接中断.重连中...');
                 handleDisconnect();
             } else {
                 throw err;
@@ -56,16 +56,14 @@
 
     //设置事务隔离级别
     function setTransactionIsolationLevel(){
-        log.info('设置事务隔离级别...');
+        //log.info('设置事务隔离级别...');
         con.query('SET session TRANSACTION ISOLATION LEVEL Read committed;',function(err,res){
             if(err) log.error('ERROR:未知错误',{err:err});
             else{
-                log.info('设置事务隔离级别成功。');
+                //log.info('设置事务隔离级别成功。');
                 con.query('select @@TX_ISOLATION;',function(err,res){
-                    if(err)
-                        log.error('ERROR:未知错误',{err:err});
-                    else
-                        log.info('当前事务隔离级别：' + res[0]['@@TX_ISOLATION']);
+                    if(err) log.error('ERROR:未知错误',{err:err});
+                    //else log.info('当前事务隔离级别：' + res[0]['@@TX_ISOLATION']);
                 });
             }
         });

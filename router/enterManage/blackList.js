@@ -30,7 +30,7 @@
                 cb(null,suffix in acceptType);
             }
         }),
-        blackList = require('../../model/blackList');
+        blackList = require('../../model/BlackList');
 
 
     /**
@@ -81,7 +81,7 @@
 
     router.post('/', upload.single('file'), bodyParser.urlencoded({extended: true}), function (req, res) {
 
-        if(req.file)  res.send('不受支持的文件类型');
+        if(typeof req.body.file != "nudefined")  res.status(400).send('不受支持的文件类型');
         //直接添加
         else blackList.add(req.body)
             .then(function () {

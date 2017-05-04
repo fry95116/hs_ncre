@@ -9,7 +9,7 @@ var fs = require('fs'),
     xlsx = require('xlsx'),
     XML_reader = require('./../XML_reader'),
     lowdb = require('lowdb'),
-    mem_store = lowdb('./config/blacklist.json')
+    mem_store = lowdb('./config/blacklist.json'),
     ERR = require('./../ApplicationError');
 
 function checkData(data_in){

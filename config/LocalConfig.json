@@ -9,8 +9,8 @@
   },
 
   "table_names":{
-    "enterInfo":"enterInfo",
-    "blackList":"blackList",
+    "enterInfo":"enterinfo",
+    "blackList":"blacklist",
     "score":"score"
   },
 

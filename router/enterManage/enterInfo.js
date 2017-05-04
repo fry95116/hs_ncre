@@ -6,7 +6,7 @@
         bodyParser = require('body-parser'),
         dbo = require('../../model/EnterInfo'),
         _ = require('lodash'),
-        blackList = require('../../model/blackList');
+        blackList = require('../../model/BlackList');
 
     /**
      * 浏览报名信息
