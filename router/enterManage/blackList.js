@@ -79,9 +79,9 @@
      * @param {string} name 名称
      * @param {string} id_number 证件号 */
 
-    router.post('/', upload.single('file'), bodyParser.urlencoded({extended: true}), function (req, res) {
+    router.post('/', bodyParser.urlencoded({extended: true}), function (req, res) {
 
-        if(typeof req.body.file != "nudefined")  res.status(400).send('不受支持的文件类型');
+        if(typeof req.body.file != "undefined")  res.status(400).send('不受支持的文件类型');
         //直接添加
         else blackList.add(req.body)
             .then(function () {

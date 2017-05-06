@@ -273,12 +273,11 @@ $(document).ready(function () {
                         else showMsg($modal.find('.message'),'info','<div class="loader"></div> 添加中...');
                     },
                     success:function(msg){
-                        showMsg($modal.find('.message'),'success','添加成功：' + msg);
-                        $scoreTable.bootstrapTable('refresh');
+                        showMsg($modal.find('.message'),'success','导入成功：' + msg);
+                        $('#enterList .enterTable').bootstrapTable('refresh');
                     },
                     error:function(xhr){
                         showMsg($modal.find('.message'),'danger','Error：' + xhr.responseText);
-                        $scoreTable.bootstrapTable('refresh');
                     }
                 });
             },

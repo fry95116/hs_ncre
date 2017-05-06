@@ -239,6 +239,7 @@
                         batch.endTime = new Date(batch.endTime);
 
                         if(batch.startTime && batch.endTime){
+
                             var testRoomIndex = config.get('test_rooms').findIndex(function (e) {
                                 return e.code == test_room_code;
                             }).value();

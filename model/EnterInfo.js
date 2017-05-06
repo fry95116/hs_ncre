@@ -649,14 +649,14 @@
                                 });
                         });
                     })
-                    .then(commit)
+                    .then(_.partial(commit, con))
                     .then(resolve)
                     .catch(function(err){
                         rollback(con)
                             .then(function(){reject(err);})
                             .catch(function(err){reject(err);});
                     })
-                    .finally(_.partial(dbo.release,con));
+                    .finally(_.partial(release,con));
 
             }).catch(function(err){
                 reject(err);
