@@ -153,8 +153,7 @@
                                             <button type="button" class="btn btn-primary toggle" title="切换为表格/卡片视图">
                                                 <i class="glyphicon glyphicon-list-alt icon-list-alt"></i> 切换视图
                                             </button>
-                                            <button class="btn btn-primary import" title="清空缓冲区" data-toggle="modal"
-                                                    data-target=".addEnter-import">
+                                            <button class="btn btn-primary import" title="导入" >
                                                 <i class="glyphicon glyphicon-import"></i> 导入
                                             </button>
                                         </div>
@@ -183,134 +182,6 @@
                     <div class="row">
                         <div class="col-xs-12">
                             <table class="importBuffer"></table>
-                        </div>
-                    </div>
-                    <!-- 导入对话框 -->
-                    <div class="modal fade addEnter-import" tabindex="-1" role="dialog">
-                        <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-                                <form action="/admin/enterManager/blackList" enctype="multipart/form-data"
-                                      method="post">
-                                    <div class="modal-header">
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span></button>
-                                        <h4 class="modal-title">数据导入</h4>
-                                    </div>
-                                    <div class="modal-body form">
-                                        <div class="form-group">
-                                            <h5>文件：</h5>
-                                            <hr>
-                                            <div class="input-group">
-                                                <input type="text" class="form-control" placeholder="File Name"
-                                                       disabled>
-                                                <span class="input-group-btn">
-                                                    <label for="file_addEnter" class="btn btn-primary">选择文件</label>
-                                                    <input id="file_addEnter" name="file" type="file" style="position:absolute;clip:rect(0 0 0 0);">
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <h5>导入说明</h5>
-                                            <hr>
-                                            <h6><b>支持的文件类型:</b></h6>
-                                            <p>
-                                                xls,xlsx
-                                            </p>
-                                            <h6><b>各个数据项对应的表头名称:</b></h6>
-                                            <table class="table table-bordered table-striped table-condensed">
-                                                <tr>
-                                                    <th>列名</th>
-                                                    <th>数据说明</th>
-                                                </tr>
-                                                <tr>
-                                                    <td>exam_site_code</td>
-                                                    <td>考点(代码)</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>subject_code</td>
-                                                    <td>考试科目(代码)</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>name</td>
-                                                    <td>姓名</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>sex</td>
-                                                    <td>性别(代码)</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>birthday</td>
-                                                    <td>出生日期</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>id_type</td>
-                                                    <td>证件类型(代码)</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>id_number</td>
-                                                    <td>证件号码</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>nationality</td>
-                                                    <td>民族(代码)</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>career</td>
-                                                    <td>职业(代码)</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>degree_of_education</td>
-                                                    <td>文化程度(代码)</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>training_type</td>
-                                                    <td>培训类型(代码)</td>
-                                                </tr>
-
-                                                <tr>
-                                                    <td>post_code</td>
-                                                    <td>邮政编码</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>address</td>
-                                                    <td>地址</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>email</td>
-                                                    <td>电子邮箱</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>phone</td>
-                                                    <td>联系电话</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>remark</td>
-                                                    <td>备注</td>
-                                                </tr>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- 中断处理对话框 -->
-                    <div class="modal fade addEnter-interruptHandle" tabindex="-1" role="dialog">
-                        <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header"><h5 class="modal-title">传输中断</h5></div>
-                                <div class="modal-body">
-                                    <p>
-                                        <label>错误信息：</label><span class="msg"></span><br>
-                                        <b>接下来怎么做？</b>
-                                    </p>
-                                    <div style="text-align: right; line-height: 3em;">
-                                            <button type="button" class="action1 btn btn-primary">1.中断传输，回去修改</button><br>
-                                            <button type="button" class="action2 btn btn-primary">2.强制添加当前项，不改变后面的添加方式</button><br>
-                                            <button type="button" class="action3 btn btn-primary">3.强制添加当前项与之后的数据项</button>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>

@@ -6,7 +6,8 @@
 (function() {
 	var mysql = require('mysql'),
 			_ = require('lodash'),
-			Promise = require('bluebird'),
+            xlsx = require('xlsx'),
+            Promise = require('bluebird'),
 
 			data_schema = require('./../data_schema'),
 			user_config = require('./../user_config'),
@@ -22,52 +23,58 @@
 
 
 
-	var con;
+	//var con;
 	//以下代码用于维持mysql的连接
 	//后期可以考虑连接池
-    function handleDisconnect() {
-
-        con = mysql.createConnection(db_config); // 连接数据库
-
-        con.connect(function(err) {
-            if(err) {
-                if(err.code = 'ECONNREFUSED'){
-                	log.error('报名信息_ERROR:无法连接到数据库，请检查数据库配置',{err:err});
-                }
-                else{
-	                log.error('报名信息_ERROR:未知错误',{err:err});
-                }
-            }
-            else{
-                log.info('报名信息_数据库连接成功。');
-                setTransactionIsolationLevel();
-            }
-        });
-        con.on('error', function(err) {
-            if(err.code === 'PROTOCOL_CONNECTION_LOST') {
-                log.error('报名信息_数据库连接中断.重连中...');
-                handleDisconnect();
-            } else {
-                throw err;
-            }
-        });
-    }
-    handleDisconnect();
+    // function handleDisconnect() {
+    //
+     //    con = mysql.createConnection(db_config); // 连接数据库
+    //
+     //    con.connect(function (err) {
+     //        if (err) {
+     //            if (err.code = 'ECONNREFUSED') {
+     //                log.error('报名信息_数据库连接_无法连接到数据库，请检查数据库配置', {err: err});
+     //            }
+     //            else {
+     //                log.error('报名信息_数据库连接_未知错误', {err: err});
+     //            }
+     //        }
+     //        else {
+     //            log.info('报名信息_数据库连接_成功。');
+     //            setTransactionIsolationLevel();
+     //        }
+     //    });
+     //    con.on('error', function (err) {
+     //        if (err.code === 'PROTOCOL_CONNECTION_LOST') {
+     //            log.error('报名信息_数据库连接_中断.重连中...', {err: err});
+     //            handleDisconnect();
+     //        } else {
+     //            throw err;
+     //        }
+     //    });
+    // }
+    //
+    // handleDisconnect();
 
     //设置事务隔离级别
-    function setTransactionIsolationLevel(){
+    function setTransactionIsolationLevel(con){
         //log.info('设置事务隔离级别...');
         con.query('SET session TRANSACTION ISOLATION LEVEL Read committed;',function(err,res){
-            if(err) log.error('ERROR:未知错误',{err:err});
-            else{
-                //log.info('设置事务隔离级别成功。');
-                con.query('select @@TX_ISOLATION;',function(err,res){
-                    if(err) log.error('ERROR:未知错误',{err:err});
-                    //else log.info('当前事务隔离级别：' + res[0]['@@TX_ISOLATION']);
-                });
-            }
+            if(err) log.error('报名信息_数据库连接_未知错误',{err:err});
+            // else{
+            //     log.info('设置事务隔离级别成功。');
+            //     con.query('select @@TX_ISOLATION;',function(err,res){
+            //         if(err) log.error('ERROR:未知错误',{err:err});
+            //         else log.info('当前事务隔离级别：' + res[0]['@@TX_ISOLATION']);
+            //     });
+            // }
         });
     }
+
+    var pool = mysql.createPool(db_config);
+    pool.on('connection', setTransactionIsolationLevel);
+    log.info('报名信息_创建数据库连接池。');
+
 
 	//身份证校验算法
     var getIdCardInfo = function(cardNo){
@@ -129,54 +136,76 @@
         return info;
     };
 
+    /** 获取连接 */
+    function getConnection(){
+        return new Promise(function(resolve,reject){
+            pool.getConnection(function(err,con){
+                if(err) reject(err);
+                else resolve(con);
+            });
+        });
+    }
+    exports.getConnection = getConnection;
+    /** 断开连接 */
+    function release(con){
+        return new Promise(function(resolve,reject){
+            con.release();
+            resolve();
+        });
+    }
+    exports.release = release;
+
+
+
     /**
      * 开始事务
      * */
-    exports.begin = function() {
+    function begin(con) {
         return new Promise(function(resolve,reject){
             con.beginTransaction(function(err){
                 if(err) reject(err);
                 else resolve();
             });
         });
-    };
-
+    }
+    exports.begin = begin;
     /**
      * 回滚事务
      * */
-    exports.rollback = function() {
+    function rollback(con) {
         return new Promise(function(resolve,reject){
             con.rollback(function(err){
                 if(err) reject(err);
                 else resolve();
             });
         });
-    };
-
+    }
+    exports.rollback = rollback;
     /**
      * 提交事务
      * */
-    exports.commit = function() {
+    function commit(con) {
         return new Promise(function(resolve,reject){
             con.commit(function(err){
                 if(err) reject(err);
                 else resolve();
             });
         });
-    };
+    }
+    exports.commit = commit;
 
-	/**
+    /**
 	 * 对数据合法性进行检查
 	 * check函数的同步版本
 	 * @param {Object} data_in 输入的数据
 	 * @return {Error} 为null时说明没有异常 */
-    var checkSync = function(data_in) {
+    function checkSync(data_in) {
 
     	var err = {};
 
 		// 下面的for循环是用正则表达式验证是否合乎规则
 		for (var key in data_schema) {
-			if (!data_schema[key].test(data_in[key])) {
+			if (!data_schema[key].test(data_in[key] ? data_in[key]: '')) {
 				// 在 data_schema 中的正则表达式已经为可以为空的key做了匹配规则
 				// 如果data_in[key]不存在，表明提交的表单object被修改过，有的键被删除，则err[key]设为'not exist'
                 // 否则设为'invalid data'
@@ -210,25 +239,28 @@
 
 		if(_.isEmpty(err)) return null;
 		else return new ERR.InvalidDataError(JSON.stringify(err));
-	};
+	}
     exports.checkSync = checkSync;
+
     /**
 	 * 对数据合法性进行检查
      * @param {Object} data_in 输入的数据
      * @return {Promise} Promise对象 */
-    exports.check = function(data_in){
+    function check(data_in){
     	return new Promise(function(resolve,reject){
             var err = checkSync(data_in);
     		if(err) reject(err);
     		else resolve();
 		});
 
-	};
+	}
+    exports.check = check;
 
-	/**
+    /**
 	 * 人数统计（一次性返回所有信息）
+     * @param {Object} con 数据库连接
 	 * @return {Promise} Promise对象,成功时传入counts */
-    exports.getStatistics = function(){
+    function getStatistics(con){
     	return new Promise(function(resolve,reject){
             //组装模板
             var counts = _.reduce(exam_sites,function(memo,site){
@@ -265,14 +297,20 @@
                 }
             );
 		});
-	};
+	}
+    exports.getStatistics = getStatistics;
 
-	/**
+    /**
 	 * 重复检查
-	 * @param {int} id_number 证件号
+	 * @param {string|Object} id_number 证件号或者带证件号的对象
+     * @param {Object} con 数据库连接
 	 * @return {Promise} Promise对象,resolve时传入counts */
-    exports.repeatCheck = function(id_number) {
+    function repeatCheck(con,id_number) {
     	return new Promise(function(resolve,reject){
+    	    if(!_.isString(id_number)) {
+                reject(new Error('没有证件号'));
+                return;
+            }
             con.query(
                 'SELECT count(1) AS \'count\' FROM ' + table_names.enterInfo +
                 ' WHERE id_number=?',
@@ -289,15 +327,16 @@
                 }
             );
 		});
-	};
+	}
+    exports.repeatCheck = repeatCheck;
 
-	/**
+    /**
 	 * 内部函数,按规则检查人数
 	 * @param {Object} counts 由getStatistics获得的人数统计信息
 	 * @param {Object} limit_rule 限制规则
 	 * @param {bool} equalAllowed 是否允许相等
 	 * @return {bool} 检查是否通过 */
-    var checkCountSync = function(counts, limit_rule, equalAllowed){
+    function checkCountSync(counts, limit_rule, equalAllowed){
 		equalAllowed = equalAllowed | false;
 		var count = 0;
 		//noinspection JSUnresolvedVariable
@@ -322,14 +361,14 @@
 			}
 		}
 		return equalAllowed ? count <= limit_rule.limitNum : count < limit_rule.limitNum;
-	};
+	}
 
     /**
 	 * 按规则检查人数
      * @param {Object} counts 由getStatistics获得的人数统计信息
      * @param {bool} equalAllowed 是否允许相等
 	 * @return {Promise} Promise对象 */
-    exports.checkCount = function(counts, equalAllowed){
+    function checkCount(counts, equalAllowed){
     	return new Promise(function(resolve,reject){
     	    equalAllowed = equalAllowed || false;
 
@@ -348,13 +387,15 @@
             }
 
         });
-	};
+	}
+    exports.checkCount = checkCount;
 
-	/**
+    /**
 	 * 插入记录
+     * @param {Object} con 数据库连接
 	 * @param {object} data_in 输入的数据
 	 * @return {Promise} Promise对象*/
-	exports.insertInfo = function(data_in) {
+	function insertInfo(con,data_in) {
 		return new Promise(function(resolve,reject){
 
 			//过滤掉无用的属性
@@ -377,10 +418,12 @@
                 else resolve();
             });
 		});
-	};
+	}
+    exports.insertInfo = insertInfo;
 
-	/**
+    /**
 	 * 查询记录
+     * @param {Object} con 数据库连接
 	 * @param {Object} option 查询参数
 	 * @return {Promise} Promise对象,resolve时传入查询结果*/
 	/**
@@ -394,8 +437,7 @@
 	 * @property {number} offset 截取上界
 	 * @property {number} limit 截取数量
 	 * */
-
-	exports.selectInfo = function(option){
+	exports.selectInfo = function(con,option){
 		return new Promise(function(resolve,reject){
             var opt = {
                 searchBy:'',
@@ -475,11 +517,11 @@
 
 	/**
 	 * 更新记录
+     * @param {Object} con 数据库连接
 	 * @param {string} id_number 证件号
 	 * @param {object} updateData 要更新的数据
 	 * */
-
-	exports.updateInfo = function(id_number,updateData){
+	exports.updateInfo = function(con,id_number,updateData){
 	    return new Promise(function(resolve,reject){
 
 	        //获取旧的值
@@ -544,9 +586,10 @@
 
     /**
      * 删除记录
+     * @param {Object} con 数据库连接
      * @param {string} id_number 证件号
      * */
-    exports.deleteInfo = function(id_number){
+    exports.deleteInfo = function(con,id_number){
         return new Promise(function(resolve,reject){
             //删除数据
             var sql = 'DELETE FROM ' + table_names.enterInfo + ' WHERE id_number=?;';
@@ -558,9 +601,9 @@
     };
 
     /**
-     * 删除记录
+     * 删除全部记录
      * */
-    exports.deleteAllInfo = function(){
+    exports.deleteAllInfo = function(con){
         return new Promise(function(resolve,reject){
             //删除数据
             var sql = 'DELETE FROM ' + table_names.enterInfo + ';';
@@ -569,5 +612,58 @@
                 else resolve();
             });
         });
+    };
+
+    /**
+     * 导入记录
+     * @param {string} type 文件类型
+     * */
+    exports.importInfo = function (type) {
+        type = type.toLowerCase();
+        if(type === 'xls' || type === 'xlsx') return importXLSX;
+        //else if(type === 'csv') return importCSV;
+        //else if(type === 'xml') return importXML;
+        //else if(type === 'json') return importJSON;
+    };
+
+    function importXLSX(filepath){
+        return new Promise(function (resolve, reject) {
+
+            var workbook = xlsx.readFile(filepath);
+            var sheet = workbook.Sheets[workbook.SheetNames[0]];
+
+            var data = xlsx.utils.sheet_to_json(sheet);
+
+            getConnection().then(function(con){
+                begin(con)
+                    .then(function(){return data})
+                    .mapSeries(function(row,index){
+                        return new Promise(function(resolve,reject){
+                            check(row)
+                                .then(_.partial(repeatCheck, con, row.id_number))
+                                .then(_.partial(insertInfo, con, row))
+                                .then(resolve)
+                                .catch(function(err){
+                                    err.message += '(行号:' + (index+1) + ')';
+                                    reject(err);
+                                });
+                        });
+                    })
+                    .then(commit)
+                    .then(resolve)
+                    .catch(function(err){
+                        rollback(con)
+                            .then(function(){reject(err);})
+                            .catch(function(err){reject(err);});
+                    })
+                    .finally(_.partial(dbo.release,con));
+
+            }).catch(function(err){
+                reject(err);
+            });
+
+        });
+
     }
+
 })();

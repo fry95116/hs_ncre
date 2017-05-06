@@ -31,20 +31,20 @@
         con.connect(function(err) {
             if(err) {
                 if(err.code = 'ECONNREFUSED'){
-                    log.error('分数信息_数据库连接:无法连接到数据库，请检查数据库配置',{err:err});
+                    log.error('场次信息_数据库连接:无法连接到数据库，请检查数据库配置',{err:err});
                 }
                 else{
-                    log.error('分数信息_数据库连接:未知错误',{err:err});
+                    log.error('场次信息_数据库连接:未知错误',{err:err});
                 }
             }
             else{
-                log.info('分数信息_数据库连接_成功。');
+                log.info('场次信息_数据库连接_成功。');
                 setTransactionIsolationLevel();
             }
         });
         con.on('error', function(err) {
             if(err.code === 'PROTOCOL_CONNECTION_LOST') {
-                log.error('分数信息_数据库连接_中断.重连中...',{err:err});
+                log.error('场次信息_数据库连接_中断.重连中...',{err:err});
                 handleDisconnect();
             } else {
                 throw err;
@@ -57,11 +57,11 @@
     function setTransactionIsolationLevel(){
         //log.info('设置事务隔离级别...');
         con.query('SET session TRANSACTION ISOLATION LEVEL Read committed;',function(err,res){
-            if(err) log.error('分数信息_数据库连接:未知错误',{err:err});
+            if(err) log.error('场次信息_数据库连接:未知错误',{err:err});
             else{
                 //log.info('设置事务隔离级别成功。');
                 con.query('select @@TX_ISOLATION;',function(err,res){
-                    if(err) log.error('分数信息_数据库连接:未知错误',{err:err});
+                    if(err) log.error('场次信息_数据库连接:未知错误',{err:err});
                     //else log.info('当前事务隔离级别：' + res[0]['@@TX_ISOLATION']);
                 });
             }
@@ -111,7 +111,7 @@
     function repeatCheck(id_number) {
         return new Promise(function(resolve,reject){
             con.query(
-                'SELECT count(1) AS \'count\' FROM ' + table_names.score +
+                'SELECT count(1) AS \'count\' FROM ' + table_names.testInfo +
                 ' WHERE id_number=?',
                 id_number,
                 function(err, res) {
@@ -129,13 +129,13 @@
      * @param {object} data_in 输入的数据
      * @param {object} index 索引，用于错误定位
      * @return {Promise} Promise对象*/
-    function insertScore(data_in,index) {
+    function insertTestInfo(data_in,index) {
         return new Promise(function(resolve,reject){
-            var cols = ['id_number', 'name', 'examinee_number', 'enter_number', 'score', 'rank', 'certificate_number'];
+            var cols = ['id_number', 'name', 'testRoom_number', 'batch_number'];
             //过滤掉无用的属性
             data_in = _.pick(data_in, cols);
             for(var i = 0; i < cols.length; ++i){
-                if(_.isUndefined(data_in[cols[i]]) && (cols[i] !=  'certificate_number')){
+                if(_.isUndefined(data_in[cols[i]])){
                     reject(new Error('非法的数据：缺少数据项' + cols[i] + '(行数：' + (index+1) + ')'));
                     return;
                 }
@@ -154,7 +154,7 @@
                     }).join(',');
 
                     //插入数据
-                    var sql = 'INSERT INTO ' + table_names.score + ' SET ' + data_in;
+                    var sql = 'INSERT INTO ' + table_names.testInfo + ' SET ' + data_in;
                     con.query(sql, function (err) {
                         if (err) reject(err);
                         else resolve();
@@ -168,7 +168,7 @@
 
         });
     }
-    exports.insertScore = insertScore;
+    exports.insertTestInfo = insertTestInfo;
 
     /**
      * 查询记录
@@ -186,7 +186,7 @@
      * @property {number} limit 截取数量
      * */
 
-    function selectScore(option){
+    function selectTestInfo(option){
         return new Promise(function(resolve,reject){
             var opt = {
                 searchBy:'',
@@ -197,10 +197,10 @@
                 offset:0,
                 limit: -1
             };
-            var cols = ['id_number', 'name', 'examinee_number', 'enter_number', 'score', 'rank', 'certificate_number'];
+            var cols = ['id_number', 'name', 'testRoom_number', 'batch_number'];
 
             opt = _.extend(opt,option);
-            opt.table = table_names.score;
+            opt.table = table_names.testInfo;
             opt.searchText = _.trim(opt.searchText);
 
             //option合法性检查
@@ -261,18 +261,18 @@
 
         });
     }
-    exports.selectScore =selectScore;
+    exports.selectTestInfo =selectTestInfo;
     /**
      * 更新记录
      * @param {string} id_number 证件号
      * @param {object} updateData 要更新的数据
      * */
 
-    function updateScore(id_number,updateData){
+    function updateTestInfo(id_number,updateData){
         return new Promise(function(resolve,reject){
 
             //数据检查
-            var cols = [ 'name', 'examinee_number', 'enter_number', 'score', 'rank', 'certificate_number'];
+            var cols = ['name', 'testRoom_number', 'batch_number'];
             var newData = _.pick(updateData,cols);
 
 
@@ -282,7 +282,7 @@
             }).join(',');
 
             //数据更新
-            var sql = 'UPDATE ' + table_names.score + ' SET ' + newData + 'WHERE id_number=?;';
+            var sql = 'UPDATE ' + table_names.testInfo + ' SET ' + newData + 'WHERE id_number=?;';
             con.query(sql, id_number, function (err) {
                 if (err) reject(err);
                 else resolve();
@@ -290,30 +290,30 @@
         });
 
     }
-    exports.updateScore = updateScore;
+    exports.updateTestInfo = updateTestInfo;
         /**
      * 删除记录
      * @param {string} id_number 证件号
      * */
-    function deleteScore(id_number){
+    function deleteTestInfo(id_number){
         return new Promise(function(resolve,reject){
             //删除数据
-            var sql = 'DELETE FROM ' + table_names.score + ' WHERE id_number=?;';
+            var sql = 'DELETE FROM ' + table_names.testInfo + ' WHERE id_number=?;';
             con.query(sql, id_number, function (err) {
                 if (err) reject(err);
                 else resolve();
             });
         });
     }
-    exports.deleteScore = deleteScore;
+    exports.deleteTestInfo = deleteTestInfo;
 
     /**
      * 删除全部记录
      * */
-    function deleteAllScore(){
+    function deleteAllTestInfo(){
         return new Promise(function(resolve,reject){
             //删除数据
-            var sql = 'DELETE FROM ' + table_names.score + ';';
+            var sql = 'DELETE FROM ' + table_names.testInfo + ';';
             con.query(sql, function (err) {
                 if (err) reject(err);
                 else resolve();
@@ -321,14 +321,14 @@
         });
     }
 
-    exports.deleteAllScore =deleteAllScore;
+    exports.deleteAllTestInfo =deleteAllTestInfo;
 
 
     /**
-     * 导入记录
+     * 导入黑名单
      * @param {string} type 文件类型
      * */
-    exports.importScore = function (type) {
+    exports.importTestInfo = function (type) {
         type = type.toLowerCase();
 
         if(type === 'xls' || type === 'xlsx') return importXLSX;
@@ -340,26 +340,23 @@
     var mapping = {
         ZJH:'id_number',
         XM:'name',
-        ZKZH:'examinee_number',
-        BMH:'enter_number',
-        CJ:'score',
-        DD:'rank',
-        ZSBH:'certificate_number'
+        KCH:'testRoom_number',
+        PCH:'batch_number'
     };
 
     function num2ColName(Num){
         var dict = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
         if(Num < 26) return dict[Num];
-        else return num2ColName(Math.floor(Num/26) - 1) + dict[Num % 26];
+        else return num2ColName(Math.floor(Num/26) - 1,dict) + dict[Num % 26];
     }
 
     function colName2Num(str){
         var dict = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
         return _.reduce(str,function(memo,val,index){
-                return memo * 26 + (_.findIndex(dict,function(el){
-                        return el === val;
-                    }) + 1);
-            },0) - 1;
+            return memo * 26 + (_.findIndex(dict,function(el){
+                return el === val;
+            }) + 1);
+        },0) - 1;
     }
 
     function importXLSX(filepath){
@@ -370,13 +367,10 @@
 
             //替换
             var count_cols = 0;
-
-            var count_cols = 0;
             if(!_.isUndefined(sheet['!range'])) count_cols = sheet['!range'].e.c;
             else if(!_.isUndefined(sheet['!ref'])){
                 count_cols = colName2Num(sheet['!ref'].match(/^[A-Z]+\d+:([A-Z]+)\d+$/)[1]);
             }
-
 
             for(var i = 0; i < count_cols; ++i){
                 var addr = num2ColName(i) + '1';
@@ -392,7 +386,7 @@
 
             begin()
                 .then(function(){return data})
-                .mapSeries(insertScore)
+                .mapSeries(insertTestInfo)
                 .then(commit)
                 .then(function(){
                     resolve();

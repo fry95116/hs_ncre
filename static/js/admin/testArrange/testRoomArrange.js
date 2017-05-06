@@ -5,14 +5,20 @@ $(document).ready(function(){
     var $root = $('#testRoomArrange');
 
     //考点 & 科目设置
-    var cache_examSites = [];                 //数据对象
-    var currentExamSite = null;     //当前选择的考点
+    var cache_testRooms = [];                 //数据对象
+    var currentTestRoom = null;     //当前选择的考点
     
-    var $examSiteTable = $('.examSites table',$root);
-    var $subjectTable = $('.subjects table',$root);
+    var $testRoomTable = $('.testRooms table',$root);
+    var $batchTable = $('.batchs table',$root);
+
+
+    //日期
+    var formatter_date = function(val,col,index){
+        return '<div class="cell">' + new Date(val).toLocaleString() + '</div>';
+    };
 
     var formatter_text = function(val,col,index){
-        var url = '/admin/testArrange/examPlan/examSites/' + col.code + '/' + this.field;
+        var url = '/admin/testArrange/testRooms/' + col.code + '/' + this.field;
         return '<a class="edit" data-url="' + url + '" ' +
                 'data-type="text" ' +
                 'data-pk = "' + col.code + '" ' +
@@ -22,41 +28,42 @@ $(document).ready(function(){
     };
 
 
-    $examSiteTable.bootstrapTable({
+    $testRoomTable.bootstrapTable({
         cardView:true,
         onCheck:function(row, $el){
-            refresh_subjectTable(row.code);
+            refresh_batchTable(row.code);
         },
         columns: [{
             radio:true
         },{
             field: 'code',
-            title: '考点代码',
+            title: '考场号',
             formatter:formatter_text
         }, {
-            field: 'name',
-            title: '考点名称',
+            field: 'location',
+            title: '地点',
             formatter:formatter_text
-
         }, {
             formatter: function(value, row, index){
                 return '<a href="javascript:void(0)" class="delete" key="' + row.code + '">删除</a>';
             }
         }]
     });
-    $subjectTable.bootstrapTable({
-        cardView:true,
+    $batchTable.bootstrapTable({
+        //cardView:true,
 
         columns: [{
             field: 'code',
             sortable:true,
-            title: '科目代码'
+            title: '批次号'
         }, {
-            field: 'name',
-            title: '科目名称'
+            field: 'startTime',
+            title: '考试开始时间',
+            formatter:formatter_date
         }, {
-            field: 'duration',
-            title: '考试时间(分钟)'
+            field: 'endTime',
+            title: '考试结束时间',
+            formatter:formatter_date
         }, {
             formatter: function(value, row, index){
                 return '<a href="javascript:void(0)" class="delete" key="' + row.code + '">删除</a>';
@@ -65,16 +72,16 @@ $(document).ready(function(){
     });
 
     /* 刷新考点列表 */
-    function refresh_ExamSiteTable(){
-        $examSiteTable.bootstrapTable('load',_.map(cache_examSites,function(e){
-            return _.pick(e,['code','name']);
+    function refresh_testRoomTable(){
+        $testRoomTable.bootstrapTable('load',_.map(cache_testRooms,function(e){
+            return _.pick(e,['code','location']);
         }));
         //删除按钮
-        $examSiteTable.find('a.delete').click(function(){
+        $testRoomTable.find('a.delete').click(function(){
             var key = $(this).attr('key');
             myDialog.confirm('确认删除？',function(res){
                 if(res.state === 'ok') $.ajax({
-                    url:'/admin/testArrange/examPlan/examSites/' + key,
+                    url:'/admin/testArrange/testRooms/' + key,
                     type:'delete',
                     success:function(){
                         updateCache();
@@ -84,7 +91,7 @@ $(document).ready(function(){
             })
         });
         //编辑框
-        $examSiteTable.find('a.edit').on('save', function(e, params) {
+        $testRoomTable.find('a.edit').on('save', function(e, params) {
             updateCache();
         }).editable({
             ajaxOptions: {
@@ -94,19 +101,19 @@ $(document).ready(function(){
     }
 
     /* 刷新科目列表 */
-    function refresh_subjectTable(exam_site_code){
-        var examSiteInfo = _.find(cache_examSites,function(e){
-            return e.code == exam_site_code;
+    function refresh_batchTable(testRoom_code){
+        var testRoomInfo = _.find(cache_testRooms,function(e){
+            return e.code == testRoom_code;
         });
-        if((!_.isUndefined(examSiteInfo)) && (!_.isUndefined(examSiteInfo.subjects))){
-            currentExamSite = exam_site_code;
-            $subjectTable.bootstrapTable('load',examSiteInfo.subjects);
+        if((!_.isUndefined(testRoomInfo)) && (!_.isUndefined(testRoomInfo.batchs))){
+            currentTestRoom = testRoom_code;
+            $batchTable.bootstrapTable('load',testRoomInfo.batchs);
             //删除按钮
-            $subjectTable.find('a.delete').click(function(){
+            $batchTable.find('a.delete').click(function(){
                 var key = $(this).attr('key');
                 myDialog.confirm('确认删除？',function(res){
                     if(res.state === 'ok') $.ajax({
-                        url:'/admin/testArrange/examPlan/examSites/' + currentExamSite + '/subjects/' + key,
+                        url:'/admin/testArrange/testRooms/' + currentTestRoom + '/batchs/' + key,
 
                         type:'delete',
                         success:function(){
@@ -118,54 +125,52 @@ $(document).ready(function(){
             });
         }
         else{
-            $subjectTable.bootstrapTable('removeAll');
+            $batchTable.bootstrapTable('removeAll');
         }
     }
 
     /* 更新缓存，刷新UI */
     function updateCache(){
-        $.getJSON('/admin/testArrange/examPlan/examSites',function(data){
-            cache_examSites = data;
-            refresh_ExamSiteTable();
-            refresh_subjectTable(currentExamSite);
-            $examSiteTable.bootstrapTable('check',0);
+        $.getJSON('/admin/testArrange/testRooms',function(data){
+            cache_testRooms = data;
+            refresh_testRoomTable();
+            refresh_batchTable(currentTestRoom);
+            $testRoomTable.bootstrapTable('check',0);
         });
     }
-
-
 
     //初始化
     updateCache();
 
-    $('.examSitesAndSubjects .refresh',$root).click(updateCache);
+    $('.testRoomsAndBatchs .refresh',$root).click(updateCache);
 
-    /* 添加考点对话框 */
-    var template_addSite =
+    /* 添加考场对话框 */
+    var template_addTestRoom =
         '<form>' +
             '<div class="form-group msg"></div>'+
             '<div class="form-group">' +
-                '<label>考点代码：</label>' +
-                '<input name="code" type="text" class="form-control" placeholder="考点代码" required>' +
+                '<label>考场代码：</label>' +
+                '<input name="code" type="text" class="form-control" placeholder="考场代码" required>' +
             '</div>' +
             '<div class="form-group">' +
-                '<label>名称：</label>' +
-                '<input name="name" type="text" class="form-control" placeholder="名称" required>' +
+                '<label>考试地点：</label>' +
+                '<input name="location" type="text" class="form-control" placeholder="考试地点" required>' +
             '</div>' +
             '<button type="submit" class="btn btn-primary">添加</button>' +
         '</form>';
 
-    $('.addSite',$root).click(function(){
+    $('.addTestRoom',$root).click(function(){
         myDialog.dialog({
-            title:'添加考点',
+            title:'添加考场',
             okBtn:false,
             cancelBtn:false,
-            msg:template_addSite,
+            msg:template_addTestRoom,
             init:function($modal,re){
                 $modal.find('form').ajaxForm({
-                    url:'/admin/testArrange/examPlan/examSites',
+                    url:'/admin/testArrange/testRooms',
                     type:'post',
                     success:function(){
-                        currentExamSite = null;
+                        currentTestRoom = null;
                         updateCache();
                         $modal.modal('hide');
                     },
@@ -177,37 +182,66 @@ $(document).ready(function(){
         });
     });
 
-    /* 添加科目对话框 */
-    var template_addSubject =
+    /* 添加批次对话框 */
+    var template_addBatch =
         '<form>' +
             '<div class="form-group"><div class="msg"></div></div>' +
             '<div class="form-group">' +
-                '<label>代码：</label>' +
-                '<input name="code" type="text" class="form-control" placeholder="代码" required>' +
+                '<label>批次号：</label>' +
+                '<input name="code" type="text" class="form-control" placeholder="批次号" required>' +
             '</div>' +
             '<div class="form-group">' +
-                '<label>名称：</label>' +
-                '<input name="name" type="text" class="form-control" placeholder="名称" required>' +
+                '<label>考试开始时间：</label>' +
+                '<input name="startTime" type="text" class="form-control" placeholder="考试开始时间" required>' +
             '</div>' +
             '<div class="form-group">' +
-                '<label>考试时间：</label>' +
-                '<input name="duration" type="text" class="form-control" placeholder="考试时间" required>' +
+                '<label>考试结束时间：</label>' +
+                '<input name="endTime" type="text" class="form-control" placeholder="考试开始时间" required>' +
             '</div>' +
             '<button type="submit" class="btn btn-primary">添加</button>' +
         '</form>';
 
-    $('.addSubject',$root).click(function(){
+    $('.addBatch',$root).click(function(){
         myDialog.dialog({
             title:'添加科目',
             okBtn:false,
             cancelBtn:false,
-            msg:template_addSubject,
+            msg:template_addBatch,
             init:function($modal,re){
+
+                //时间选择器
+                var $from = $modal.find('input[name="startTime"]',$root);
+                var $until = $modal.find('input[name="endTime"]',$root);
+
+                $from.datetimepicker({
+                    format:'YYYY-MM-DDTHH:mm:00ZZ',
+                    showTodayButton:true,
+                    defaultDate: new Date()
+
+                }).on('dp.change',function(e){
+                    if(e.date.toDate() > $until.data('DateTimePicker').date().toDate()){
+                        $until.data('DateTimePicker').date(e.date.toDate());
+                    }
+                });
+
+                $until.datetimepicker({
+                    format:'YYYY-MM-DDTHH:mm:00ZZ',
+                    showTodayButton:true,
+                    defaultDate: new Date()
+
+                }).on('dp.change',function(e){
+                    if($from.data('DateTimePicker').date().toDate() > e.date.toDate()){
+                        $from.data('DateTimePicker').date(e.date.toDate());
+                    }
+                });
+
+
+                //标点
                 $modal.find('form').ajaxForm({
-                    url:'/admin/testArrange/examPlan/examSites/' + currentExamSite + '/subjects',
+                    url:'/admin/testArrange/testRooms/' + currentTestRoom + '/batchs',
                     type:'post',
                     beforeSubmit:function(){
-                        if(_.isNull(currentExamSite)){
+                        if(_.isNull(currentTestRoom)){
                             showMsg($modal.find('.msg'),'danger','请先选择考点');
                             return false;
                         }
@@ -225,245 +259,252 @@ $(document).ready(function(){
         });
     });
 
-    /** 人数限制规则 */
-    var $limitRulesTable = $('.limitRules table',$root);
-    $limitRulesTable.bootstrapTable({
-        url:'/admin/testArrange/examPlan/limitRules',
-        detailView:true,
-        detailFormatter:function(index, row, element){
-            //return JSON.stringify(row);
-            var template =
-                '<div class="container-fluid">' +
-                    '<div class="row">' +
-                        '<div class="col-xs-12"><label>描述：</label><span>'+ row.desc +'</span></div>' +
-                    '</div>' +
-                    '<div class="row">' +
-                        '<div class="col-xs-12"><label>限制人数：</label><span>小于 <b>'+ row.limitNum +'</b> 人</span></div>' +
-                    '</div>' +
-                    '<div class="row">' +
-                        '<div class="col-xs-12">' +
-                            '<label>限制科目(以下科目人数相加)：</label>' +
-                            '<ul></ul>' +
-                        '</div>' +
-                    '</div>';
 
-            element.html(template);
+    /** 考试信息 */
 
-            var rulesContent = element.find('.col-xs-12:eq(2)>ul');
-            _.each(row.limit_obj,function(el){
-                //考点名称
-                var examSite = _.find(cache_examSites,function(el2){return el2.code == el.exam_site_code;});
-                var str = '' + examSite.name;
-                //科目名称
-                if(el.subject_code){
-                    var subject = _.find(examSite.subjects,function(el2){return el2.code == el.subject_code;});
-                    str += ' 的<br> ' + subject.name;
-                }
-                else str += ' 的<br> 所有科目';
-                rulesContent.append('<li>' + str + '</li>');
-            });
+    //搜索条件按钮
+    var btn_searchBy = $('.searchBy',$root);
+    btn_searchBy.find("a").click(function(){
+        btn_searchBy.find('.btn-text').text($(this).text());
+        $('[name=searchBy]',$root).val($(this).attr('value'));
+    });
 
-            return '';
+    //报名信息列表
+    var $toolbar = $('.toolbar',$root);
+    var $testInfoTable = $('.testInfoTable',$root);
 
+    //选择器
+    var formatter_select = function(val,col,index){
+        var url = '/admin/testArrange/testInfo/' + col.id_number + '/' + this.field;
+        var source = '/codeRef/' + this.field;
+
+        return '<div class="cell">' +
+            '<a ' +
+            'data-url="' + url + '" ' +
+            'data-pk = "' + col.id_number + '" ' +
+            'data-type="select" ' +
+            'data-source="' + source + '" ' +
+            'data-sourceCache="false" ' +
+            'data-value="' + val + '"' +
+            'data-emptyText="未知代码(' + val + ')"></a>' +
+            '</div>';
+    };
+
+    //文本框
+    var formatter_text = function(val,col,index){
+        var url = '/admin/testArrange/testInfo/' + col.id_number + '/' + this.field;
+        var source = '/codeRef/' + this.field;
+        return  '<div class="cell">' +
+            '<a data-url="' + url + '" data-pk = "' + col.id_number + '" data-type="text" data-source="' + source + '" data-value="' + val + '"></a>' +
+            '</div>';
+    };
+
+    //文本
+    var formatter_disable = function(val,col,index){
+        return  '<div class="cell">' + val + '</div>';
+    };
+
+    $testInfoTable.bootstrapTable({
+        url:'/admin/testArrange/testInfo',     //数据URL
+        idField:'id_number',
+        /* 翻页 */
+        pagination:true,
+        sidePagination:'server',
+        /* 组装查询参数 */
+        queryParams:function(params){
+
+            var searchText = $('input[name="searchText"]',$toolbar).val();
+            var searchBy = $('input[name="searchBy"]',$toolbar).val();
+            var strictMode = false;//$('input[name="strictMode"]',$toolbar).is(':checked');
+            if(searchText === '') return params;
+            else{
+                params.searchText = searchText;
+                params.searchBy = searchBy;
+                params.strictMode = strictMode;
+                return params;
+            }
         },
+        /* x-editable */
         onPostBody:function(data){
-            $limitRulesTable.find('a.delete').click(function(){
-                var key = $(this).attr('key');
-                myDialog.confirm('确认删除？',function(res){
-                    if(res.state === 'ok') $.ajax({
-                        url:'/admin/testArrange/examPlan/limitRules/' + key,
-                        type:'delete',
-                        success:function(){
-                            $limitRulesTable.bootstrapTable('refresh');
-                            myDialog.alert('删除成功');
-                        }
-                    });
-                })
+            $testInfoTable.find('a').editable({
+                mode:'inline',
+                ajaxOptions: {
+                    type: 'PUT'
+                }
             });
         },
         columns: [{
-            field: 'desc',
-            title: '规则描述'
+            field: 'state',
+            checkbox: true,
+            align: 'center',
+            valign: 'middle'
         }, {
-            field: 'limitNum',
-            title: '限制人数'
-
+            field:'id_number',
+            title:'证件号',
+            sortable:true,
+            formatter:formatter_disable
         }, {
-            formatter: function(value, row, index){
-                return '<a href="javascript:void(0)" class="delete" key="' + index + '">删除</a>';
-            }
+            field:'name',
+            title:'姓名',
+            sortable:true,
+            formatter:formatter_text
+        }, {
+            field:'testRoom_number',
+            title:'考试地点(考场号)',
+            sortable:true,
+            formatter:formatter_select
+        }, {
+            field:'batch_number',
+            title:'批次号',
+            sortable:true,
+            formatter:formatter_select
         }]
     });
 
-    $('.limitRules .refresh',$root).click(function(){
-        $limitRulesTable.bootstrapTable('refresh')
+    //刷新按钮
+    $toolbar.find('.refresh').click(function(){
+        $testInfoTable.bootstrapTable('refresh');
     });
 
 
-    /** 添加人数限制规则对话框 */
-    var template_addLimitRule =
-        '<form class="container-fluid">' +
-            '<div class="row"><div class="col-xs-12 msg"></div></div>' +
-            '<div class="row">' +
-                '<div class="col-xs-12">' +
-                    '<div class="form-group">' +
-                        '<label>规则描述：</label>' +
-                        '<input name="desc" type="text" class="form-control" required>' +
-                    '</div>' +
-                    '<div class="form-group">' +
-                        '<label>限制人数：</label>' +
-                        '<input name="limitNum" type="number" class="form-control" min="0" required>' +
-                    '</div>' +
-                    '<input name="limit_obj" type="hidden">'+
-                '</div>' +
-            '</div>'+
+    //搜索按钮
+    $toolbar.find('.search').click(function(){
+        $testInfoTable.bootstrapTable('refresh');
+    });
 
-            '<div class="row">' +
-                '<div class="col-xs-12 form-group">' +
-                    '<label>限制科目(以下科目人数相加)：</label>' +
-                    '<table></table>' +
-                '</div>' +
-            '</div>' +
-            //添加限制科目
-            '<div class="row">' +
-                '<div class="col-xs-12 form-group">' +
-                    '<label>添加限制科目</label>' +
-                    '<div class="form-horizontal">' +
-                        '<div class="form-group">' +
-                            '<label for="exam_site_code" class="col-sm-2 control-label">考点</label>' +
-                            '<div class="col-sm-10">' +
-                                '<select class="exam_site_code form-control"></select>' +
-                            '</div>'+
-                        '</div>'+
-                        '<div class="form-group">' +
-                            '<label for="subject_code" class="col-sm-2 control-label">科目</label>' +
-                            '<div class="col-sm-10">' +
-                                '<select class="subject_code form-control" ></select>' +
-                            '</div>'+
-                        '</div>' +
-                        '<div class="form-group">' +
-                            '<div class="col-sm-offset-2 col-sm-10">'+
-                                '<button class="addLimitObj btn btn-primary" type="button">添加限制科目</button>'+
-                            '</div>' +
-                        '</div>'+
-                    '</div>'+
-                '</div>' +
-            '</div>'+
+    //删除按钮
+    $toolbar.find('.delete').click(function(){
 
-            '<button type="submit" class="btn btn-block btn-primary">添加</button>' +
-        '</form>';
-
-    $('.limitRules .addLimitRule').click(function(){
-        myDialog.dialog({
-            title:'添加人数限制规则',
-            okBtn:false,
-            cancelBtn:false,
-            msg:template_addLimitRule,
-            init:function($modal,re){
-                //表格
-                var $table = $modal.find('table');
-                $table.bootstrapTable({
-                    onPostBody:function(data){
-                        $table.find('a.delete').click(function(){
-                            var i = $(this).attr('key');
-                            $table.bootstrapTable('load',_.reject($table.bootstrapTable('getData'), function(value,index){
-                                return index == i;
-                            }));
-                        });
-                    },
-                    columns: [{
-                        field: 'exam_site_code',
-                        title: '考点',
-                        formatter: function(value, row, index){
-                            var examSite = _.find(cache_examSites,function(el){return el.code == value;});
-                            return examSite ? examSite.name : '未知代码：' + value;
-                        }
-                    }, {
-                        field: 'subject_code',
-                        title: '科目',
-                        formatter: function(value, row, index){
-                            if(value == 0) return '所有科目';
-                            else{
-                                var examSite = _.find(cache_examSites,function(el){return el.code == row.exam_site_code;});
-                                if(examSite.subjects){
-                                    var subject = _.find(examSite.subjects,function(el){return el.code == value;});
-                                    return subject ? subject.name : '未知代码：' + value;
-                                }
-                                else return '未知代码：' + value;
-                            }
-                        }
-                    }, {
-                        formatter: function(value, row, index){
-                            return '<a href="javascript:void(0)" class="delete" key="' + index + '">删除</a>';
-                        }
-                    }]
-                });
-
-                //添加限制科目
-                var $select_esc = $modal.find('select.exam_site_code');
-                var $select_sc = $modal.find('select.subject_code');
-                $select_esc.html(
-                    _.reduce(cache_examSites,function(memo,el){
-                        return memo + '<option value="' + el.code + '">' + el.name + '</option>';
-                    },'')
-                ).change(function(){
-                    var code = $(this).val();
-                    var examSite = _.find(cache_examSites,function(el){
-                        return el.code == code;
-                    });
-                    if(examSite){
-                        $select_sc.html(
-                            _.reduce(examSite.subjects,function(memo,el){
-                                return memo + '<option value="' + el.code + '">' + el.name + '</option>';
-                            },'<option value="0">所有科目</option>')
-                        );
-                    }
-                }).trigger('change');
-
-                $modal.find('.addLimitObj').click(function(){
-                    var data = {
-                        exam_site_code:$select_esc.val(),
-                        subject_code:$select_sc.val()
-                    };
-                    var i = _.findIndex($table.bootstrapTable('getData'),function(el){
-                        return (el.exam_site_code == data.exam_site_code && el.subject_code == data.subject_code)
-                            || (el.exam_site_code == data.exam_site_code && el.subject_code == 0) ;
-                    });
-
-                    if(i == -1) $table.bootstrapTable('append',data);
-                });
-
-                //提交事件
-                $modal.find('.addLimitRule').click(function(){
-                    $modal.find('form').submit();
-                });
-                $modal.find('form').ajaxForm({
-                    url:'/admin/testArrange/examPlan/limitRules/',
-                    type:'post',
-                    beforeSerialize:function(){
-                        var data = $table.bootstrapTable('getData');
-                        if(data.length == 0){
-                            showMsg($modal.find('.msg'),'danger','限制科目不能为空');
-                            return false;
-                        }
-                        else{
-                            $modal.find('input[name="limit_obj"]').val(JSON.stringify(_.map(data,function(el){
-                                if(el.subject_code == 0) delete el.subject_code;
-                                return el;
-                            })));
-                            return true;
-                        }
-                    },
+        var data_del = $testInfoTable.bootstrapTable('getSelections'); //要删除的数据
+        if(data_del.length != 0){
+            if(!confirm('确定删除所选信息?')) return;
+            //并行删除
+            var succeed = 0;
+            _.each(data_del,function(row){
+                $.ajax({
+                    url:'/admin/testArrange/testInfo/' + row.id_number,
+                    type:'delete',
                     success:function(){
-                        $limitRulesTable.bootstrapTable('refresh');
-                        $modal.modal('hide');
+                        succeed++;
+                        if(succeed = data_del.length) {
+                            showMsg($('.message',$root),'success','删除成功');
+                            $testInfoTable.bootstrapTable('refresh');
+                        }
                     },
-                    error:function(xhr){
-                        showMsg($modal.find('.msg'),'danger',xhr.responseText);
+                    error:function(){
+                        console.log('删除失败:' + row.id_number);
                     }
                 });
+            });
+        }
+
+    });
+    //删除全部按钮
+    $toolbar.find('.deleteAll').click(function(){
+        if(prompt('确定删除所有信息?输入"确认删除"以确认。','') !== '确认删除'){
+            return;
+        }
+        //删除
+        $.ajax({
+            url:'/admin/testArrange/testInfo',
+            type:'delete',
+            success:function(){
+                showMsg($('.message',$root),'success','删除成功');
+                $testInfoTable.bootstrapTable('refresh');
+            },
+            error:function(){
+                console.log('删除失败:');
+                $testInfoTable.bootstrapTable('refresh');
             }
         });
     });
+
+    //导入对话框模板
+    var template_import = '' +
+        '<form>' +
+            '<div class="form-group message">' +
+            '</div>' +
+            '<div class="form-group">' +
+                '<label>文件：</label>' +
+                '<div class="input-group">' +
+                    '<input type="text" class="form-control" placeholder="File Name" disabled>' +
+                    '<span class="input-group-btn">' +
+                        '<label for="file_testInfo" class="btn btn-primary">选择文件</label>' +
+                        '<input id="file_testInfo" name="file" type="file" style="position:absolute;clip:rect(0 0 0 0);">' +
+                    '</span>' +
+                '</div>' +
+            '</div>' +
+            '<div class="form-group">' +
+                '<button type="submit" class="btn btn-primary btn-lg btn-block">提交</button>' +
+            '</div>' +
+            '<div class="form-group">' +
+                '<h5>导入说明</h5>' +
+                '<hr>' +
+                '<h6><b>支持的文件类型:</b></h6> ' +
+                    '<p> xls,xlsx </p>' +
+                '<h6><b>各个数据项对应的表头名称（注：列名与缩写都可以使用）:</b></h6>' +
+                '<table class="table table-bordered table-striped table-condensed">' +
+                    '<tr>' +
+                        '<th>列名</th>' +
+                        '<th>缩写</th>'+
+                        '<th>表头名称</th>' +
+                    '</tr>' +
+                    '<tr>' +
+                        '<td>id_number</td>' +
+                        '<td>ZJH</td>'+
+                        '<td>证件号</td>' +
+                    '</tr>' +
+                    '<tr>' +
+                        '<td>name</td>' +
+                        '<td>XM</td>'+
+                        '<td>姓名</td>' +
+                    '</tr>' +
+                    '<tr>' +
+                        '<td>testRoom_number</td>' +
+                        '<td>KCH</td>'+
+                        '<td>考场号</td>' +
+                    '</tr>' +
+                    '<tr>' +
+                        '<td>batch_number</td>' +
+                        '<td>PCH</td>'+
+                        '<td>批次号</td>' +
+                    '</tr>' +
+                '</table>' +
+            '</div>' +
+        '</form>';
+    //导入按钮
+    $toolbar.find('.import').click(function(){
+
+        myDialog.dialog({
+            title:'导入考试信息',
+            msg:template_import,
+            init:function($modal,re){
+
+                $modal.find('input[type="file"]').change(function(){
+                    $modal.find('input[type="text"]',$root).val($(this).val());
+                });
+
+                $modal.find('form').ajaxForm({
+                    url:'/admin/testArrange/testInfo',
+                    type:'post',
+                    beforeSubmit:function(){
+                        if($modal.find('input[type="file"]').val() == '') return false;
+                        else showMsg($modal.find('.message'),'info','<div class="loader"></div> 添加中...');
+                    },
+                    success:function(msg){
+                        showMsg($modal.find('.message'),'success','添加成功：' + msg);
+                        $testInfoTable.bootstrapTable('refresh');
+                    },
+                    error:function(xhr){
+                        showMsg($modal.find('.message'),'danger','Error：' + xhr.responseText);
+                        $testInfoTable.bootstrapTable('refresh');
+                    }
+                });
+            },
+            okBtn:false
+        });
+    });
+
+
 
 });

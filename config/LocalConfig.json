@@ -11,7 +11,8 @@
   "table_names":{
     "enterInfo":"enterinfo",
     "blackList":"blacklist",
-    "score":"score"
+    "score":"score",
+    "testInfo":"testinfo"
   },
 
   "redis_config":{

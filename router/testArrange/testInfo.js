@@ -4,7 +4,7 @@
 (function () {
     var router = require('express').Router(),
         bodyParser = require('body-parser'),
-        dbo = require('../../model/Score'),
+        dbo = require('../../model/TestInfo'),
         _ = require('lodash'),
         multer = require('multer'),
         diskStore = multer.diskStorage({
@@ -41,12 +41,12 @@
      * @param {number} offset 偏移
      * @param {number} limit 限制 */
     router.get('/', function (req, res, next) {
-        dbo.selectScore(req.query)
+        dbo.selectTestInfo(req.query)
             .then(function (result) {
                 res.send(result);
             })
             .catch(function (err) {
-                req.log.error('分数信息_获取_失败',{err:err});
+                req.log.error('考试信息_获取_失败',{err:err});
                 res.status(400).send(err);
             });
     });
@@ -60,15 +60,15 @@
     router.post('/', upload.single('file'), function (req, res, next) {
         //文件导入
         if (req.file) {
-            var reader = dbo.importScore(req.file.suffix);
+            var reader = dbo.importTestInfo(req.file.suffix);
             if(reader){
                 reader(req.file.path)
                     .then(function(){
-                        req.log.info('分数信息_导入_成功');
+                        req.log.info('考试信息_导入_成功');
                         res.send('导入成功');
                     })
                     .catch(function(err){
-                        req.log.error('分数信息_导入_失败',{err:err});
+                        req.log.error('考试信息_导入_失败',{err:err});
                         res.status(400).send('导入失败:' + err.message);
                     });
             }
@@ -97,18 +97,18 @@
         if (req.body && req.body.value) {
             var newData = {};
             newData[req.params.field] = req.body.value;
-            dbo.updateScore(req.params.id_number, newData)
+            dbo.updateTestInfo(req.params.id_number, newData)
                 .then(function () {
-                    req.log.info('分数信息_修改_成功',{id_number:req.params.id_number});
+                    req.log.info('考试信息_修改_成功',{id_number:req.params.id_number});
                     res.send('修改成功');
                 })
                 .catch(function (err) {
-                    req.log.error('分数信息_修改_失败',{err:err,id_number:req.params.id_number});
+                    req.log.error('考试信息_修改_失败',{err:err,id_number:req.params.id_number});
                     res.status(400).send('修改失败：' + err.message);
                 });
         }
         else {
-            res.status(400).send('no data');
+            res.status(400).send('该证件号不存在');
         }
     });
 
@@ -117,25 +117,25 @@
      * @method DELETE
      * */
     router.delete('/', function (req, res, next) {
-        dbo.deleteAllScore()
+        dbo.deleteAllTestInfo()
             .then(function () {
-                req.log.info('分数信息_清空_成功');
+                req.log.info('考试信息_清空_成功');
                 res.send('删除成功');
             })
             .catch(function (err) {
-                req.log.error('分数信息_清空_失败',{err:err});
+                req.log.error('考试信息_清空_失败',{err:err});
                 res.status(400).send('删除失败：' + err.message);
             })
     });
 
     router.delete('/:id_number', function (req, res, next) {
-        dbo.deleteScore(req.params.id_number)
+        dbo.deleteTestInfo(req.params.id_number)
             .then(function () {
-                req.log.info('分数信息_删除_成功',{id_number:req.params.id_number});
+                req.log.info('考试信息_删除_成功',{id_number:req.params.id_number});
                 res.send('删除成功');
             })
             .catch(function (err) {
-                req.log.error('分数信息_删除_失败',{err:err,id_number:req.params.id_number});
+                req.log.error('考试信息_删除_失败',{err:err,id_number:req.params.id_number});
                 res.status(400).send('删除失败：' + err.message);
             })
     });

@@ -6,10 +6,10 @@
     <div class="panel-body">
         <div class="container-fluid">
             <div class="row">
-                <div class="col-lg-6 examSitesAndSubjects">
+                <div class="col-lg-6 testRoomsAndBatchs">
                     <div class="row">
                         <div class="col-xs-12 my-heading">
-                            <h4 class="pull-left">考点 & 科目管理</h4>
+                            <h4 class="pull-left">考场 & 批次管理</h4>
                             <button class="refresh pull-right btn btn-primary">
                                 <span class="glyphicon glyphicon-refresh"></span>
                             </button>
@@ -17,37 +17,96 @@
                         <div class="col-xs-12 clearfix"><hr></div>
                     </div>
                     <div class="row">
-                        <div class="col-md-5 examSites">
+                        <div class="col-md-4 testRooms">
                             <table></table>
                             <br>
-                            <button type="button" class="btn btn-primary btn-lg btn-block addSite">添加考点</button>
+                            <button type="button" class="btn btn-primary btn-lg btn-block addTestRoom">添加考场</button>
                         </div>
-                        <div class="col-md-7 subjects">
+                        <div class="col-md-8 batchs">
                             <table></table>
                             <br>
-                            <button type="button" class="btn btn-primary btn-lg btn-block addSubject">添加科目</button>
+                            <button type="button" class="btn btn-primary btn-lg btn-block addBatch">添加批次</button>
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-6 limitRules">
+                <div class="col-lg-6 examines">
                     <div class="row">
                         <div class="col-xs-12 my-heading">
-                            <h4 class="pull-left">人数限制规则管理</h4>
-                            <button class="refresh pull-right btn btn-primary">
-                                <span class="glyphicon glyphicon-refresh"></span>
-                            </button>
+                            <h4 class="pull-left">考试信息管理</h4>
                         </div>
                         <div class="col-xs-12 clearfix"><hr></div>
                     </div>
                     <div class="row">
-                        <div class="col-xs-12">
-                            <table></table>
+                        <div class="col-xs-12 message">
+
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-xs-12">
-                            <br>
-                            <button type="button" class="btn btn-primary btn-lg btn-block addLimitRule">添加人数限制规则</button>
+                        <div class="col-xs-12 toolbar form-inline" style="margin-bottom:10px;">
+                            <div class="pull-left">
+                                <div class="form-inline" role="form">
+                                    <div class="form-group">
+                                        <div class="btn-group">
+                                            <button class="btn btn-danger delete" data-toggle="tooltip" data-placement="bottom"
+                                                    title="删除选中的行">
+                                                <i class="glyphicon glyphicon-trash"></i> 删除
+                                            </button>
+                                            <button class="btn btn-danger deleteAll" data-toggle="tooltip" data-placement="bottom"
+                                                    title="删除全部行">
+                                                <i class="glyphicon glyphicon-trash"></i> 删除全部
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="btn-group">
+                                            <button type="button" class="btn btn-primary refresh"  title="刷新表格"><i
+                                                        class="glyphicon glyphicon-refresh"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-primary import" title="导入分数,支持xls、xlsx文件"><i
+                                                        class="glyphicon glyphicon-import"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="pull-right">
+                                <div class="form-inline" role="form">
+                                    <div class="form-group">
+                                        <input name="searchText" type="text" class="form-control" placeholder="搜索">
+                                    </div>
+                                    <!--<div class="checkbox">-->
+                                        <!--<label title="选中后，结果搜索内容严格匹配">-->
+                                            <!--<input type="checkbox" name="strictMode" > 严格匹配模式-->
+                                        <!--</label>-->
+                                    <!--</div>-->
+                                    <div class="form-group">
+                                        <div class="btn-group">
+                                            <div class="btn-group searchBy">
+                                                <button type="button" class="btn btn-primary dropdown-toggle"
+                                                        data-toggle="dropdown">
+                                                    <span class="btn-text">按名字搜索</span> <span class="caret"></span>
+                                                </button>
+                                                <ul class="dropdown-menu" role="menu">
+                                                    <li><a href="javascript:void(0);" value="name">按名字搜索</a></li>
+                                                    <li><a href="javascript:void(0);" value="id_number">按证件号搜索</a></li>
+                                                </ul>
+                                                <input name="searchBy" type="hidden" value="name"/>
+                                            </div>
+                                            <button class="btn btn-primary search" type="button"><i
+                                                        class="glyphicon glyphicon-search"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div><!-- /pull right -->
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <table class="testInfoTable">
+
+                            </table>
                         </div>
                     </div>
                 </div>

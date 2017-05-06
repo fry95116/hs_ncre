@@ -6,17 +6,18 @@ $(document).ready(function () {
 
 
     /** 导入缓冲区 */
-        //选择器
+    //选择器
     var formatter_select = function (val, col, index) {
         var source = '/codeRef/' + this.field;
 
             return '<div class="cell">' +
                 '<a ' +
-                'data-pk = "' + index + '" ' +
+                'data-pk = "' + index + '"' +
                 'data-field = "' + this.field + '"' +
-                'data-type = "select" ' +
-                'data-source = "' + source + '" ' +
-                'data-value = "' + val + '"></a>' +
+                'data-type = "select"' +
+                'data-source = "' + source + '"' +
+                'data-value = "' + val + '"' +
+                'data-emptyText="未知代码(' + val + ')"></a>' +
                 '</div>';
         };
     //文本框
@@ -119,25 +120,25 @@ $(document).ready(function () {
         }]
     });
 
-    /** 删除所选 */
+    //删除所选
     $('.delete', $root).click(function () {
         $importBuffer.bootstrapTable('remove', {
             field: 'tid',
             values: _.pluck($importBuffer.bootstrapTable('getAllSelections'), 'tid')
         });
     });
-    /** 删除全部 */
+    //删除全部
     $('.deleteAll', $root).click(function () {
         $importBuffer.bootstrapTable('removeAll');
     });
-    /** 切换显示 */
+    //切换显示
     $('.toggle', $root).click(function () {
         $importBuffer.bootstrapTable('toggleView');
     });
 
     /** 手动添加 */
     var $form = $('form.manuallyAdd', $root);
-    /** 装填select */
+    //装填select
     $form.find('select').each(function(){
         (function($el) {
             var source = $el.attr('data-source');
@@ -172,16 +173,15 @@ $(document).ready(function () {
     });
 
     /** 添加信息 */
-        //主键生成
+    //主键生成
     var getID = (function(){
             var i = 0;
             return function(){
                 return i++;
             }
         })();
-    //添加数据
+
     function appendData(data){
-        //装入list
         $importBuffer.bootstrapTable('append', _.map(data,function(row){
             row.tid = getID();
             return row;
@@ -189,95 +189,143 @@ $(document).ready(function () {
         $importBuffer.bootstrapTable('scrollTo', 'bottom');
     }
 
-    /** 添加入缓冲区 */
+    window.appendData = appendData;
+
+    //添加入缓冲区
     $form.submit(function () {
         var data = _.reduce($form.serializeArray(), function (memo, iter) {
             memo[iter.name] = iter.value;
             return memo;
         }, {});
-
-        appendData(data);
-
+        appendData([data]);
         return false;
     });
+
+
+
+
+
+
     /** 导入缓冲区 */
-    $('#file_addEnter').change(function(e){
-        var files = e.target.files;
-        if(files.length === 0)return;
-        //读取第一个文件
-        var file = files[0];
-        var reader = new FileReader();
-        reader.onload = function(e) {
-            var data = e.target.result;
-            var workbook = XLSX.read(data, {type: 'binary'});           //工作簿
-            var worksheet = workbook.Sheets[workbook.SheetNames[0]];    //工作表
-            /*console.log(XLSX.utils.sheet_to_json(worksheet));*/
 
-            var IDs = [
-                'exam_site_code', 'name', 'sex', 'birthday',
-                'id_type', 'id_number', 'nationality', 'career',
-                'degree_of_education', 'training_type', 'subject_code',
-                'post_code', 'address', 'email', 'phone', 'remark'
-            ];
-            appendData(_.map(XLSX.utils.sheet_to_json(worksheet),function(row){
-                return _.defaults(_.pick(row,IDs),{
-                    'post_code':'',
-                    'address':'',
-                    'phone':'',
-                    'remark':''
+    var template_import = '' +
+        '<form>' +
+            '<div class="form-group message"></div>' +
+            '<div class="form-group"> ' +
+                '<h5>文件：</h5> ' +
+                '<hr> ' +
+                '<div class="input-group"> ' +
+                    '<input type="text" class="form-control" placeholder="File Name" disabled> ' +
+                    '<span class="input-group-btn"> ' +
+                        '<label for="file_addEnter" class="btn btn-primary">选择文件</label> ' +
+                        '<input id="file_addEnter" name="file" type="file" style="position:absolute;clip:rect(0 0 0 0);"> ' +
+                    '</span> ' +
+                '</div> ' +
+            '</div> ' +
+            '<div class="form-group">' +
+                '<button type="submit" class="btn btn-primary btn-lg btn-block">提交</button>' +
+            '</div>' +
+            '<div class="form-group"> ' +
+                '<h5>导入说明</h5> ' +
+                '<hr> ' +
+
+                '<h6><b>支持的文件类型:</b></h6> ' +
+                '<p>xls,xlsx </p> ' +
+
+                '<h6><b>各个数据项对应的表头名称:</b></h6> ' +
+                '<table class="table table-bordered table-striped table-condensed"> ' +
+                    '<tr> <th>列名</th> <th>数据说明</th> </tr> ' +
+                    '<tr> <td>exam_site_code</td> <td>考点(代码)</td> </tr> ' +
+                    '<tr> <td>subject_code</td> <td>考试科目(代码)</td> </tr> ' +
+                    '<tr> <td>name</td> <td>姓名</td> </tr> ' +
+                    '<tr> <td>sex</td> <td>性别(代码)</td> </tr> ' +
+                    '<tr> <td>birthday</td> <td>出生日期</td> </tr> ' +
+                    '<tr> <td>id_type</td> <td>证件类型(代码)</td> </tr> ' +
+                    '<tr> <td>id_number</td> <td>证件号码</td> </tr> ' +
+                    '<tr> <td>nationality</td> <td>民族(代码)</td> </tr> ' +
+                    '<tr> <td>career</td> <td>职业(代码)</td> </tr> ' +
+                    '<tr> <td>degree_of_education</td> <td>文化程度(代码)</td> </tr> ' +
+                    '<tr> <td>training_type</td> <td>培训类型(代码)</td> </tr> ' +
+                    '<tr> <td>post_code</td> <td>邮政编码</td> </tr> ' +
+                    '<tr> <td>address</td> <td>地址</td> </tr> ' +
+                    '<tr> <td>email</td> <td>电子邮箱</td> </tr> ' +
+                    '<tr> <td>phone</td> <td>联系电话</td> </tr> ' +
+                    '<tr> <td>remark</td> <td>备注</td> </tr> ' +
+                '</table> ' +
+            '</div>' +
+        '</form>';
+    $('.import',$root).click(function(){
+
+        myDialog.dialog({
+            title:'导入报名信息',
+            msg:template_import,
+            init:function($modal,re){
+
+                $modal.find('input[type="file"]').change(function(){
+                    $modal.find('input[type="text"]',$root).val($(this).val());
                 });
-            }));
 
-        };
-        reader.readAsBinaryString(file);
+                $modal.find('form').ajaxForm({
+                    url:'/admin/enterManage/enterInfo',
+                    type:'post',
+                    beforeSubmit:function(){
+                        if($modal.find('input[type="file"]').val() == '') return false;
+                        else showMsg($modal.find('.message'),'info','<div class="loader"></div> 添加中...');
+                    },
+                    success:function(msg){
+                        showMsg($modal.find('.message'),'success','添加成功：' + msg);
+                        $scoreTable.bootstrapTable('refresh');
+                    },
+                    error:function(xhr){
+                        showMsg($modal.find('.message'),'danger','Error：' + xhr.responseText);
+                        $scoreTable.bootstrapTable('refresh');
+                    }
+                });
+            },
+            okBtn:false
+        });
     });
+
+    // $('#file_addEnter').change(function(e){
+    //     var files = e.target.files;
+    //     if(files.length === 0)return;
+    //     //读取第一个文件
+    //     var file = files[0];
+    //     var reader = new FileReader();
+    //     reader.onload = function(e) {
+    //         var data = e.target.result;
+    //         var workbook = XLSX.read(data, {type: 'binary'});           //工作簿
+    //         var worksheet = workbook.Sheets[workbook.SheetNames[0]];    //工作表
+    //         /*console.log(XLSX.utils.sheet_to_json(worksheet));*/
+    //
+    //         var IDs = [
+    //             'exam_site_code', 'name', 'sex', 'birthday',
+    //             'id_type', 'id_number', 'nationality', 'career',
+    //             'degree_of_education', 'training_type', 'subject_code',
+    //             'post_code', 'address', 'email', 'phone', 'remark'
+    //         ];
+    //         appendData(_.map(XLSX.utils.sheet_to_json(worksheet),function(row){
+    //             return _.defaults(_.pick(row,IDs),{
+    //                 'post_code':'',
+    //                 'address':'',
+    //                 'phone':'',
+    //                 'remark':''
+    //             });
+    //         }));
+    //
+    //     };
+    //     reader.readAsBinaryString(file);
+    // });
 
     /** 数据提交 */
     $('.add',$root).click(function(){
         if(confirm('确定添加？'))
             Upload(false,$importBuffer,$('.err_msg',$root));
     });
-
     $('.forceAdd',$root).click(function(){
         if(confirm('确定添加？'))
             Upload(true,$importBuffer,$('.err_msg',$root));
     });
-
-    /** 中断处理对话框 */
-    var showInterruptHandler = (function(){
-        var self = this;
-        var dialog = null;
-        function init(){
-            dialog = $('.addEnter-interruptHandle',$root);
-            dialog.find('.action1').click(function(){
-                self.msg = 1;
-                dialog.modal('hide');
-            });
-            dialog.find('.action2').click(function(){
-                //2.强制添加当前项，不改变后面的添加方式
-                self.msg = 2;
-                dialog.modal('hide');
-            });
-            dialog.find('.action3').click(function(){
-                //3.强制添加当前项与之后的数据项
-                self.msg = 3;
-                dialog.modal('hide');
-            });
-            dialog.on('hidden.bs.modal',function(){
-                if(typeof self.onHidden === 'function') self.onHidden(self.msg);
-            });
-        }
-
-        return function(msg,onHidden){
-            if(!dialog) init();
-            dialog.find('.msg').text(msg);
-            self.onHidden = onHidden;
-            dialog.modal({
-                backdrop:'static',
-                keyboard:false
-            });
-        }
-    })();
 
     /** 提交表单
      * force            是否强制提交
@@ -294,13 +342,13 @@ $(document).ready(function () {
         //进度条
         $processContent.append(
             '<div class="panel panel-default">' +
-            '<div class="panel-body">' +
-            '<label>添加进度：</label>' +
-            '<span class="cur_rate">0/' + sum + '</span>' +
-            '<div class="progress">' +
-            '<div class="progress-bar progress-bar-success"></div>' +
-            '</div>' +
-            '</div>' +
+                '<div class="panel-body">' +
+                    '<label>添加进度：</label>' +
+                    '<span class="cur_rate">0/' + sum + '</span>' +
+                    '<div class="progress">' +
+                        '<div class="progress-bar progress-bar-success"></div>' +
+                    '</div>' +
+                '</div>' +
             '</div>'
         );
 
@@ -342,17 +390,39 @@ $(document).ready(function () {
                     },
                     error:function(XHR, textStatus, errorThrown){
                         //显示模态框
-                        showInterruptHandler(XHR.responseText,function(msg){
-                            switch(msg) {
-                                case 1:     //1.中断传输，回去修改
-                                    $processContent.empty();
-                                    break;
-                                case 2:     //2.强制添加当前项，不改变后面的添加方式
-                                    submitData(true,true);
-                                    break;
-                                case 3:     //3.强制添加当前项与之后的数据项
-                                    submitData(true);
-                                    break;
+                        myDialog.dialog({
+                            title:'传输中断',
+                            okBtn:false,
+                            cancelBtn:false,
+                            closeBtn:false,
+                            msg:'' +
+                            '<p> ' +
+                            '<label>错误信息：</label>' + XHR.responseText + '<br> ' +
+                            '<b>接下来怎么做？</b> ' +
+                            '</p> ' +
+                            '<div style="text-align: right; line-height: 3em;"> ' +
+                            '<button type="button" class="action btn btn-primary" value="interrupt">1.中断传输，回去修改</button><br> ' +
+                            '<button type="button" class="action btn btn-primary" value="forceCurrent">2.强制添加当前项，不改变后面的添加方式</button><br> ' +
+                            '<button type="button" class="action btn btn-primary" value="keepforce">3.强制添加当前项与之后的数据项</button> ' +
+                            '</div>',
+                            init:function($modal,re){
+                                $modal.find('.action').click(function(){
+                                    re.msg = $(this).attr('value');
+                                    $modal.modal('hide');
+                                });
+                            },
+                            response:function(re){
+                                switch(re.msg) {
+                                    case 'interrupt':     //1.中断传输，回去修改
+                                        $processContent.empty();
+                                        break;
+                                    case 'forceCurrent':     //2.强制添加当前项，不改变后面的添加方式
+                                        submitData(true,true);
+                                        break;
+                                    case 'keepforce':     //3.强制添加当前项与之后的数据项
+                                        submitData(true);
+                                        break;
+                                }
                             }
                         });
                     }
@@ -361,20 +431,4 @@ $(document).ready(function () {
 
         }
     }
-
-    /*$('.forceAdd',$root).click(function(){
-     $form.find('input[name="force"]').val('true');
-     });
-     $('.add',$root).click(function(){
-     $form.find('input[name="force"]').val('false');
-     });
-     $form.ajaxForm({
-     success:function(data){
-     showMsg($('.err_msg',$root),'success',data);
-     },
-     error:function(xhr){
-     showMsg($('.err_msg',$root),'danger',xhr.responseText);
-     },
-     resetForm:true
-     });*/
 });

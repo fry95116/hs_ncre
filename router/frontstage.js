@@ -175,60 +175,59 @@
             req.body.remark = req.body.school == '01' ? req.body.school_name : codeRef.school.findName(req.body.school);
         }
 
-        //前期检查
-        dbo.check(req.body)
-            .then(_.partial(dbo.repeatCheck,req.body.id_number))
-            .then(_.partial(blackList.check,req.body.id_number))
-            .then(dbo.getStatistics)
-            .then(dbo.checkCount)
-            //添加过程
-            .then(dbo.begin)
-            .then(_.partial(dbo.insertInfo,req.body))
-            .then(dbo.getStatistics)
-            .then(_.partial(dbo.checkCount,_,true))
-            .then(dbo.commit)
-            .then(function(){
-                //日志
-                res.render('frontStage/op_res',{type:'success'});
-            })
-            .catch(function(err){
-                dbo.rollback()
-                    .then(function(){
-                        //日志
-                        req.log.error(err);
-                        //无效的提交数据
-                        if(err instanceof ERR.InvalidDataError){
-                            res.render('frontStage/fillout', {
-                                tr: codeRef,
-                                sites_info: sites_info,
-                                error_info: err.message,
-                                formData: JSON.stringify(req.body)
-                            });
-                        }
-                        //重复提交
-                        else if(err instanceof ERR.RepeatInfoError){
-                            res.render('frontStage/op_res',{type:'repeat'});
-                        }
-                        //人数超出
-                        else if(err instanceof ERR.CountOverFlowError){
-                            res.render('frontStage/op_res',{type:'overflow',msg:err.message});
-                        }
-                        //在黑名单中
-                        else if(err instanceof ERR.BlacklistError){
-                            res.render('frontStage/op_res',{type:'blackList'});
-                        }
-                        //未知错误
-                        else{
-                            res.render('frontStage/op_res',{type:'unknown'});
-                        }
-                    })
-                    .catch(function(err){
-                        //日志
-                        req.log.error(err);
-                        //未知错误
-                        res.render('frontStage/op_res',{type:'unknown'});
-                    });
-            });
+        //正常添加
+        dbo.getConnection().then(function(con){
+            //前期检查
+            dbo.check(req.body)
+                .then(_.partial(dbo.repeatCheck, con, req.body.id_number))
+                .then(_.partial(blackList.check, con, req.body.id_number))
+                .then(_.partial(dbo.getStatistics, con))
+                .then(dbo.checkCount)
+                //添加过程
+                .then(_.partial(dbo.begin, con))
+                .then(_.partial(dbo.insertInfo, con, req.body))
+                .then(_.partial(dbo.getStatistics, con))
+                .then(_.partial(dbo.checkCount, _, true))
+                .then(_.partial(dbo.commit, con))
+                .then(function () {
+                    //日志
+                    req.log.info('报名信息_添加_成功',{id_number:req.body.id_number});
+                    res.send('添加成功。');
+                })
+                .catch(function (err) {
+                    dbo.rollback(con)
+                        .then(function () {
+                            //日志
+                            req.log.error('报名信息_添加_失败',{id_number:req.body.id_number,err:err});
+                            //无效的提交数据
+                            if (err instanceof ERR.InvalidDataError) res.status(400).send('无效的提交数据:' +
+                                _.map(_.toPairs(JSON.parse(err.message)),function(pair){
+                                    return pair.join('=');
+                                }).join('&')
+                            );
+                            //重复提交
+                            else if (err instanceof ERR.RepeatInfoError) res.status(400).send(err.message);
+                            //人数超出
+                            else if (err instanceof ERR.CountOverFlowError) res.status(400).send('人数超出:' + JSON.parse(err.message).desc);
+                            //在黑名单中
+                            else if (err instanceof ERR.BlacklistError) res.status(400).send(err.message);
+                            //未知错误
+                            else res.status(400).send('未知错误:' + err.message);
+                        })
+                        .catch(function (err) {
+                            //日志
+                            req.log.error(err);
+                            //未知错误
+                            res.status(400).send('未知错误:' + err.message);
+                        })
+                })
+                //释放连接
+                .finally(_.partial(dbo.release,con));
+        }).catch(function(err){
+            req.log.error('报名信息_获取连接_失败',{err:err});
+            res.status(400).send('未知错误:' + err.message);
+        });
+
     });
     module.exports = router;
 })();

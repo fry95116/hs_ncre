@@ -91,7 +91,7 @@
         }
     });
 
-    /** 删除科目 */
+    /** 删除人数限制规则 */
     router.delete('/limitRules/:index',function(req,res,next){
         user_config.limit_rules_operator.removeRule(req.params.index)
             .then(function(){

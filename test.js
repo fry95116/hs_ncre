@@ -1,20 +1,31 @@
+var _ = require('lodash');
 var Promise = require('bluebird');
 
-function iter(t){
+function test(con){
     return new Promise(function(resolve,reject){
         setTimeout(function(){
-            console.log(t);
-            if(t == 3) reject(new Error('error'));
-            else resolve();
+            if(con.msg === 30) reject(new Error('error'),con);
+            console.log(con.msg);
+            con.msg += 1;
+            resolve(con);
         },500);
-    });
+    })
 }
 
-function begin(){
-    return new Promise(function(resolve){
-        resolve();
+test({msg:0})
+    .then(test)
+    .then(test)
+    .then(test)
+    .then(test)
+    .then(test)
+    .then(test)
+    .then(test)
+    .then(test)
+    .catch(function(err){
+        console.error(err);
+        console.log(con);
+    })
+    .finally(function(con){
+        console.log(con + 'closed');
     });
-}
-begin().then(function(){
-    return [1,2,3,4,5,6,7];
-}).mapSeries(iter);
+

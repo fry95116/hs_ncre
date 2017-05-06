@@ -29,7 +29,8 @@ $(document).ready(function(){
             'data-type="select" ' +
             'data-source="' + source + '" ' +
             'data-sourceCache="false" ' +
-            'data-value="' + val + '"></a>' +
+            'data-value="' + val + '"' +
+            'data-emptyText="未知代码(' + val + ')"></a>' +
             '</div>';
     };
 
@@ -260,6 +261,10 @@ $(document).ready(function(){
                 $modal.find('form').ajaxForm({
                     url:'/admin/testArrange/score',
                     type:'post',
+                    beforeSubmit:function(){
+                        if($modal.find('input[type="file"]').val() == '') return false;
+                        else showMsg($modal.find('.message'),'info','<div class="loader"></div> 添加中...');
+                    },
                     success:function(msg){
                         showMsg($modal.find('.message'),'success','添加成功：' + msg);
                         $scoreTable.bootstrapTable('refresh');

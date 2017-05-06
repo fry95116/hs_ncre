@@ -29,7 +29,8 @@ $(document).ready(function(){
             'data-type="select" ' +
             'data-source="' + source + '" ' +
             'data-sourceCache="false" ' +
-            'data-value="' + val + '"></a>' +
+            'data-value="' + val + '"' +
+            'data-emptyText="未知代码(' + val + ')"></a>' +
             '</div>';
     };
     //日期

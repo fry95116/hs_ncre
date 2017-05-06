@@ -80,17 +80,11 @@
         //添加响应回调
 
         $el.find('.ok').click(function(){
-            if(opt.response) $el.on('hidden.bs.modal',function(){
-                re.state = 'ok';
-                opt.response(re);
-            });
+            re.state = 'ok';
             $el.modal('hide');
         });
         $el.find('.cancel').click(function(){
-            if(opt.response) $el.on('hidden.bs.modal',function(){
-                re.state = 'cancel';
-                opt.response(re);
-            });
+            re.state = 'cancel';
             $el.modal('hide');
         });
 
@@ -103,6 +97,7 @@
 
         $el.on('hidden.bs.modal',function(){
             $('.myDialog').remove();
+            if(opt.response)opt.response(re);
         });
 
         //加入DOM并显示

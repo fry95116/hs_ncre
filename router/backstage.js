@@ -136,6 +136,9 @@
     router.use('/configs/logs',require('./configs/logs'));
 
     router.use('/testArrange/examPlan',require('./testArrange/examPlan'));
+    router.use('/testArrange/testRooms',require('./testArrange/testRooms'));
+    router.use('/testArrange/testInfo',require('./testArrange/testInfo'));
     router.use('/testArrange/score',require('./testArrange/score'));
+
     module.exports = router;
 })();

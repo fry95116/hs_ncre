@@ -109,7 +109,7 @@
                         }
 					}
 					else{
-                		reject(new Error('非法的类型'));
+                		reject(new Error('缺少必要的数据项'));
 					}
                 });
 			},
@@ -165,6 +165,109 @@
                 return new Promise(function(resolve,reject){
                     config.get('limit_rules').remove(function(e,i){
                         return i == index;
+                    }).value();
+                    resolve();
+                });
+            }
+        },
+
+        test_rooms:config.get('test_rooms').value(),
+        test_rooms_operator:{
+
+            addTestRoom:function(testRoom){
+                return new Promise(function(resolve,reject){
+                    //类型检查
+                    if(_.has(testRoom,'code') && _.has(testRoom,'location')){
+                        examSite = _.pick(testRoom,['code','name']);			//过滤无用属性
+                        //重复检查
+                        var i = config.get('test_rooms').findIndex(function(e){
+                            return e.code == testRoom.code;
+                        }).value();
+                        if(i == -1){
+                            testRoom.batchs = [];
+                            config.get('test_rooms').push(testRoom).value();
+                            resolve();
+                        }
+                        else reject(new Error('该考场号已经存在'));
+                    }
+                    else reject(new Error('非法的类型'));
+                });
+
+            },
+            updateTestRoom:function(test_room_code,key,value){
+                return new Promise(function(resolve,reject){
+                    //类型检查
+                    if(key !== 'code' && key !== 'location') {
+                        reject(new Error('无效的属性'));
+                        return;
+                    }
+
+                    var examSites = config.get('test_rooms');
+                    if(key === 'code' && test_room_code !== value){
+                        //重复检查(新的考点代码)
+                        if(examSites.findIndex(function(e){return e.code == value;}).value() != -1){
+                            reject(new Error('该考场号已经存在'));
+                            return;
+                        }
+                    }
+                    //更新信息
+                    var oldVal = examSites.find(function(e){
+                        return e.code == test_room_code;
+                    }).value();
+                    oldVal[key] = value;
+                    config.write();
+                    resolve();
+                });
+
+            },
+            removeTestRoom:function(code){
+                return new Promise(function(resolve,reject){
+                    config.get('test_rooms').remove(function(e){
+                        return e.code == code;
+                    }).value();
+                    resolve();
+                });
+            },
+
+            addBatch:function(test_room_code,batch){
+                return new Promise(function(resolve,reject){
+                    if(_.has(batch,'code') && _.has(batch,'startTime') && _.has(batch,'endTime')) {		//类型检查
+                        batch = _.pick(batch, ['code', 'startTime', 'endTime']);			//过滤无用属性
+
+                        //日期合法性校验
+                        batch.startTime = new Date(batch.startTime);
+                        batch.endTime = new Date(batch.endTime);
+
+                        if(batch.startTime && batch.endTime){
+                            var testRoomIndex = config.get('test_rooms').findIndex(function (e) {
+                                return e.code == test_room_code;
+                            }).value();
+                            //考场检查
+                            if (testRoomIndex == -1) reject(new Error('该考场不存在'));
+                            else {
+                                var i = config.get('test_rooms[' + testRoomIndex + '].batchs').findIndex(function (e) {
+                                    return e.code == batch.code;
+                                }).value();
+                                //科目重复检查
+                                if (i != -1) reject(new Error('该批次号已存在'));
+                                else {
+                                    config.get('test_rooms[' + testRoomIndex + '].batchs').push(batch).value();
+                                    resolve();
+                                }
+                            }
+                        }else reject('非法的日期格式（考试开始时间）');
+
+                    }
+                    else reject(new Error('缺少必要的数据项'));
+                });
+            },
+            removeBatch:function(test_room_code,batch_code){
+                return new Promise(function(resolve,reject){
+                    var i = config.get('test_rooms').findIndex(function(e){
+                        return e.code == test_room_code;
+                    }).value();
+                    if(i !== -1) config.get('test_rooms['+ i +'].batchs').remove(function(e){
+                        return e.code == batch_code;
                     }).value();
                     resolve();
                 });
