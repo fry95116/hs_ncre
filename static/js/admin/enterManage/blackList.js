@@ -11,11 +11,11 @@ $(document).ready(function(){
             '</div> ' +
             '<div class="form-group"> ' +
                 '<label>姓名：</label> ' +
-                '<input name="name" type="text" class="form-control" placeholder="姓名"> ' +
+                '<input name="name" type="text" class="form-control" placeholder="姓名" required> ' +
             '</div> ' +
             '<div class="form-group"> ' +
                 '<label>证件号：</label> ' +
-                '<input name="id_number" type="text" class="form-control" placeholder="证件号"> ' +
+                '<input name="id_number" type="text" class="form-control" placeholder="证件号" required> ' +
             '</div> ' +
             '<div class="form-group"> ' +
                 '<button type="submit" class="btn btn-primary">提交</button> ' +
@@ -117,23 +117,6 @@ $(document).ready(function(){
             }
         });
     });
-
-
-    //添加\导入表单
-
-    $('.import form',$root).ajaxForm({
-        url:'/admin/enterManage/blackList',
-        type:'post',
-        success:function(msg){
-            showMsg($('.import .message',$root),'success','添加成功：' + msg);
-            $('table',$root).bootstrapTable('refresh');
-        },
-        error:function(xhr){
-            showMsg($('.import .message',$root),'danger','Error：' + xhr.responseText);
-            $('table',$root).bootstrapTable('refresh');
-        }
-    });
-
 
     //删除按钮
     $('.delete',$root).click(function(){

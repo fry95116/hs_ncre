@@ -49,6 +49,7 @@ $(document).ready(function() {
         'enterManage/addEnter':function(){showSubFuncView('enterManage','addEnter')},
         'enterManage/blackList':function(){showSubFuncView('enterManage','blackList')},
         'enterManage/enterList':function(){showSubFuncView('enterManage','enterList')},
+        'enterManage/photoManage':function(){showSubFuncView('enterManage','photoManage')},
 
 
 

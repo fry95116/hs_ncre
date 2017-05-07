@@ -30,6 +30,7 @@ $(document).ready(function(){
 
     $testRoomTable.bootstrapTable({
         cardView:true,
+        clickToSelect:true,
         onCheck:function(row, $el){
             refresh_batchTable(row.code);
         },

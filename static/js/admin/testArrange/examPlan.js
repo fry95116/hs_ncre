@@ -24,6 +24,7 @@ $(document).ready(function(){
 
     $examSiteTable.bootstrapTable({
         cardView:true,
+        clickToSelect:true,
         onCheck:function(row, $el){
             refresh_subjectTable(row.code);
         },

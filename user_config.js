@@ -8,7 +8,7 @@
 		localConfig = require('./config/LocalConfig.json');
 
 	module.exports = {
-        MySQLPath:localConfig.MySQLPath,
+        paths:localConfig.paths,
         db_config:localConfig.db_config,
 		table_names:localConfig.table_names,
         redis_config:localConfig.redis_config,

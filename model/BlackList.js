@@ -29,7 +29,7 @@ function __add(data_in,tid,line){
     else{
         //添加过程
         if(tid) data_in.tid = tid;                              //添加tid
-        data_in.id_number = data_in.id_number.toLowerCase();    //对齐省份证号的x为小写x
+        data_in.id_number = data_in.id_number.toUpperCase();    //对齐省份证号的x为大写x
         mem_store.get('blackList').push(data_in).value();       //添加
     }
 }

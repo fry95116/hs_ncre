@@ -1,31 +1,16 @@
 var _ = require('lodash');
-var Promise = require('bluebird');
+var decompress = require('decompress');
+var fs = require('fs');
+var images = require('images');
 
-function test(con){
-    return new Promise(function(resolve,reject){
-        setTimeout(function(){
-            if(con.msg === 30) reject(new Error('error'),con);
-            console.log(con.msg);
-            con.msg += 1;
-            resolve(con);
-        },500);
-    })
-}
+_.each(fs.readdirSync('./testing/testData/证件照'),function(fileName,index){
+    fs.readFile('./testing/testData/证件照/' + fileName,function(err,buf){
 
-test({msg:0})
-    .then(test)
-    .then(test)
-    .then(test)
-    .then(test)
-    .then(test)
-    .then(test)
-    .then(test)
-    .then(test)
-    .catch(function(err){
-        console.error(err);
-        console.log(con);
-    })
-    .finally(function(con){
-        console.log(con + 'closed');
+        var pic = images(buf);
+        var width = pic.width(),height = pic.height();
+        console.log(index+':' + fileName + '\t' + width + '*' + height);
+        if(width / 3 * 4 < height) pic.resize(width,width / 3 * 4);
+        else pic.resize(height / 4 * 3,height);
+        if(pic.width() >= 144) pic.save('./调整过的图片/' + fileName);
     });
-
+});

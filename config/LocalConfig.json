@@ -1,5 +1,8 @@
 {
-  "MySQLPath":"D:\\MariaDB 10.0",
+  "paths":{
+    "mysqldump":"D:\\MariaDB 10.0",
+    "photo":"D:\\我的工程\\hs_ncre\\证件照"
+  },
 
   "db_config":{
     "host": "localhost",
@@ -12,7 +15,8 @@
     "enterInfo":"enterinfo",
     "blackList":"blacklist",
     "score":"score",
-    "testInfo":"testinfo"
+    "testInfo":"testinfo",
+    "photo":"photo"
   },
 
   "redis_config":{

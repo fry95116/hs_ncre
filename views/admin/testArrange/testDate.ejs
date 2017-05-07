@@ -1,52 +1,64 @@
 <div id="<%= field %>" class="subFuncContent panel panel-default" style="display: <% if(show){ %>block<% }else{ %> none <% } %>" >
+    <script src="/js/admin/testArrange/testDate.js"></script>
+
     <div class="panel-heading">
         <h3 class="panel-title"><%= name %></h3>
     </div>
     <div class="panel-body">
-        <div style="margin: 30px auto;max-width: 640px;">
+        <div style="margin: 30px auto;max-width: 480px;">
             <form class="form-horizontal" action="/admin/configs/authentication/password" method="post">
                 <div class="form-group message">
 
                 </div>
+                <div class="page-header">
+                    <h4>报名</h4>
+                </div>
                 <div class="form-group">
-                    <label class="col-sm-3 control-label" for="enterStart">报名开始时间</label>
+                    <label class="col-sm-3 control-label" for="enterStart">开始时间</label>
                     <div class="col-sm-9">
-                        <input name="enterStart" type="Date" class="form-control" required>
+                        <input name="enterStart" class="form-control Mydate" required>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="col-sm-3 control-label" for="enterEnd">报名结束时间</label>
+                    <label class="col-sm-3 control-label" for="enterEnd">结束时间</label>
                     <div class="col-sm-9">
-                        <input name="enterEnd" type="Date" class="form-control" required>
+                        <input name="enterEnd" class="form-control Mydate" required>
+                    </div>
+                </div>
+                <div class="page-header">
+                    <h4>准考证领取</h4>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label" for="printStart">开始时间</label>
+                    <div class="col-sm-9">
+                        <input name="printEnd" class="form-control Mydate" required>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="col-sm-3 control-label" for="printStart">准考证领取开始时间</label>
+                    <label class="col-sm-3 control-label" for="printStart">结束时间</label>
                     <div class="col-sm-9">
-                        <input name="printEnd" type="Date" class="form-control" required>
+                        <input name="printStart" class="form-control Mydate" required>
+                    </div>
+                </div>
+                <div class="page-header">
+                    <h4>分数查询</h4>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label" for="printStart">开始时间</label>
+                    <div class="col-sm-9">
+                        <input name="printEnd" class="form-control Mydate" required>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="col-sm-3 control-label" for="printStart">准考证领取结束时间</label>
+                    <label class="col-sm-3 control-label" for="printStart">结束时间</label>
                     <div class="col-sm-9">
-                        <input name="printStart" type="Date" class="form-control" required>
+                        <input name="printStart" class="form-control Mydate" required>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="col-sm-3 control-label" for="printStart">分数查询开始时间</label>
-                    <div class="col-sm-9">
-                        <input name="printEnd" type="Date" class="form-control" required>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="col-sm-3 control-label" for="printStart">分数查询结束时间</label>
-                    <div class="col-sm-9">
-                        <input name="printStart" type="Date" class="form-control" required>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="col-sm-offset-6 col-sm-6" style="text-align: right">
-                        <button type="submit" class="btn btn-primary">保存</button>
+                    <div class="col-sm-12" style="text-align: right">
+                        <button type="button" class="reset btn btn-default btn-lg">重置</button>
+                        <button type="submit" class="btn btn-primary btn-lg">保存</button>
                     </div>
                 </div>
             </form>

@@ -130,6 +130,7 @@
 
     router.use('/enterManage/enterInfo',require('./enterManage/enterInfo'));
     router.use('/enterManage/blackList',require('./enterManage/blackList'));
+    router.use('/enterManage/photo',require('./enterManage/photo'));
 
     router.use('/configs/authentication',require('./configs/authentication'));
     router.use('/configs/dbBackup',require('./configs/dbBackup'));
