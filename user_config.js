@@ -19,6 +19,12 @@
 			set password(val){config.set('admin_passport.password',val).value();}
 		},
 
+        get examDate(){return config.get('exam_date').value();},
+        set examDate(val){config.set('exam_date',val).value();},
+
+        get functionControl(){return config.get('function_control').value();},
+        set functionControl(val){config.set('function_control',val).value();},
+
 		dump_plan:{
         	get path(){return config.get('dump_plan.path').value();},
         	get schedule(){return config.get('dump_plan.schedule').value();},

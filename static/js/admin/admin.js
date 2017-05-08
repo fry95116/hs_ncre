@@ -61,7 +61,7 @@ $(document).ready(function() {
 
         'testArrange':function(){showFuncView('testArrange')},
         'testArrange/examPlan':function(){showSubFuncView('testArrange','examPlan')},
-        'testArrange/testDate':function(){showSubFuncView('testArrange','testDate')},
+        'testArrange/examDate':function(){showSubFuncView('testArrange','examDate')},
         'testArrange/testRoomArrange':function(){showSubFuncView('testArrange','testRoomArrange')},
         'testArrange/scoreManage':function(){showSubFuncView('testArrange','scoreManage')}
     };

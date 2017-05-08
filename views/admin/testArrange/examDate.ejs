@@ -1,0 +1,121 @@
+<div id="<%= field %>" class="subFuncContent panel panel-default" style="display: <% if(show){ %>block<% }else{ %> none <% } %>" >
+    <script src="/js/admin/testArrange/examDate.js"></script>
+
+    <div class="panel-heading">
+        <h3 class="panel-title"><%= name %></h3>
+    </div>
+    <div class="panel-body">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-offset-2 col-lg-4">
+                    <div class="page-header">
+                        <h4>日程管理</h4>
+                    </div>
+                    <form class="form-horizontal">
+                        <div class="form-group message">
+
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-12">
+                                <h5>报名</h5>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label" for="enterStart">开始时间</label>
+                            <div class="col-sm-9">
+                                <input name="enterStart" class="form-control Mydate" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label" for="enterEnd">结束时间</label>
+                            <div class="col-sm-9">
+                                <input name="enterEnd" class="form-control Mydate" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-12">
+                                <h5>准考证领取</h5>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label" for="printStart">开始时间</label>
+                            <div class="col-sm-9">
+                                <input name="printStart" class="form-control Mydate" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label" for="printEnd">结束时间</label>
+                            <div class="col-sm-9">
+                                <input name="printEnd" class="form-control Mydate" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-12">
+                                <h5>分数查询</h5>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label" for="queryStart">开始时间</label>
+                            <div class="col-sm-9">
+                                <input name="queryStart" class="form-control Mydate" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label" for="queryEnd">结束时间</label>
+                            <div class="col-sm-9">
+                                <input name="queryEnd" class="form-control Mydate" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-12" style="text-align: right">
+                                <button type="button" class="reset btn btn-default btn-lg">重置</button>
+                                <button type="submit" class="btn btn-primary btn-lg">保存</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-lg-4">
+                    <div class="page-header">
+                        <h4>功能控制</h4>
+                    </div>
+                    <form>
+                        <div class="form-group message">
+
+                        </div>
+                        <div class="checkbox">
+                            <label>
+                                <input name="enter" type="checkbox"> 报名
+                            </label>
+                        </div>
+                        <div class="checkbox">
+                            <label>
+                                <input name="print" type="checkbox"> 准考证打印
+                            </label>
+                        </div>
+                        <div class="checkbox">
+                            <label>
+                                <input name="query" type="checkbox"> 分数查询
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-12" style="text-align: right">
+                                <button type="button" class="reset btn btn-default btn-lg">重置</button>
+                                <button type="submit" class="btn btn-primary btn-lg">保存</button>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="page-header">
+                        <h4>说明</h4>
+                    </div>
+                    <p style="line-height: 2em;font-size: 16px;">
+                        1.&nbsp;日程安排中时间的作用是,在设置的时间点打开或关闭相应的前台功能<br>
+                        2.&nbsp;在功能控制中可以手动控制个前台功能的开关<br>
+                        3.&nbsp;<b>注意:</b>&nbsp;功能控制的设置优先级大于日程安排<br>
+                        4.&nbsp;对日程安排的设置将在下一次启动时生效
+                    </p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
