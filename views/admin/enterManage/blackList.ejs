@@ -7,10 +7,17 @@
     </div>
     <div class="panel-body">
         <div class="toolbar">
-            <button type="button" class="btn btn-danger delete" data-toggle="tooltip" data-placement="bottom"
-                    title="删除选中的行" style="margin-right: 10px;">
-                <i class="glyphicon glyphicon-trash"></i><span>删除</span>
-            </button>
+            <div class="btn-group">
+                <button type="button" class="btn btn-danger delete" data-toggle="tooltip" data-placement="bottom"
+                        title="删除选中的行">
+                    <i class="glyphicon glyphicon-trash"></i><span>删除</span>
+                </button>
+                <button type="button" class="btn btn-danger deleteAll" data-toggle="tooltip" data-placement="bottom"
+                        title="删除全部行">
+                    <i class="glyphicon glyphicon-trash"></i><span>删除全部</span>
+                </button>
+            </div>
+
             <div class="btn-group">
                 <button type="button" class="add btn btn-primary" title="添加黑名单项">
                     <i class="glyphicon glyphicon glyphicon-plus"></i><span>添加</span>

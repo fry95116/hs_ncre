@@ -1,7 +1,8 @@
 {
   "paths":{
-    "mysqldump":"D:\\MariaDB 10.0",
-    "photo":"D:\\我的工程\\hs_ncre\\证件照"
+    "mysql":"C:\\Program Files\\MariaDB 10.1\\bin",
+    "photo":"D:\\我的工程\\hs_ncre\\证件照",
+    "dump":"D:\\我的工程\\hs_ncre\\dump"
   },
 
   "db_config":{

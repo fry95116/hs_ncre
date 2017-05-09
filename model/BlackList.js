@@ -87,6 +87,15 @@ exports.delete = function (id_number) {
     });
 };
 
+exports.deleteAll = function(){
+    return new Promise(function (resolve, reject) {
+        //删除
+        mem_store.get('blackList').remove(function (v) {return true;}).value();
+        resolve();
+    });
+};
+
+
 function importCSV(filepath){
     return new Promise(function (resolve, reject) {
         var tid = _.now();

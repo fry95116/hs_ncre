@@ -118,30 +118,9 @@ $(document).ready(function(){
         });
     });
 
-    //删除按钮
-    $('.delete',$root).click(function(){
-        var data_del = $('table',$root).bootstrapTable('getSelections'); //要删除的数据
-        //并行删除
-        var succeed = 0;
-        _.each(data_del,function(row){
-            $.ajax({
-                url:'/admin/enterManage/blackList/' + row.id_number,
-                type:'delete',
-                success:function(){
-                    succeed++;
-                    if(succeed = data_del.length) {
-                        showMsg($('.message:eq(0)',$root),'success','删除成功');
-                    }
-                    $('table',$root).bootstrapTable('refresh');
-                },
-                error:function(){
-                    console.log('删除失败:' + row.id_number);
-                }
-            });
-        });
-    });
 
-    $('table',$root).bootstrapTable({
+
+    var $blackList = $('table',$root).bootstrapTable({
         url:'/admin/enterManage/blackList',     //数据URL
         idField:'id_number',
         /* 翻页 */
@@ -166,6 +145,49 @@ $(document).ready(function(){
             title:'姓名',
             sortable:true
         }]
+    });
+
+    //删除按钮
+    $('.delete',$root).click(function(){
+        var data_del = $('table',$root).bootstrapTable('getSelections'); //要删除的数据
+        //并行删除
+        var succeed = 0;
+        _.each(data_del,function(row){
+            $.ajax({
+                url:'/admin/enterManage/blackList/' + row.id_number,
+                type:'delete',
+                success:function(){
+                    succeed++;
+                    if(succeed = data_del.length) {
+                        showMsg($('.message:eq(0)',$root),'success','删除成功');
+                    }
+                    $blackList.bootstrapTable('refresh');
+                },
+                error:function(){
+                    console.log('删除失败:' + row.id_number);
+                }
+            });
+        });
+    });
+
+    //删除全部按钮
+    $root.find('.deleteAll').click(function(){
+        if(prompt('确定删除所有信息?输入"确认删除"以确认。','') !== '确认删除'){
+            return;
+        }
+        //删除
+        $.ajax({
+            url:'/admin/enterManage/blackList',
+            type:'delete',
+            success:function(){
+                showMsg($('.message',$root),'success','删除成功');
+                $blackList.bootstrapTable('refresh');
+            },
+            error:function(){
+                console.log('删除失败:' + row.id_number);
+                $blackList.bootstrapTable('refresh');
+            }
+        });
     });
 });
 

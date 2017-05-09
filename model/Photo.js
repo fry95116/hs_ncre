@@ -323,7 +323,6 @@
             file_name = file_name || '';
             if(_.isObject(file_name)) file_name = file_name.file_name;
             if(file_name === '') resolve(); //reject(new Error('无文件名传入'));
-
             var absolutePath = path.join(user_config.paths.photo,file_name); //绝对路径
             fs.unlink(absolutePath, function(err){
                 if(err) {

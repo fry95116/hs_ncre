@@ -426,21 +426,20 @@
     }
   ],
   "dump_plan": {
-    "path": "/dump",
-    "schedule": "0 */40 * * *"
+    "schedule": "*/30 * * * *"
   },
   "exam_date": {
-    "enterStart": 1494258924000,
-    "enterEnd": 1494345324000,
-    "printStart": 1494258929000,
+    "enterStart": 1494316680000,
+    "enterEnd": 1494402748000,
+    "printStart": 1494319991000,
     "printEnd": 1494431729000,
     "queryStart": 1494518135000,
     "queryEnd": 1494604535000
   },
   "function_control": {
-    "enter": false,
+    "enter": true,
     "print": false,
-    "query": true
+    "query": false
   },
   "admin_passport": {
     "username": "admin",

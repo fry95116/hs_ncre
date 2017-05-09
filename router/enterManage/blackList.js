@@ -94,6 +94,22 @@
             });
     });
 
+
+    /**
+     * 删除全部黑名单项
+     * @method DELETE
+     * */
+    router.delete('/', function (req, res) {
+        blackList.deleteAll(req.params.id_number)
+            .then(function () {
+                req.log.info('黑名单_清空_成功',{id:req.params.id_number});
+                res.send('删除成功');
+            }).catch(function (err) {
+            req.log.error('黑名单_清空_失败',{err:err});
+            res.status(400).send('删除失败:' + err.message);
+        });
+    });
+
     /**
      * 删除黑名单项
      * @method DELETE

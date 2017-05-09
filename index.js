@@ -3,11 +3,11 @@
     session = require('express-session'), //session
     redisStore = require('connect-redis')(session),
 
-	log = require('./Logger').getLogger();
+	log = require('./Logger').getLogger(),
 
 	local_config = require('./config/LocalConfig.json'),
     redis_config = local_config.redis_config,
-
+	cron = require('./cron'),
     leader = require('./router/configGuide');
 
 

@@ -5,31 +5,29 @@ $(document).ready(function(){
 
     var $root = $('#dbBackup');
 
+    /******************* 备份计划设置 ********************/
     //表单提交
     $('form',$root).ajaxForm({
+        url:'/admin/configs/dbBackup/schedule',
+        type:'put',
         success:function(msg){
-            showMsg($('.message',$root),'success',msg);
+            showMsg($('.message-schedule',$root),'success',msg);
             loadData();
         },
         error:function(xhr){
-            showMsg($('.message',$root),'danger','Error：' + xhr.responseText);
-            loadData();
+            showMsg($('.message-schedule',$root),'danger','Error：' + xhr.responseText);
         }
     });
 
     function loadData(){
-        $.get('/admin/configs/dbBackup', function(data){
+        $.getJSON('/admin/configs/dbBackup/schedule', function(data){
             $('form input[name="schedule"]',$root).val(data.schedule);
         });
     }
 
-    $('form .refresh',$root).click(function(){
-        loadData();
-    });
     loadData();
-
+    /**************** crontab表达式生成器 *****************/
     var $crontabGenerator = $('#crontabGenerator');
-
     //tab
     $('.nav li',$crontabGenerator).click(function(){
         var $this = $(this);
@@ -77,4 +75,128 @@ $(document).ready(function(){
         });
         $('.result',$crontabGenerator).val(exp);    //显示结果
     });
+
+    /****************** 备份管理 & 还原 *******************/
+
+
+
+    var $dumpList = $('table.dumpList',$root);
+    $dumpList.bootstrapTable({
+        url:'/admin/configs/dbBackup/dumpList',     //数据URL
+        idField:'id',
+        /* 翻页 */
+        pagination:true,
+        sidePagination:'server',
+        search:true,
+        showRefresh:true,
+        showToggle:true,
+        buttonsClass:'primary',
+        toolbar:'#dbBackup .toolbar',
+        onPostBody:function(){
+            //删除按钮
+            $dumpList.find('.restore').click(function(){
+                var url = $(this).attr('url');
+                myDialog.confirm('确认还原到这个时间点?',function(re){
+                    if(re.state === 'ok'){
+                        $.ajax({
+                            url:url,
+                            type:'put',
+                            success:function(){
+                                showMsg($('.message-dumplist',$root),'success','还原成功');
+                                $dumpList.bootstrapTable('refresh');
+                            },
+                            error:function(XHR){
+                                showMsg($('.message-dumplist',$root),'danger','还原失败:' + XHR.responseText);
+                            }
+                        });
+                    }
+                });
+
+            });
+        },
+        columns: [{
+            field: 'state',
+            checkbox: true,
+            align: 'center',
+            valign: 'middle'
+        }, {
+            field:'atime',
+            title:'备份时间',
+            formatter:function(val,col,index){
+                return '<div class="cell">' + new Date(val).toLocaleString() + '</div>';
+            }
+        },{
+            field:'operator',
+            title:'操作',
+            formatter:function(val,col,index){
+                return '<a class="restore" href="javascript:void(0)" url="/admin/configs/dbBackup/dumpList/' + col.id + '">还原</a>';
+            }
+        }]
+    });
+
+    var $toolbar = $('.toolbar',$root);
+
+
+    //删除按钮
+    $toolbar.find('.dump').click(function(){
+        $.ajax({
+            url:'/admin/configs/dbBackup/dumpList',
+            type:'post',
+            success:function(){
+                showMsg($('.message-dumplist',$root),'success','删除成功');
+                $dumpList.bootstrapTable('refresh');
+            },
+            error:function(XHR){
+                showMsg($('.message-dumplist',$root),'danger','删除失败:' + XHR.responseText);
+            }
+        });
+    });
+    //删除按钮
+    $toolbar.find('.delete').click(function(){
+
+        var data_del = $dumpList.bootstrapTable('getSelections'); //要删除的数据
+        if(data_del.length != 0){
+            if(!confirm('确定删除所选信息?')) return;
+            //并行删除
+            var succeed = 0;
+            _.each(data_del,function(row){
+                $.ajax({
+                    url:'/admin/configs/dbBackup/dumpList/' + row.id,
+                    type:'delete',
+                    success:function(){
+                        succeed++;
+                        if(succeed = data_del.length) {
+                            showMsg($('.message-dumplist',$root),'success','删除成功');
+                            $dumpList.bootstrapTable('refresh');
+                        }
+                    },
+                    error:function(){
+                        console.log('删除失败:' + row.id);
+                    }
+                });
+            });
+        }
+
+    });
+    //删除全部按钮
+    $toolbar.find('.deleteAll').click(function(){
+        if(prompt('确定删除所有信息?输入"确认删除"以确认。','') !== '确认删除'){
+            return;
+        }
+        //删除
+        $.ajax({
+            url:'/admin/configs/dbBackup/dumpList',
+            type:'delete',
+            success:function(){
+                showMsg($('.message-dumplist',$root),'success','删除成功');
+                $dumpList.bootstrapTable('refresh');
+            },
+            error:function(){
+                console.log('删除失败:' + row.id_number);
+                $dumpList.bootstrapTable('refresh');
+            }
+        });
+    });
+
+
 });
