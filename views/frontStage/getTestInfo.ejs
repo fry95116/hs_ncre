@@ -5,7 +5,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
 
 	<script src="/js/libs/jquery-2.1.4.js"></script>
-	<link href="/css/getEnterInfo.css" rel="stylesheet" type="text/css">
+	<link href="/css/getTestInfo.css" rel="stylesheet" type="text/css">
 	<style type="text/css"></style>
 </head>
 
@@ -15,15 +15,13 @@
 		<div style="position:relative;">
 			<img src="./img/school.png">
 			<h1>考生信息</h1>
-			<p>
-				检查你的个人信息
-				<br>如果有错误,请在现场报名阶段更正</p>
+			<p>你的考试时间与地点信息</p>
 		</div>
 	</div>
 	<div id='mainPanel'>
 		<div>
             <% if(info==null){ %>
-			未找到与您输入的证件号码相匹配的报名信息，请重新报名，或与管理员联系。
+			未找到与您输入的证件号码相匹配的考试信息，请与管理员联系。
             <%}else{%>
 			<table>
 				<th>名称</th><th>内容</th>

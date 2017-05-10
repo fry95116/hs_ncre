@@ -2,6 +2,8 @@
 <head>
 	<title>hs_ncre</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+
 	<script src="/js/libs/jquery-2.1.4.js"></script>
 	<script type="text/javascript" src="/js/welcome.js"></script>
 	<link href="/css/welcome.css" rel="stylesheet" type="text/css">
@@ -14,23 +16,65 @@
 		<h1>全国计算机等级考试</h1>
 	</div>
 	<div id="header">
-		<h2>网上预报名系统</h2>
+		<h2>网上报名系统</h2>
 		<ul id="RegNum">
 			<%for (var desc in reg_info) { %>
 			<li><%= desc %>:限报<%= reg_info[desc].limit %>人&nbsp已报<%= reg_info[desc].count %>人</li>
 			<%}%>
 		</ul>
-		<button id="read_info" onclick="window.location = '/instructions'">开始报名</button>
-		
-		<button id="get_info">报名结果查询</button>
+		<!--<button id="read_info" onclick="window.location = '/instructions'">开始报名</button>-->
+		<ul id="functionList">
+			<li><a href="/instructions">开始报名</a></li>
+			<li><a class="func" href="/getEnterInfo">查询报名信息</a></li>
+			<li><a class="func" href="/updateEnterInfo">修改报名信息</a></li>
+			<li><a class="func" href="/getTestInfo">查询考试信息 & 打印准考证</a></li>
+			<li><a class="func" href="/getScoreInfo">查询分数信息</a></li>
+		</ul>
+
 		<form id="get_id_number" action="getEnterInfo" method="GET">
 			<h3>请输入你的证件号码</h3>
-			<input id="id_number" name="id_number" type="text">
-			<input type="submit" value="检索">
+			<div>
+				<input id="id_number" name="id_number" type="text">
+				<input type="submit" value="检索">
+				<input id="back" type="button" value="返回">
+			</div>
 		</form> 
 		<div id="question">
-			<div>考试信息咨询QQ群: <br><b>北环考点：437252399</b><br><b>郑东新区考点：437306317 / 437312687 / 437314632</b></div>
-			<div>报名咨询电话: 86551362</div>
+			<table>
+				<tr>
+					<th colspan="2">考试信息咨询QQ群</th>
+				</tr>
+				<tr>
+					<td>北环考点:</td>
+					<td>437252399</td>
+				</tr>
+				<tr>
+					<td>郑东新区考点:</td>
+					<td>437306317</td>
+				</tr>
+				<tr>
+					<td></td>
+					<td>437312687</td>
+				</tr>
+				<tr>
+					<td></td>
+					<td>437314632</td>
+				</tr>
+				<tr>
+					<th colspan="2">报名咨询电话</th>
+				</tr>
+				<tr>
+					<td></td>
+					<td>86551362</td>
+				</tr>
+			</table>
+			<!--<p>考试信息咨询QQ群<br>-->
+				<!--北环考点：437252399<br>-->
+				<!--郑东新区考点：437306317<br>-->
+				<!--437312687<br>-->
+				<!--437314632-->
+			<!--</p>-->
+			<!--<p>报名咨询电话: 86551362</p>-->
 		</div>
 	</div>
 </body>

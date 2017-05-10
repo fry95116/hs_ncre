@@ -51,7 +51,13 @@
         address: '地址',
         email: '电子邮箱',
         phone: '联系电话',
-        remark: '备注'
+        remark: '备注',
+
+        enter_number:'报名号',
+        examinee_number:'准考证号',
+        score:'分数',
+        rank:'等第',
+        certificate_number:'证书编号'
     };
     module.exports.data_schema_convert = data_schema_convert;
 

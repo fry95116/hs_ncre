@@ -2,7 +2,7 @@ body{
 	margin:0px;
 	background-color: #66ccff;
 	text-align: center;
-	padding-top: 7%;
+	padding-top: 100px;
 	font-family: Microsoft YaHei;
 	color:#fff;
 }
@@ -12,12 +12,10 @@ img{
 }
 
 #nav h1{
-	font-size: 80px;
 	font-weight: lighter;
 	margin-bottom: 20px;
 }
 #header h2{
-	font-size: 60px;
 	font-weight: lighter;
 	margin-top: 0px;
 	margin-bottom:32px;
@@ -49,47 +47,95 @@ img{
 	margin-bottom: 16px;
 }
 
-#get_id_number{
-	margin-top: 32px;
+#functionList{
+	max-width:400px;
+	margin: 50px auto 40px;
+	list-style: none;
+	padding-left: 0px;
 }
-
-button,input[type="submit"]{
-	font-size: 20px;
-	padding: 12px;
-	border: 3px solid #fff;
-	border-radius: 12px;
-	background-color: #66ccff;
+#functionList li>a{
+	line-height: 2em;
 	color:#fff;
+	font-weight: lighter;
+	font-style: italic;
+	text-decoration: none;
 }
 
-input[type="submit"]:focus{
-	outline:none;
+#functionList li>a:active{
+	color:#00f;
+	text-decoration: underline;
+}
+
+#functionList li>a:hover:before{
+	content:"> ";
+}
+#functionList li>a:hover:after{
+	content:" <";
+
+}
+
+#get_id_number{
+	margin: 64px auto;
 }
 
 #id_number{
-	font-size: 23px;
-	padding:12px;
-	border: 3px solid #fff;
-	border-radius: 12px;
+	font-size: 16px;
+	padding: 10px;
+	border: 2px solid #fff;
+	border-radius: 8px;
 	background-color: #66ccff;
-	color:#fff;
+	color: #fff;
 }
 
 #id_number:focus{
 	outline:none;
 }
 
-button:hover,input[type="submit"]:hover{
+input[type="submit"],input[type="button"]{
+	font-size: 16px;
+	padding: 7px 14px 10px;
+	border: 2px solid #fff;
+	border-radius: 8px;
+	background-color: #66ccff;
+	color: #fff;
+}
+
+input[type="submit"]:focus,input[type="button"]:focus{
+	outline:none;
+}
+
+input[type="submit"]:hover,input[type="button"]:hover{
 	color:#66ccff;
 	background-color: #fff;
 }
 
-button:active,input[type="submit"]:active{
+input[type="submit"]:active,input[type="button"]:active{
 	background-color: #eee;
 }
 
-#question{
-margin:0 auto;
-font-size:18px;
-margin-top:20px;
+#question table{
+	margin:0 auto;
+}
+
+#question tr>th:first-child{
+	text-align: left;
+}
+
+#question tr>td:first-child{
+	text-align: right;
+}
+
+@media (min-width: 640px) {
+	#nav h1{
+		font-size: 60px;
+	}
+	#header h2{
+		font-size: 40px;
+	}
+	#functionList{
+		font-size:24px;
+	}
+	#question{
+		font-size:18px;
+	}
 }

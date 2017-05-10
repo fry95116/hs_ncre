@@ -554,7 +554,7 @@
                 else{
                     var oldData = res[0];
                     //数据检查
-                    var newData = _.pick(updateData, _.chain(data_schema).keys().without('id_number').value());
+                    var newData = _.pick(updateData, _.chain(data_schema).keys().value());
                     for(var key in newData){
                         if (!data_schema[key].test(newData[key])) {
                             reject(new Error('非法的数据'));
@@ -596,7 +596,7 @@
                     }).join(',');
 
                     //数据更新
-                    var sql = 'UPDATE ' + table_names.enterInfo + ' SET ' + newData + 'WHERE id_number=?;';
+                    var sql = 'UPDATE ' + table_names.enterInfo + ' SET ' + newData + ' WHERE id_number=?;';
                     con.query(sql, id_number, function (err) {
                         if (err) reject(err);
                         else resolve();

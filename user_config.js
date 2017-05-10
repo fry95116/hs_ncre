@@ -32,8 +32,8 @@
 		},
 
         op_res_text:config.get('op_res_text').value(),
-		exam_sites:config.get('exam_sites').value(),
 
+		exam_sites:config.get('exam_sites').value(),
 		exam_sites_operator:{
 
 			addSite:function(examSite){

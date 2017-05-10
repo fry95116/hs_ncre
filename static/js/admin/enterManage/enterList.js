@@ -100,7 +100,7 @@ $(document).ready(function(){
             field:'id_number',
             title:'证件号',
             sortable:true,
-            formatter:formatter_disable
+            formatter:formatter_text
         }, {
             field:'name',
             title:'姓名',
