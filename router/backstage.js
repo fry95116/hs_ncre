@@ -134,6 +134,7 @@
 
     router.use('/configs/authentication',require('./configs/authentication'));
     router.use('/configs/dbBackup',require('./configs/dbBackup'));
+    router.use('/configs/templateManage',require('./configs/templateManage'));
     router.use('/configs/logs',require('./configs/logs'));
 
     router.use('/testArrange/examPlan',require('./testArrange/examPlan'));

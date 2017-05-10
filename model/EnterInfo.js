@@ -157,9 +157,7 @@
 
 
 
-    /**
-     * 开始事务
-     * */
+    /** 开始事务 */
     function begin(con) {
         return new Promise(function(resolve,reject){
             con.beginTransaction(function(err){
@@ -169,9 +167,7 @@
         });
     }
     exports.begin = begin;
-    /**
-     * 回滚事务
-     * */
+    /** 回滚事务 */
     function rollback(con) {
         return new Promise(function(resolve,reject){
             con.rollback(function(err){
@@ -181,9 +177,7 @@
         });
     }
     exports.rollback = rollback;
-    /**
-     * 提交事务
-     * */
+    /** 提交事务 */
     function commit(con) {
         return new Promise(function(resolve,reject){
             con.commit(function(err){
@@ -252,7 +246,6 @@
     		if(err) reject(err);
     		else resolve();
 		});
-
 	}
     exports.check = check;
 
@@ -307,7 +300,7 @@
 	 * @return {Promise} Promise对象,resolve时传入counts */
     function repeatCheck(con,id_number) {
     	return new Promise(function(resolve,reject){
-    	    if(!_.isString(id_number)) {
+    	    if(_.isNil(id_number)) {
                 reject(new Error('没有证件号'));
                 return;
             }
@@ -332,16 +325,18 @@
 
     /**
 	 * 内部函数,按规则检查人数
+     * @param {Object} data_in 报名信息
 	 * @param {Object} counts 由getStatistics获得的人数统计信息
 	 * @param {Object} limit_rule 限制规则
 	 * @param {bool} equalAllowed 是否允许相等
 	 * @return {bool} 检查是否通过 */
     function checkCountSync(counts, limit_rule, equalAllowed){
 		equalAllowed = equalAllowed | false;
+
 		var count = 0;
 		//noinspection JSUnresolvedVariable
-		if(_.isNil(limit_rule.limit_obj))
-			throw new Error('无效的limit_rule:limit_obj不存在(limit_rule=' + JSON.stringify(limit_rule) + ')');
+		/*if(_.isNil(limit_rule.limit_obj))
+			throw new Error('无效的limit_rule:limit_obj不存在(limit_rule=' + JSON.stringify(limit_rule) + ')');*/
 		for(var i in limit_rule['limit_obj']){
 			var limit_obj = limit_rule['limit_obj'][i];
             //考点总人数
@@ -365,15 +360,43 @@
 
     /**
 	 * 按规则检查人数
+     * @param {Object} data_in 报名信息
      * @param {Object} counts 由getStatistics获得的人数统计信息
      * @param {bool} equalAllowed 是否允许相等
 	 * @return {Promise} Promise对象 */
-    function checkCount(counts, equalAllowed){
+    function checkCount(data_in, counts, equalAllowed){
     	return new Promise(function(resolve,reject){
     	    equalAllowed = equalAllowed || false;
 
+    	    //报名信息的合法性检查
+            if(_.isNil(data_in.exam_site_code) || _.isNil(data_in.subject_code)){
+                reject(new ERR.InvalidDataError('没有考点或学科代码'));
+                return;
+            }
+
+    	    //限制规则的合法性检查
+    	    var invalidRule = _.find(limit_rules,function(limit_rule){
+                return !_.isArray(limit_rule.limit_obj);
+            });
+    	    if(!_.isNil(invalidRule)) {
+                reject(new ERR.CountCheckError('无效的limit_rule:limit_obj不存在(limit_rule=' + JSON.stringify(limit_rule) + ')'));
+                return;
+            }
+            //过滤出相关的限制规则
+            var limit_rules_accept  = _.filter(limit_rules,function(limit_rule){
+                return _.findIndex(limit_rule.limit_obj,function(limit_obj){
+                    if(!_.isNil(limit_obj.exam_site_code) && !_.isNil(limit_obj.subject_code))
+                        return limit_obj.exam_site_code == data_in.exam_site_code && limit_obj.subject_code == data_in.subject_code;
+                    else if(!_.isNil(limit_obj.exam_site_code))
+                        return limit_obj.exam_site_code == data_in.exam_site_code;
+                    else
+                        return false;
+                }) !== -1;
+
+            });
+
     	    try{
-                var violateRule = _.find(limit_rules,function(limit_rule){
+                var violateRule = _.find(limit_rules_accept,function(limit_rule){
                     //检查各条规则
                     return !checkCountSync(counts,limit_rule,equalAllowed);
                 });

@@ -11,7 +11,7 @@ body {
 }
 
 #header div{
-	width: 960px;
+	max-width: 960px;
 	margin: 0 auto 1em;
 	text-align: right;
 	padding: 1em;
@@ -25,11 +25,16 @@ body {
 	margin: 24px 32px;
 }
 
+
 #mainPanel {
-	width: 704px;
+	max-width: 960px;
 	margin: 20px auto;
+	padding:20px;
+}
+
+#mainPanel>div{
 	background-color: #f7f7f7;
-	padding: 32px 128px;
+	padding: 32px 96px;
 	border: 2px solid #eee;
 	border-radius: 10px;
 	text-align: left;

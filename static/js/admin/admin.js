@@ -54,7 +54,7 @@ $(document).ready(function() {
 
 
         'configs':function(){showFuncView('configs')},
-        'configs/overView':function(){showSubFuncView('configs','overView')},
+        'configs/templateManage':function(){showSubFuncView('configs','templateManage')},
         'configs/logs':function(){showSubFuncView('configs','logs')},
         'configs/dbBackup':function(){showSubFuncView('configs','dbBackup')},
         'configs/authentication':function(){showSubFuncView('configs','authentication')},

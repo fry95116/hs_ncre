@@ -113,7 +113,7 @@
      * @return {Promise} Promise对象*/
     function insertTestInfo(data_in,index) {
         return new Promise(function(resolve,reject){
-            var cols = ['id_number', 'name', 'testRoom_number', 'batch_number'];
+            var cols = ['id_number','examinee_number','enter_number','name', 'testRoom_number', 'batch_number'];
             //过滤掉无用的属性
             data_in = _.pick(data_in, cols);
             for(var i = 0; i < cols.length; ++i){
@@ -179,8 +179,7 @@
                 offset:0,
                 limit: -1
             };
-            var cols = ['id_number', 'name', 'testRoom_number', 'batch_number'];
-
+            var cols = ['id_number','examinee_number','enter_number','name', 'testRoom_number', 'batch_number'];
             opt = _.extend(opt,option);
             opt.table = table_names.testInfo;
             opt.searchText = _.trim(opt.searchText);
@@ -254,7 +253,7 @@
         return new Promise(function(resolve,reject){
 
             //数据检查
-            var cols = ['name', 'testRoom_number', 'batch_number'];
+            var cols =  ['id_number','examinee_number','enter_number','name', 'testRoom_number', 'batch_number'];
             var newData = _.pick(updateData,cols);
 
 
@@ -273,7 +272,7 @@
 
     }
     exports.updateTestInfo = updateTestInfo;
-        /**
+    /**
      * 删除记录
      * @param {string} id_number 证件号
      * */
@@ -321,6 +320,8 @@
 
     var mapping = {
         ZJH:'id_number',
+        ZKZH:'examinee_number',
+        BMH:'enter_number',
         XM:'name',
         KCH:'testRoom_number',
         PCH:'batch_number'

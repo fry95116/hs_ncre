@@ -140,12 +140,12 @@
                     .then(_.partial(dbo.repeatCheck, con, req.body.id_number))
                     .then(_.partial(blackList.check, con, req.body.id_number))
                     .then(_.partial(dbo.getStatistics, con))
-                    .then(dbo.checkCount)
+                    .then(_.partial(dbo.checkCount,req.body, _, false))
                     //添加过程
                     .then(_.partial(dbo.begin, con))
                     .then(_.partial(dbo.insertInfo, con, req.body))
                     .then(_.partial(dbo.getStatistics, con))
-                    .then(_.partial(dbo.checkCount, _, true))
+                    .then(_.partial(dbo.checkCount,req.body, _, true))
                     .then(_.partial(dbo.commit, con))
                     .then(function () {
                         //日志

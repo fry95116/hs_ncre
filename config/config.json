@@ -105,20 +105,11 @@
   ],
   "limit_rules": [
     {
-      "limitNum": 12,
-      "desc": "郑东新区考点",
-      "limit_obj": [
-        {
-          "exam_site_code": 410084
-        }
-      ]
-    },
-    {
       "limitNum": 10,
       "desc": "北环考点",
       "limit_obj": [
         {
-          "exam_site_code": 410067
+          "exam_site_code": "410067"
         }
       ]
     },
@@ -127,8 +118,8 @@
       "desc": "西区MS—office",
       "limit_obj": [
         {
-          "exam_site_code": 410067,
-          "subject_code": 65
+          "exam_site_code": "410067",
+          "subject_code": "65"
         }
       ]
     },
@@ -137,12 +128,21 @@
       "desc": "东区+西区C语言",
       "limit_obj": [
         {
-          "exam_site_code": 410067,
-          "subject_code": 24
+          "exam_site_code": "410067",
+          "subject_code": "24"
         },
         {
-          "exam_site_code": 410084,
-          "subject_code": 24
+          "exam_site_code": "410084",
+          "subject_code": "24"
+        }
+      ]
+    },
+    {
+      "desc": "郑东新区考点",
+      "limitNum": "5000",
+      "limit_obj": [
+        {
+          "exam_site_code": "410084"
         }
       ]
     }
@@ -438,7 +438,7 @@
   },
   "function_control": {
     "enter": true,
-    "print": false,
+    "print": true,
     "query": false
   },
   "admin_passport": {

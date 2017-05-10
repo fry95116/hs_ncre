@@ -343,7 +343,17 @@ $(document).ready(function(){
             field:'id_number',
             title:'证件号',
             sortable:true,
-            formatter:formatter_disable
+            formatter:formatter_text
+        }, {
+            field:'examinee_number',
+            title:'准考证号',
+            sortable:true,
+            formatter:formatter_text
+        }, {
+            field:'enter_number',
+            title:'报名号',
+            sortable:true,
+            formatter:formatter_text
         }, {
             field:'name',
             title:'姓名',

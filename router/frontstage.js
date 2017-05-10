@@ -12,6 +12,7 @@
         Captchapng = require('captchapng'),             //验证码模块
 
         dbo = require('../model/EnterInfo'),                      //提供各类数据操作
+        data_schema = require('../data_schema'),
         translate = require('../tr'),                 //各类映射
         codeRef = translate.codeRef,                    //职业,民族,学历等项目的 名称-代码 映射
         tr = translate.tr,                              //翻译函数， 用于将数据表字段名翻译为实际名称(原tr.js)
@@ -66,12 +67,12 @@
 
     /* 考生须知 */
     router.get('/instructions',function(req,res){
-        res.render('frontStage/instructions');
+        res.render('frontStage/instructions',{isPreview:false,content:'instructions'});
     });
 
     /* 考生信息填报界面 */
-    router.get('/fillout', function (req, res) {
-        res.render('frontStage/fillout', {
+    router.get('/enter', function (req, res) {
+        res.render('frontStage/enter', {
             tr: codeRef,
             sites_info: sites_info,
             error_info: '',
@@ -81,34 +82,83 @@
 
 
     /* 考生信息查询界面 */
-    router.get('frontStage/getinfo', function (req, res) {
+    router.get('/getEnterInfo', function (req, res) {
         if (req.query.id_number) {
-            dbo.getInfo(req.query.id_number, function (err, result) {
-                if (err) {
-                    //console.log(err);
-                    if (err === 'empty') res.render('getinfo', {
-                        info: null
-                    });
-                } else {
-                    var out = {};
-                    result = result[0];
-                    //组装报名信息对象
-                    out[tr('exam_site_code')] = sites_info.findName(result.exam_site_code);
-                    out[tr('subject_code')] = sites_info.findName(result.exam_site_code, result.subject_code);
+            dbo.getConnection()
+                .then(function(con){
+                    dbo.selectInfo(con,{searchBy:'id_number',searchText:req.query.id_number,strictMode:true})
+                        .then(function(result){
+                            if(result.total !== 0) {
+                                var out = {};
+                                result = _.pick(result.rows[0],_.keys(data_schema));
 
-                    result = _.omit(result, ['exam_site_code', 'subject_code']);
+                                //组装报名信息对象
+                                var examSite = _.find(sites_info,function(el){return el.code == result.exam_site_code;});
+                                if(_.isNil(examSite)){
+                                    out[tr('exam_site_code')] = '未知';
+                                    out[tr('subject_code')] = '未知'
+                                }
+                                else if(_.isNil(examSite.subjects)){
+                                    out[tr('subject_code')] = '未知';
+                                }else{
+                                    out[tr('exam_site_code')] = examSite.name;
+                                    var subject = _.find(examSite.subjects,function(el){return el.code == result.subject_code;});
+                                    if(_.isNil(subject)) out[tr('subject_code')] = '未知';
+                                    else out[tr('subject_code')] = subject.name;
+                                }
 
-                    for (var key in result) {
-                        out[tr(key)] = codeRef[key] ? codeRef[key].findName(result[key]) : result[key];
-                    }
+                                result = _.omit(result, ['exam_site_code', 'subject_code']);
 
-                    res.render('getinfo', {
-                        info: out
-                    });
-                }
+                                for (var key in result) {
+                                    out[tr(key)] = codeRef[key] ? codeRef[key].findName(result[key]) : result[key];
+                                }
+
+                                res.render('frontStage/getEnterInfo', {
+                                    info: out
+                                });
+                            }
+                            //查询为空
+                            else res.render('frontStage/getEnterInfo', {info: null});
+
+                        })
+                        .catch(function(err){
+                            req.log.error('报名信息_查询_失败',{err:err});
+                            res.render('frontStage/op_res',{isPreview:false,content:'unknown'});
+                        })
+                        //释放连接
+                        .finally(_.partial(dbo.release,con));
+                })
+                .catch(function(err){
+                req.log.error('报名信息_获取连接_失败',{err:err});
+                res.status(400).send('未知错误:' + err.message);
             });
+
+            // dbo.selectInfo({searchText:req.query.id_number,strictMode:true}, function (err, result) {
+            //     if (err) {
+            //         //console.log(err);
+            //         if (err === 'empty') res.render('getEnterInfo', {
+            //             info: null
+            //         });
+            //     } else {
+            //         var out = {};
+            //         result = result[0];
+            //         //组装报名信息对象
+            //         out[tr('exam_site_code')] = sites_info.findName(result.exam_site_code);
+            //         out[tr('subject_code')] = sites_info.findName(result.exam_site_code, result.subject_code);
+            //
+            //         result = _.omit(result, ['exam_site_code', 'subject_code']);
+            //
+            //         for (var key in result) {
+            //             out[tr(key)] = codeRef[key] ? codeRef[key].findName(result[key]) : result[key];
+            //         }
+            //
+            //         res.render('getEnterInfo', {
+            //             info: out
+            //         });
+            //     }
+            // });
         } else {
-            res.status(401).send('查询格式错误');
+            res.status(401).send('查询格式错误:输入证件号');
         }
     });
 
@@ -139,13 +189,26 @@
     /* 重复检查 */
     router.get('/repeatcheck', function (req, res, next) {
         if (req.query.id_number != '') {
-            dbo.repeatCheck(req.query.id_number)
-                .then(function(){
-                    res.send(true);
-                })
-                .catch(function(){
-                    res.send(false);
+
+            dbo.getConnection().then(function(con){
+                //前期检查
+                dbo.repeatCheck(con,req.query.id_number)
+                    .then(function(){
+                        res.send(true);
+                    })
+                    .catch(function(err){
+                        res.send(false);
+                    })
+                    //释放连接
+                    .finally(function(){
+                        dbo.release(con);
+                    });
+            }).catch(function(err){
+                req.log.error('报名信息_获取连接_失败',{err:err});
+                res.status(400).send('未知错误:' + err.message);
             });
+
+
         }
         else{
             res.send(false);
@@ -153,11 +216,11 @@
     });
 
     /* 处理提交的考生记录 */
-    router.post('/fillout',bodyparser.urlencoded({extended: true}),function (req, res) {
+    router.post('/enter',bodyparser.urlencoded({extended: true}),function (req, res) {
 
         //验证验证码
         if (!req.session || req.session.captcha != req.body.captcha.toUpperCase()) {
-            res.render('frontStage/fillout', {
+            res.render('frontStage/enter', {
                 tr: codeRef,
                 sites_info: sites_info,
                 error_info: '{"captcha":"invalid data"}',
@@ -182,17 +245,17 @@
                 .then(_.partial(dbo.repeatCheck, con, req.body.id_number))
                 .then(_.partial(blackList.check, con, req.body.id_number))
                 .then(_.partial(dbo.getStatistics, con))
-                .then(dbo.checkCount)
+                .then(_.partial(dbo.checkCount,req.body, _, false))
                 //添加过程
                 .then(_.partial(dbo.begin, con))
                 .then(_.partial(dbo.insertInfo, con, req.body))
                 .then(_.partial(dbo.getStatistics, con))
-                .then(_.partial(dbo.checkCount, _, true))
+                .then(_.partial(dbo.checkCount,req.body, _, true))
                 .then(_.partial(dbo.commit, con))
                 .then(function () {
                     //日志
                     req.log.info('报名信息_添加_成功',{id_number:req.body.id_number});
-                    res.send('添加成功。');
+                    res.render('frontStage/op_res',{isPreview:false,content:'success'});
                 })
                 .catch(function (err) {
                     dbo.rollback(con)
@@ -200,25 +263,27 @@
                             //日志
                             req.log.error('报名信息_添加_失败',{id_number:req.body.id_number,err:err});
                             //无效的提交数据
-                            if (err instanceof ERR.InvalidDataError) res.status(400).send('无效的提交数据:' +
-                                _.map(_.toPairs(JSON.parse(err.message)),function(pair){
-                                    return pair.join('=');
-                                }).join('&')
-                            );
+                            if (err instanceof ERR.InvalidDataError)
+                                res.send('无效的提交数据');
                             //重复提交
-                            else if (err instanceof ERR.RepeatInfoError) res.status(400).send(err.message);
+                            else if (err instanceof ERR.RepeatInfoError)
+                                res.render('frontStage/op_res',{isPreview:false,content:'repeat'});
                             //人数超出
-                            else if (err instanceof ERR.CountOverFlowError) res.status(400).send('人数超出:' + JSON.parse(err.message).desc);
+                            else if (err instanceof ERR.CountOverFlowError)
+                                res.render('frontStage/op_res',{isPreview:false,content:'overflow'});
                             //在黑名单中
-                            else if (err instanceof ERR.BlacklistError) res.status(400).send(err.message);
+                            else if (err instanceof ERR.BlacklistError)
+                                res.render('frontStage/op_res',{isPreview:false,content:'blacklist'});
                             //未知错误
-                            else res.status(400).send('未知错误:' + err.message);
+                            else
+                                res.render('frontStage/op_res',{isPreview:false,content:'unknown'});
+
                         })
                         .catch(function (err) {
                             //日志
                             req.log.error(err);
                             //未知错误
-                            res.status(400).send('未知错误:' + err.message);
+                            res.render('frontStage/templates',{isPreview:false,content:'unknown'});
                         })
                 })
                 //释放连接

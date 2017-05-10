@@ -12,6 +12,7 @@
 		<link href="/css/libs/bootstrap-table.css" rel="stylesheet" />
 		<link href="/css/libs/bootstrap-editable.css" rel="stylesheet"/>
 		<link href="/css/libs/bootstrap-dialog.css" rel="stylesheet"/>
+		<link href="/css/libs/summernote.css" rel="stylesheet"/>
 		<link href="/css/admin/admin.css" rel="stylesheet"/>
 
 		<script src="/js/libs/jquery-2.1.4.js"></script>
@@ -22,7 +23,9 @@
 		<script src="/js/libs/bootstrap-table-zh-CN.js"></script>
 		<script src="/js/libs/bootstrap-editable.js"></script>
 		<script src="/js/libs/bootstrap-dialog.js"></script>
-		<script src="/js/libs/bootbox.js"></script>
+		<script src="/js/libs/summernote.js"></script>
+		<script src="/js/libs/summernote-zh-CN.js"></script>
+
 		<script src="/js/libs/myDialog.js"></script>
 
 		<script src="/js/libs/director.js"></script>
@@ -106,13 +109,13 @@
 					field:'configs',
 					subFunc:[
 						{
-							field:'overView',
-							name:'状态摘要',
-							templateName:'overView'
-						},{
 							field:'logs',
 							name:'系统日志',
 							templateName:'logs'
+						},{
+							field:'templateManage',
+							name:'模板管理',
+							templateName:'templateManage'
 						},{
 							field:'dbBackup',
 							name:'数据库备份/还原',

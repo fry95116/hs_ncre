@@ -256,7 +256,7 @@
         return new Promise(function(resolve,reject){
 
             //数据检查
-            var cols = [ 'name', 'examinee_number', 'enter_number', 'score', 'rank', 'certificate_number'];
+            var cols = [ 'id_number', 'name', 'examinee_number', 'enter_number', 'score', 'rank', 'certificate_number'];
             var newData = _.pick(updateData,cols);
 
 

@@ -1,0 +1,65 @@
+<div id="<%= field %>" class="subFuncContent panel panel-default" style="display: <% if(show){ %>block<% }else{ %> none <% } %>" >
+    <script src="/js/admin/configs/templateManage.js"></script>
+    <div class="panel-heading">
+        <h3 class="panel-title"><%= name %></h3>
+    </div>
+    <div class="panel-body">
+        <div class="container-fluid">
+            <div class="row">
+                <!-- 编辑器 -->
+                <div class="col-lg-5">
+                    <div class="page-header">
+                        <h4>编辑模板</h4>
+                    </div>
+                    <div class="form-group message">
+                    </div>
+                    <div class="form-group clearfix">
+                        <!-- 模板选择 -->
+                        <div class="pull-left">
+                            <div class="templateName btn-group">
+                                <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
+                                    <span class="current_templateName">请选择模板</span><span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a href="javascript:void(0)" value="instructions">考生须知</a></li>
+                                    <li role="separator" class="divider"></li>
+                                    <li><a href="javascript:void(0)" value="success">报名成功</a></li>
+                                    <li role="separator" class="divider"></li>
+                                    <li><a href="javascript:void(0)" value="blacklist">报名失败_在黑名单中</a></li>
+                                    <li><a href="javascript:void(0)" value="overflow">报名失败_人数已满</a></li>
+                                    <li><a href="javascript:void(0)" value="repeat">报名失败_重复报名</a></li>
+                                    <li><a href="javascript:void(0)" value="unknown">报名失败_未知错误</a></li>
+                                </ul>
+                            </div>
+                            <input name="templateName" type="hidden">
+                        </div>
+                        <div class="pull-right">
+                            <div class="btn-group" role="group">
+
+                                <button type="button" class="reload btn btn-primary">
+                                    <i class="glyphicon glyphicon-cloud-download"></i>&nbsp;重新加载
+                                </button>
+                                <button type="button" class="save btn btn-primary">
+                                    <i class="glyphicon glyphicon-cloud-upload"></i>&nbsp;保存
+                                </button>
+                            </div>
+                            <button  type="button" class="preview btn btn-primary">
+                                预览&nbsp;<i class="glyphicon glyphicon-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="templateEditor"></div>
+                </div>
+                <!-- 预览 -->
+                <div class="col-lg-7">
+                        <div class="page-header">
+                            <h4>预览</h4>
+                        </div>
+                        <div class="panel panel-default">
+                            <iframe class="previewWindow" style="width: 100%;min-height:200px;border:none;margin-bottom:-5px;"></iframe>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

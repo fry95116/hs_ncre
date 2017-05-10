@@ -13,7 +13,13 @@
 		</div>
 	</div>
 	<div id='mainPanel'>
-		<%- include('./op_res/' + type)%>
+		<div>
+            <% if(isPreview === true){ %>
+            <%- content %>
+            <% } else { %>
+            <%- include('./templates/' + content) %>
+            <%}%>
+		</div>
 	</div>
 </body>
 </html>
