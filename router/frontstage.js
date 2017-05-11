@@ -5,10 +5,10 @@
 
 (function () {
     var router = require('express').Router(),
-        _ = require('lodash'),
+        fs = require('fs'),
+        Captchapng = require('captchapng'),
 
-        Captchapng = require('captchapng'),             //验证码模块
-
+        AdimissionTicker = require('../model/AdmissionTicket'),
         translate = require('../tr'),                   //各类映射
         tr = translate.tr,                              //翻译函数， 用于将数据表字段名翻译为实际名称(原tr.js)
         user_config = require('../user_config');        //用户设置
@@ -49,6 +49,10 @@
         res.render('frontStage/welcome', {
             reg_info: {}
         });
+    });
+
+    router.get('/export',function(req,res){
+        AdimissionTicker.export(res);
     });
 
     /* 考生须知 */

@@ -142,6 +142,7 @@
     router.use('/testArrange/functionControl',require('./testArrange/functionControl'));
     router.use('/testArrange/testRooms',require('./testArrange/testRooms'));
     router.use('/testArrange/testInfo',require('./testArrange/testInfo'));
+    router.use('/testArrange/admissionTicket',require('./testArrange/admissionTicket'));
     router.use('/testArrange/score',require('./testArrange/score'));
 
     module.exports = router;

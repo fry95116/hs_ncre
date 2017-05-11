@@ -4,76 +4,23 @@
  * */
 
 (function() {
-	var mysql = require('mysql'),
-			_ = require('lodash'),
-            xlsx = require('xlsx'),
-            Promise = require('bluebird'),
+	var _ = require('lodash'),
+        xlsx = require('xlsx'),
+        Promise = require('bluebird'),
 
-			data_schema = require('./../data_schema'),
-			user_config = require('./../user_config'),
-			db_config = user_config.db_config,
-			table_names = user_config.table_names,
-			exam_sites = user_config.exam_sites,
-			limit_rules = user_config.limit_rules,
+        ConnectionPool = require('./ConnectionPool'),
+        log = require('../Logger').getLogger(),
+        blackList = require('./BlackList'),
+        data_schema = require('./../data_schema'),
+        user_config = require('./../user_config'),
+        table_names = user_config.table_names,
+        exam_sites = user_config.exam_sites,
+        limit_rules = user_config.limit_rules,
 
-            ERR = require('./../ApplicationError'),
-            log = require('../Logger').getLogger();
+        ERR = require('./../ApplicationError');
 
     _.templateSettings.interpolate = /\{\{(.+?)\}\}/g;
 
-
-
-	//var con;
-	//以下代码用于维持mysql的连接
-	//后期可以考虑连接池
-    // function handleDisconnect() {
-    //
-     //    con = mysql.createConnection(db_config); // 连接数据库
-    //
-     //    con.connect(function (err) {
-     //        if (err) {
-     //            if (err.code = 'ECONNREFUSED') {
-     //                log.error('报名信息_数据库连接_无法连接到数据库，请检查数据库配置', {err: err});
-     //            }
-     //            else {
-     //                log.error('报名信息_数据库连接_未知错误', {err: err});
-     //            }
-     //        }
-     //        else {
-     //            log.info('报名信息_数据库连接_成功。');
-     //            setTransactionIsolationLevel();
-     //        }
-     //    });
-     //    con.on('error', function (err) {
-     //        if (err.code === 'PROTOCOL_CONNECTION_LOST') {
-     //            log.error('报名信息_数据库连接_中断.重连中...', {err: err});
-     //            handleDisconnect();
-     //        } else {
-     //            throw err;
-     //        }
-     //    });
-    // }
-    //
-    // handleDisconnect();
-
-    //设置事务隔离级别
-    function setTransactionIsolationLevel(con){
-        //log.info('设置事务隔离级别...');
-        con.query('SET session TRANSACTION ISOLATION LEVEL Read committed;',function(err,res){
-            if(err) log.error('报名信息_数据库连接_未知错误',{err:err});
-            // else{
-            //     log.info('设置事务隔离级别成功。');
-            //     con.query('select @@TX_ISOLATION;',function(err,res){
-            //         if(err) log.error('ERROR:未知错误',{err:err});
-            //         else log.info('当前事务隔离级别：' + res[0]['@@TX_ISOLATION']);
-            //     });
-            // }
-        });
-    }
-
-    var pool = mysql.createPool(db_config);
-    pool.on('connection', setTransactionIsolationLevel);
-    log.info('报名信息_创建数据库连接池。');
 
 
 	//身份证校验算法
@@ -135,58 +82,6 @@
         }
         return info;
     };
-
-    /** 获取连接 */
-    function getConnection(){
-        return new Promise(function(resolve,reject){
-            pool.getConnection(function(err,con){
-                if(err) reject(err);
-                else resolve(con);
-            });
-        });
-    }
-    exports.getConnection = getConnection;
-    /** 断开连接 */
-    function release(con){
-        return new Promise(function(resolve,reject){
-            con.release();
-            resolve();
-        });
-    }
-    exports.release = release;
-
-
-
-    /** 开始事务 */
-    function begin(con) {
-        return new Promise(function(resolve,reject){
-            con.beginTransaction(function(err){
-                if(err) reject(err);
-                else resolve();
-            });
-        });
-    }
-    exports.begin = begin;
-    /** 回滚事务 */
-    function rollback(con) {
-        return new Promise(function(resolve,reject){
-            con.rollback(function(err){
-                if(err) reject(err);
-                else resolve();
-            });
-        });
-    }
-    exports.rollback = rollback;
-    /** 提交事务 */
-    function commit(con) {
-        return new Promise(function(resolve,reject){
-            con.commit(function(err){
-                if(err) reject(err);
-                else resolve();
-            });
-        });
-    }
-    exports.commit = commit;
 
     /**
 	 * 对数据合法性进行检查
@@ -280,9 +175,9 @@
                     	//统计
                         _.forEach(res,function(v){
 
-                            if(typeof counts.sitesCount[v.esc] !== 'undefined')
+                            if(!_.isUndefined(counts.sitesCount[v.esc]))
                             	counts.sitesCount[v.esc] += v.count;
-                            if(typeof counts.subjectCount[v.esc][v.sc] !== 'undefined')
+                            if(!_.isUndefined(counts.subjectCount[v.esc][v.sc]))
                             	counts.subjectCount[v.esc][v.sc] += v.count;
                         });
                         resolve(counts);
@@ -291,7 +186,20 @@
             );
 		});
 	}
-    exports.getStatistics = getStatistics;
+    exports.getStatistics = function(){
+        return Promise(function(resolve,reject){
+            ConnectionPool.getConnection().then(function(con){
+                getStatistics(con)
+                    .then(resolve)
+                    .catch(reject)
+                    .finally(_.partial(ConnectionPool.release,con));
+            }).catch(function(err){
+                log.error('报名信息_获取连接_失败',{err:err});
+                reject(err);
+            });
+
+        });
+    };
 
     /**
 	 * 重复检查
@@ -321,7 +229,66 @@
             );
 		});
 	}
-    exports.repeatCheck = repeatCheck;
+    exports.repeatCheck = function(id_number){
+        return new Promise(function(resolve,reject){
+            ConnectionPool.getConnection()
+                .then(function(con){
+                    repeatCheck(con,id_number)
+                        .then(resolve)
+                        .catch(reject)
+                        .finally(_.partial(ConnectionPool.release,con));
+                })
+                .catch(function(err){
+                    log.error('报名信息_获取连接_失败',{err:err});
+                    reject(err);
+                });
+
+        });
+    };
+
+
+    /**
+     * 检查是否存在
+     * @param {string|Object} id_number 证件号或者带证件号的对象
+     * @param {Object} con 数据库连接
+     * @return {Promise} Promise对象,resolve时传入counts */
+    function exists(con,id_number) {
+        return new Promise(function(resolve,reject){
+            if(_.isNil(id_number)) {
+                reject(new Error('没有证件号'));
+                return;
+            }
+            con.query(
+                'SELECT count(1) AS \'count\' FROM ' + table_names.enterInfo +
+                ' WHERE id_number=?',
+                id_number,
+                function(err, res) {
+                    if (err) reject(err);
+                    else {
+                        if (res[0].count > 0) resolve();
+                        else reject(new Error('报名信息不存在'));
+                    }
+                }
+            );
+        });
+    }
+    exports.exists = function(id_number){
+        return new Promise(function(resolve,reject){
+            ConnectionPool.getConnection()
+                .then(function(con){
+                    exists(con,id_number)
+                        .then(resolve)
+                        .catch(reject)
+                        .finally(_.partial(ConnectionPool.release,con));
+                })
+                .catch(function(err){
+                    log.error('报名信息_获取连接_失败',{err:err});
+                    reject(err);
+                });
+
+        });
+    };
+
 
     /**
 	 * 内部函数,按规则检查人数
@@ -442,7 +409,57 @@
             });
 		});
 	}
-    exports.insertInfo = insertInfo;
+
+	exports.addInfo = function(data_in){
+	    return new Promise(function(resolve,reject){
+            ConnectionPool.getConnection().then(function(con){
+                //前期检查
+                check(data_in)
+                    .then(_.partial(repeatCheck, con, data_in.id_number))
+                    .then(_.partial(blackList.check, data_in.id_number))
+                    .then(_.partial(getStatistics, con))
+                    .then(_.partial(checkCount,data_in, _, false))
+                    //添加过程
+                    .then(_.partial(ConnectionPool.begin, con))
+                    .then(_.partial(insertInfo, con, data_in))
+                    .then(_.partial(getStatistics, con))
+                    .then(_.partial(checkCount,data_in, _, true))
+                    .then(_.partial(ConnectionPool.commit, con))
+                    .then(resolve)
+                    .catch(function (err) {
+                        ConnectionPool.rollback(con)
+                            .then(function () {reject(err);})
+                            .catch(function (err) {reject(err);})
+                    })
+                    //释放连接
+                    .finally(_.partial(ConnectionPool.release,con));
+            }).catch(function(err){
+                log.error('报名信息_获取连接_失败',{err:err});
+                reject(err);
+            });
+        });
+    };
+
+    //强制添加
+	exports.forceAddInfo = function(data_in){
+        return new Promise(function(resolve,reject){
+            ConnectionPool.getConnection().then(function(con){
+                //前期检查
+                check(data_in)
+                    .then(_.partial(repeatCheck, con, data_in.body.id_number))
+                    //添加过程
+                    .then(_.partial(insertInfo, con, data_in))
+                    .then(resolve)
+                    .catch(function (err) {reject(err);})
+                    //释放连接
+                    .finally(_.partial(ConnectionPool.release,con));
+            }).catch(function(err){
+                log.error('报名信息_获取连接_失败',{err:err});
+                reject(err);
+            });
+        });
+    };
+
 
     /**
 	 * 查询记录
@@ -460,7 +477,7 @@
 	 * @property {number} offset 截取上界
 	 * @property {number} limit 截取数量
 	 * */
-	exports.selectInfo = function(con,option){
+    function selectInfo(con,option){
 		return new Promise(function(resolve,reject){
             var opt = {
                 searchBy:'',
@@ -536,7 +553,20 @@
             });
 
         });
-	};
+	}
+    exports.selectInfo = function(option){
+        return new Promise(function(resolve,reject){
+            ConnectionPool.getConnection().then(function(con){
+                selectInfo(con,option)
+                    .then(resolve)
+                    .catch(reject)
+                    .finally(_.partial(ConnectionPool.release,con));
+            }).catch(function(err){
+                log.error('报名信息_获取连接_失败',{err:err});
+                reject(err);
+            });
+        });
+    };
 
 	/**
 	 * 更新记录
@@ -544,7 +574,7 @@
 	 * @param {string} id_number 证件号
 	 * @param {object} updateData 要更新的数据
 	 * */
-	exports.updateInfo = function(con,id_number,updateData){
+	function updateInfo(con,id_number,updateData){
 	    return new Promise(function(resolve,reject){
 
 	        //获取旧的值
@@ -605,14 +635,27 @@
             });
         });
 
-    };
+    }
+    exports.updateInfo = function(id_number,updateData){
+        return new Promise(function(resolve,reject){
+            ConnectionPool.getConnection().then(function(con){
+                updateInfo(con,id_number,updateData)
+                    .then(resolve)
+                    .catch(reject)
+                    .finally(_.partial(ConnectionPool.release,con));
+            }).catch(function(err){
+                log.error('报名信息_获取连接_失败',{err:err});
+                reject(err);
+            });
 
+        });
+    };
     /**
      * 删除记录
      * @param {Object} con 数据库连接
      * @param {string} id_number 证件号
      * */
-    exports.deleteInfo = function(con,id_number){
+    function deleteInfo(con,id_number){
         return new Promise(function(resolve,reject){
             //删除数据
             var sql = 'DELETE FROM ' + table_names.enterInfo + ' WHERE id_number=?;';
@@ -621,12 +664,26 @@
                 else resolve();
             });
         });
+    }
+
+    exports.deleteInfo = function(id_number){
+        return new Promise(function(resolve,reject){
+            ConnectionPool.getConnection().then(function(con){
+                deleteInfo(con,id_number)
+                    .then(resolve)
+                    .catch(reject)
+                    .finally(_.partial(ConnectionPool.release,con));
+            }).catch(function(err){
+                log.error('报名信息_获取连接_失败',{err:err});
+                reject(err);
+            });
+        });
     };
 
     /**
      * 删除全部记录
      * */
-    exports.deleteAllInfo = function(con){
+    function deleteAllInfo(con){
         return new Promise(function(resolve,reject){
             //删除数据
             var sql = 'DELETE FROM ' + table_names.enterInfo + ';';
@@ -634,6 +691,20 @@
                 if (err) reject(err);
                 else resolve();
             });
+        });
+    }
+    exports.deleteAllInfo = function(){
+        return new Promise(function(resolve,reject){
+            ConnectionPool.getConnection().then(function(con){
+                deleteAllInfo(con)
+                    .then(resolve)
+                    .catch(reject)
+                    .finally(_.partial(ConnectionPool.release,con));
+            }).catch(function(err){
+                log.error('报名信息_获取连接_失败',{err:err});
+                reject(err);
+            });
+
         });
     };
 
@@ -657,8 +728,8 @@
 
             var data = xlsx.utils.sheet_to_json(sheet);
 
-            getConnection().then(function(con){
-                begin(con)
+            ConnectionPool.getConnection().then(function(con){
+                ConnectionPool.begin(con)
                     .then(function(){return data})
                     .mapSeries(function(row,index){
                         return new Promise(function(resolve,reject){
@@ -672,15 +743,14 @@
                                 });
                         });
                     })
-                    .then(_.partial(commit, con))
+                    .then(_.partial(ConnectionPool.commit, con))
                     .then(resolve)
                     .catch(function(err){
-                        rollback(con)
+                        ConnectionPool.rollback(con)
                             .then(function(){reject(err);})
                             .catch(function(err){reject(err);});
                     })
-                    .finally(_.partial(release,con));
-
+                    .finally(_.partial(ConnectionPool.release,con));
             }).catch(function(err){
                 reject(err);
             });

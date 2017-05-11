@@ -438,7 +438,7 @@
   },
   "function_control": {
     "enter": true,
-    "print": true,
+    "print": false,
     "query": false
   },
   "admin_passport": {

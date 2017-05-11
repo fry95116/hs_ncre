@@ -63,6 +63,7 @@ $(document).ready(function() {
         'testArrange/examPlan':function(){showSubFuncView('testArrange','examPlan')},
         'testArrange/examDate':function(){showSubFuncView('testArrange','examDate')},
         'testArrange/testRoomArrange':function(){showSubFuncView('testArrange','testRoomArrange')},
+        'testArrange/admissionTicket':function(){showSubFuncView('testArrange','admissionTicket')},
         'testArrange/scoreManage':function(){showSubFuncView('testArrange','scoreManage')}
     };
 

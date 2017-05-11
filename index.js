@@ -52,7 +52,7 @@ if(local_config.Port_frontStage === local_config.Port_backStage){
     app.use('/codeRef',require('./router/codeRef'));
     app.use('/admin',require('./router/backstage'));
     /*注意:后台路由一定要放在前台路由之后
-    * 否则前台路由中的功能控制会过滤掉后台路由*/
+    * 否则前中的功能控制会过滤掉后端路由*/
     app.use('/',require('./router/frontstage'));
 
 	/*

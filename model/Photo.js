@@ -102,12 +102,28 @@
                 id_number,
                 function(err, res) {
                     if (err) reject(err);
-                    else if (res[0].count > 0) reject(new Error('该证件号已经存在'));
+                    else if (res[0].count > 0) reject(new Error('照片已经存在'));
                     else resolve();
                 }
             );
         });
     }
+
+    function exists(id_number) {
+        return new Promise(function(resolve,reject){
+            con.query(
+                'SELECT count(1) AS \'count\' FROM ' + table_names.photo +
+                ' WHERE id_number=?',
+                id_number,
+                function(err, res) {
+                    if (err) reject(err);
+                    else if (res[0].count > 0) resolve();
+                    else reject(new Error('照片不存在'));
+                }
+            );
+        });
+    }
+
 
     /**
      * 查询照片信息
@@ -351,6 +367,7 @@
     exports.commit = commit;
 
     exports.repeatCheck = repeatCheck;
+    exports.exists = exists;
     exports.selectPhotoInfo = selectPhotoInfo;
     exports.getPhoto = getImage;
 

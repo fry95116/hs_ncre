@@ -1,0 +1,112 @@
+<div id="<%= field %>" class="subFuncContent panel panel-default" style="display: <% if(show){ %>block<% }else{ %> none <% } %>" >
+    <script type="text/javascript" src="/js/admin/testArrange/admissionTicket.js"></script>
+    <div class="panel-heading">
+        <h3 class="panel-title"><%= name %></h3>
+    </div>
+    <div class="panel-body">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-5 col-lg-3">
+                    <div class="row">
+                        <div class="col-xs-12 check">
+                            <h4>数据检查</h4>
+                            <hr>
+                            <div>
+                                <div class="form-group message">
+                                </div>
+                                <div class="form-group">
+                                    <label>证件号</label>
+                                    <input name="searchText" type="text" class="form-control" placeholder="number">
+                                </div>
+                                <button type="button" class="check btn btn-primary">提交</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="page-header">
+                                <h4>导出准考证</h4>
+                            </div>
+                            <form action="/admin/testArrange/admissionTicket/export.pdf" method="get">
+                                <div class="well" style="text-align: center; padding: 32px;">
+                                    <button type="submit" class="btn btn-primary btn-lg ">导出准考证信息</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-7 col-lg-9 admissionTickets">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <h4>可以导出准考证的数据</h4>
+                            <hr>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 message">
+
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 toolbar form-inline" style="margin-bottom:10px;">
+                            <div class="pull-left">
+                                <div class="form-inline" role="form">
+                                    <div class="form-group">
+                                        <div class="btn-group">
+                                            <button type="button" class="btn btn-primary refresh"  title="刷新表格">
+                                                <i class="glyphicon glyphicon-refresh"></i> 刷新
+                                            </button>
+                                            <button type="button" class="btn btn-primary toggle" title="切换为表格/卡片视图">
+                                                <i class="glyphicon glyphicon-list-alt icon-list-alt"></i> 切换视图
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="pull-right">
+                                <div class="form-inline" role="form">
+                                    <div class="form-group">
+                                        <input name="searchText" type="text" class="form-control" placeholder="搜索">
+                                    </div>
+                                    <div class="checkbox">
+                                        <label title="选中后，结果搜索内容严格匹配">
+                                            <input type="checkbox" name="strictMode" > 严格匹配模式
+                                        </label>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="btn-group">
+                                            <div class="btn-group searchBy">
+                                                <button type="button" class="btn btn-primary dropdown-toggle"
+                                                        data-toggle="dropdown">
+                                                    <span class="btn-text">按名字搜索</span> <span class="caret"></span>
+                                                </button>
+                                                <ul class="dropdown-menu" role="menu">
+                                                    <li><a href="javascript:void(0);" value="name">按名字搜索</a></li>
+                                                    <li><a href="javascript:void(0);" value="id_number">按证件号搜索</a></li>
+                                                    <li><a href="javascript:void(0);" value="examinee_number">按准考证号搜索</a></li>
+                                                    <li><a href="javascript:void(0);" value="enter_number">按报名号搜索</a></li>
+                                                </ul>
+                                                <input name="searchBy" type="hidden" value="name"/>
+                                            </div>
+                                            <button class="btn btn-primary search" type="button"><i
+                                                        class="glyphicon glyphicon-search"></i> 搜索
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div><!-- /pull right -->
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <table class="admissionTicketTable">
+
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

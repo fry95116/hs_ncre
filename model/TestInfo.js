@@ -107,6 +107,26 @@
     exports.repeatCheck = repeatCheck;
 
     /**
+     * 检查是否存在
+     * @param {int} id_number 证件号
+     * @return {Promise} Promise对象,resolve时传入counts */
+    function exists(id_number) {
+        return new Promise(function(resolve,reject){
+            con.query(
+                'SELECT count(1) AS \'count\' FROM ' + table_names.testInfo +
+                ' WHERE id_number=?',
+                id_number,
+                function(err, res) {
+                    if (err) reject(err);
+                    else if (res[0].count > 0) resolve();
+                    else reject(new Error('考试信息不存在'));
+                }
+            );
+        });
+    }
+    exports.exists = exists;
+
+    /**
      * 插入记录
      * @param {object} data_in 输入的数据
      * @param {object} index 索引，用于错误定位
@@ -306,7 +326,7 @@
 
 
     /**
-     * 导入黑名单
+     * 导入考试记录
      * @param {string} type 文件类型
      * */
     exports.importTestInfo = function (type) {
