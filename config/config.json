@@ -438,8 +438,8 @@
   },
   "function_control": {
     "enter": true,
-    "print": false,
-    "query": false
+    "print": true,
+    "query": true
   },
   "admin_passport": {
     "username": "admin",

@@ -84,7 +84,7 @@
     });
 
     /** 报名阶段的路由 */
-    router.all(['/getEnterInfo','/repeatcheck','/enter'],function(req,res,next){
+    router.all(['/getEnterInfo','/repeatcheck','/enter','/uploadPhoto'],function(req,res,next){
         if(user_config.functionControl.enter === true)
             next();
         else
@@ -92,7 +92,7 @@
     },require('./frontStage/enter'));
 
     /** 考场信息查询 & 准考证打印阶段的路由 */
-    router.all(['/getTestInfo'],function(req,res,next){
+    router.all(['/getTestInfo','/AdmissionTicket.pdf'],function(req,res,next){
         if(user_config.functionControl.print === true)
             next();
         else

@@ -29,6 +29,9 @@
 				<tr><td class="key"><%= key %></td><td class="value"><%= info[key] %></td></tr>
                 <% }%>
 			</table>
+			<a href='/AdmissionTicket.pdf?id_number=<%= id_number %>'>
+				<button onclick="window.location = '/AdmissionTicket.pdf?id_number=<%= id_number %>'">获取准考证</button>
+			</a>
             <%}%>
 		</div>
 

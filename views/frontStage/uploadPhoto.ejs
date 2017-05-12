@@ -1,0 +1,52 @@
+﻿<html>
+<head>
+	<title>考生信息</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+
+	<script src="/js/libs/jquery-2.1.4.js"></script>
+	<script type="text/javascript" src="/js/uploadPhoto.js"></script>
+	<link href="/css/uploadPhoto.css" rel="stylesheet" type="text/css">
+	<style type="text/css"></style>
+</head>
+
+<body>
+	<div id="header">
+
+		<div style="position:relative;">
+			<img src="./img/school.png">
+			<h1>上传照片</h1>
+			<p>
+				按要求上传或更新你的照片
+				<br>如果没有照片,可以在现场报名时拍摄</p>
+		</div>
+	</div>
+	<div id='mainPanel'>
+		<div>
+			<form action="/uploadPhoto" method="post" enctype="multipart/form-data">
+				<div class="form-group">
+					<div class="input-group">
+						<input class="fileNameShower" type="text" placeholder="请选择文件" disabled="" style="display: none;">
+						<label for="photoFile" >选择文件</label>
+						<input id="photoFile" name="file" type="file">
+					</div>
+				</div>
+				<div class="form-group">
+					<input name="id_number" type="hidden" value="<%= id_number %>">
+					<input type="submit" value="提交照片">
+				</div>
+				<div class="tips">
+					<table>
+						<tr><th>支持的文件类型:</th><td>png,png,gif</td></tr>
+						<tr><th>文件大小:</th><td>1M以下</td></tr>
+						<tr><th>照片比例:</th><td>3:4</td></tr>
+						<tr><th>建议分辨率:</th><td>220px * 165px</td></tr>
+						<tr><th>最小分辨率:</th><td>192px * 144px</td></tr>
+					</table>
+				</div>
+			</form>
+		</div>
+
+	</div>
+</body>
+</html>

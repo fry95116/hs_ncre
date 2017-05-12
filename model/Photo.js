@@ -391,6 +391,13 @@
     }
     exports.addPhoto = addPhoto;
 
+    function updatePhoto(id_number,buffer,type){
+        return deletePhoto(id_number)
+            .then(_.partial(addPhoto,id_number,buffer,type));
+    }
+    exports.updatePhoto = updatePhoto;
+
+
     function importPhoto(buffer){
         return new Promise(function(resolve,reject){
             decompress(buffer).then(function(files){

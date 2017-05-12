@@ -8,9 +8,12 @@
         _ = require('lodash'),
         Promise = require('bluebird'),
 
-
+        ConnectionPool = require('../../model/ConnectionPool'),
         dbo_enter = require('../../model/EnterInfo'),
         dbo_test = require('../../model/TestInfo'),
+        dbo_admissionTicket = require('../../model/AdmissionTicket'),
+
+
 
         translate = require('../../tr'),                   //各类映射
         codeRef = translate.codeRef,                    //职业,民族,学历等项目的 名称-代码 映射
@@ -25,7 +28,7 @@
     router.get('/getTestInfo', function (req, res) {
         if (req.query.id_number) {
             var opt_select = {searchBy:'id_number',searchText:req.query.id_number,strictMode:true};
-            dbo_enter.getConnection()
+            ConnectionPool.getConnection()
                 .then(function(con){
                     Promise.props({
                         enterInfo:dbo_enter.selectInfo(con,opt_select),
@@ -76,21 +79,18 @@
                                 else if(_.isNil(testRoom.batchs)){
                                     out['考试时间'] = '未知';
                                 }
-                                else{
+                                else {
                                     out['考场'] = '(' + testRoom.code + ')' + testRoom.location;
-                                    var batch = _.find(testRoom.batchs,function(el){return el.code == testInfo.batch_number;});
-                                    if(_.isNil(batch)) out[tr('考试时间')] = '未知';
+                                    var batch = _.find(testRoom.batchs, function (el) {
+                                        return el.code == testInfo.batch_number;
+                                    });
+                                    if (_.isNil(batch)) out[tr('考试时间')] = '未知';
                                     else {
                                         var testTime = (new Date(batch.endTime) - new Date(batch.startTime)) / (1000 * 60);
-                                        out['考试时间'] = new Date(batch.startTime).toLocaleString().replace(/:\d\d$/,'') + ' (' + testTime + '分钟)'
+                                        out['考试时间'] = new Date(batch.startTime).toLocaleString().replace(/:\d\d$/, '') + ' (' + testTime + '分钟)'
                                     }
                                 }
-
-
-
-                                res.render('frontStage/getTestInfo', {
-                                    info: out
-                                });
+                                res.render('frontStage/getTestInfo', {id_number:req.query.id_number,info: out});
                             }
                         })
                         .catch(function(err){
@@ -98,7 +98,7 @@
                             res.render('frontStage/op_res',{isPreview:false,content:'unknown'});
                         })
                         //释放连接
-                        .finally(_.partial(dbo_enter.release,con));
+                        .finally(_.partial(ConnectionPool.release,con));
                 })
                 .catch(function(err){
                 req.log.error('报名信息_获取连接_失败',{err:err});
@@ -109,6 +109,17 @@
         }
     });
 
+    router.get('/AdmissionTicket.pdf',function(req,res){
+        if (req.query.id_number) {
+            res.setHeader('Content-type','application/octet-stream');
+            dbo_admissionTicket.print(req.query.id_number,res).catch(function(err){
+                req.log.error('准考证_导出_失败',{err:err});
+                res.render('frontStage/op_res',{isPreview:false,content:'unknown'});
+            });
+        } else {
+            res.render('frontStage/op_res',{isPreview:true,content:'请输入证件号'});
+        }
+    });
     
     
     module.exports = router;

@@ -180,7 +180,7 @@
      * @property {string} remark 备注
      * @property {string} photoFileName 照片文件名
      * */
-    var fontPath = path.join(__dirname,'./simsun.ttf');
+    var fontPath_simsun = path.join(__dirname,'./simsun.ttf');
     function drawPassport(doc, data, offsetX, offsetY) {
 
         data = _.defaults(data,{
@@ -234,15 +234,15 @@
             .lineTo(offsetX + 0, offsetY + 0)
             .stroke();
 
-        doc.font(fontPath)
+        doc.font(fontPath_simsun)
             .fontSize(12)
             .text('2017年3月全国计算机等级考试', offsetX + 58, offsetY + 11);
 
-        doc.font(fontPath)
+        doc.font(fontPath_simsun)
             .fontSize(16)
             .text('准考证', offsetX + 85, offsetY + 27);
 
-        doc.font(fontPath)
+        doc.font(fontPath_simsun)
             .fontSize(10)
             .text('准考证号: ' + data.examinee_number, offsetX + 10, offsetY + 57)
             .text('姓　　名: ' + data.name, offsetX + 10, offsetY + 77)
@@ -259,6 +259,44 @@
             doc.image(data.photoFileName, offsetX + 211, offsetY + 25, { width: 48, height: 64 });
     }
 
+    var fontPath_DFKai = path.join(__dirname,'./DFKai.ttf');
+    function drawBack(doc, offsetX, offsetY) {
+        doc.lineWidth(0.5)
+            .moveTo(offsetX + 0, offsetY + 0)
+            .lineTo(offsetX + 270, offsetY + 0)
+            .lineTo(offsetX + 270, offsetY + 234)
+            .lineTo(offsetX + 0, offsetY + 234)
+            .lineTo(offsetX + 0, offsetY + 0)
+            .stroke();
+
+
+        var fontSize = 7.5;
+        var padding_side = 3;
+        var padding_top = 5;
+        var fontStyle = {
+            width:270 - 2 * padding_side,
+            align:'left',
+            lineGap:fontSize * 1.42,
+            indent:15
+        };
+        doc.font(fontPath_DFKai)
+            .fontSize(fontSize)
+            .text('考 生 注 意 事 项', offsetX+padding_side, offsetY + padding_top,{width:270 - 2 * padding_side,align:'center',lineGap:fontSize});
+        doc.text('1．考生凭本人准考证和有效身份证件参加考试，缺一不可。',fontStyle);
+        doc.text('2．开考前 15 分钟达到考场，应交验两证。',fontStyle);
+        doc.text('3．考生只准携带必要的考试文具（如钢笔，圆珠笔）入场，不得携带任何书籍资料，通讯设备、数据存储设备、智能电子设备等辅助工具及其他未经允许的物品。',fontStyle);
+        doc.text('4．开考信号发出后，才能开始答题。',fontStyle);
+        doc.text('5．考试开始后，迟到考生禁止入场。',fontStyle);
+        doc.text('6．考试中不得以任何方式作弊或帮助他人作弊，违者将按规定给予处罚。',fontStyle);
+        doc.text('7. 保持考场安静，不得吸烟，不得喧哗。',fontStyle);
+        doc.text('8. 考生可通过教育部考试中心综合查询网（http://chaxun.neea.edu.cn）查询当次成绩和证书信息。',fontStyle);
+    }
+    function addBackPage(doc,pos){
+        doc.addPage({ size: [595, 842],margin:0 });
+        _.each(pos,function(pos){
+           drawBack(doc,pos[0],pos[1]);
+        });
+    }
     /** 导出某人的准考证 */
 
     exports.print = function(id_number,writeStream){
@@ -275,7 +313,24 @@
                             doc.pipe(writeStream);
 
                             doc.addPage({ size: [595, 842],margin:0 });
-                            drawPassport(doc,data, 15, 32);
+                            //画裁剪线
+                            doc.lineWidth(1)
+                                .moveTo(25, 42)
+                                .lineTo(25 + 290, 42)
+                                .lineTo(25 + 290, 42 + 254)
+                                .lineTo(25, 42 + 254)
+                                .lineTo(25, 42)
+                                .dash(5, {space: 10})
+                                .stroke()
+                                .undash();
+                            //画正面
+                            drawPassport(doc,data, 35, 52);
+                            //说明文字
+                            doc.fontSize(32)
+                                .text('请将此文件双面打印，并沿虚线裁剪。', 25, 320);
+                            //画背面
+                            doc.addPage({ size: [595, 842],margin:0 });
+                            drawBack(doc, 290, 52);
                             // Finalize PDF file
                             doc.end()
                         })
@@ -302,6 +357,7 @@
                             /** 构建pdf */
                                 //尊考证的位置
                             var positions = [[15, 32],[315, 32],[15, 298],[315, 298],[15, 564],[315, 564]];
+                            var positions_back = [[10, 32],[310, 32],[10, 298],[310, 298],[10, 564],[310, 564]];
 
                             var doc = new PDFDocument({ autoFirstPage: false });
                             doc.pipe(writeStream);
@@ -309,7 +365,10 @@
 
                             _.each(res,function(data,index){
                                 var i = index % 6;
-                                if(i === 0) doc.addPage({ size: [595, 842],margin:0 });
+                                if(i === 0){
+                                    if(index !== 0) addBackPage(doc,positions_back);
+                                    doc.addPage({ size: [595, 842],margin:0 });
+                                }
                                 drawPassport(doc,data, positions[i][0], positions[i][1]);
                             });
 

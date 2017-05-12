@@ -21,10 +21,10 @@ $(document).ready(function(){
         showTodayButton:true,
         defaultDate: new Date(_.now() - 24 * 3600 * 1000)
     }).on('dp.change',function(e){
-        if(e.date.toDate() > $until.data('DateTimePicker').date().toDate()){
+        if(e.date && e.date.toDate() > $until.data('DateTimePicker').date().toDate()){
             $until.data('DateTimePicker').date(e.date.toDate());
         }
-        else if(e.date.toDate() > new Date()){
+        else if(e.date && e.date.toDate() > new Date()){
             $from.data('DateTimePicker').date(new Date());
         }
     });
@@ -34,10 +34,10 @@ $(document).ready(function(){
         showTodayButton:true,
         defaultDate: new Date()
     }).on('dp.change',function(e){
-        if($from.data('DateTimePicker').date().toDate() > e.date.toDate()){
+        if(e.date && $from.data('DateTimePicker').date().toDate() > e.date.toDate()){
             $from.data('DateTimePicker').date(e.date.toDate());
         }
-        else if(e.date.toDate() > new Date()){
+        else if(e.date && e.date.toDate() > new Date()){
             $until.data('DateTimePicker').date(new Date());
         }
     });

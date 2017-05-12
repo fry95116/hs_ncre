@@ -8,8 +8,26 @@
         _ = require('lodash'),
 
         bodyparser = require('body-parser'),            //解析post请求用
+        multer = require('multer'),
+        imageUploader = multer({
+            storage: multer.memoryStorage(),
+            fileFilter:function(req,file,cb){
+                //文件过滤
 
-        dbo = require('../../model/EnterInfo'),            //提供各类数据操作
+                var suffix = file.originalname.match(/.+\.([^\.]+)$/);
+                suffix = suffix ? suffix[1].toLowerCase() : '';
+
+                var acceptType = {'jpg':'', 'png':'', 'gif':''};
+                file.suffix = suffix;
+
+                cb(null,suffix in acceptType);
+            },
+            limits:{fileSize:1024*1024}
+        }),
+
+
+        dbo_enterInfo = require('../../model/EnterInfo'),            //提供各类数据操作
+        dbo_photo = require('../../model/Photo'),            //提供各类数据操作
         data_schema = require('../../data_schema'),
         translate = require('../../tr'),                   //各类映射
         codeRef = translate.codeRef,                    //职业,民族,学历等项目的 名称-代码 映射
@@ -17,7 +35,6 @@
         user_config = require('../../user_config'),        //用户设置
         sites_info = user_config.exam_sites,            //考点，科目信息
 
-        blackList = require('../../model/BlackList'),
         ERR = require('../../ApplicationError');
 
     /* 考生信息填报界面 */
@@ -34,7 +51,7 @@
     /* 考生信息查询界面 */
     router.get('/getEnterInfo', function (req, res) {
         if (req.query.id_number) {
-            dbo.selectInfo({searchBy:'id_number',searchText:req.query.id_number,strictMode:true})
+            dbo_enterInfo.selectInfo({searchBy:'id_number',searchText:req.query.id_number,strictMode:true})
                 .then(function(result){
                     //查询为空
                     if(result.total === 0) {
@@ -89,7 +106,7 @@
     /* 重复检查 */
     router.get('/repeatcheck', function (req, res, next) {
         if (req.query.id_number != '') {
-            dbo.repeatCheck(req.query.id_number)
+            dbo_enterInfo.repeatCheck(req.query.id_number)
                 .then(function(){
                     res.send(true);
                 })
@@ -126,7 +143,7 @@
         }
 
         //正常添加
-        dbo.addInfo(req.body)
+        dbo_enterInfo.addInfo(req.body)
             .then(function () {
                 //日志
                 req.log.info('报名信息_添加_成功',{id_number:req.body.id_number});
@@ -153,5 +170,71 @@
             });
 
     });
+
+    /** 照片上传界面 */
+    router.get('/uploadPhoto', function (req, res) {
+        if (req.query.id_number) {
+            res.render('frontStage/uploadPhoto',{id_number:req.query.id_number});
+        } else {
+            res.render('frontStage/op_res',{isPreview:true,content:'请输入证件号'});
+        }
+    });
+
+    /** 上传照片 */
+    router.post('/uploadPhoto',
+        function(req,res,next){
+            imageUploader.single('file')(req,res,function(err){
+                if(err){
+                    req.log.error('照片_添加_失败',{err:err});
+                    if(err.code === 'LIMIT_FILE_SIZE')
+                        res.render('frontStage/op_res',{isPreview:true,content:'照片文件大小过大'});
+                    else
+                        res.render('frontStage/op_res',{isPreview:false,content:'unknown'});
+                }
+                else next();
+            })
+        },
+        bodyparser.urlencoded({extended: true}),
+        function (req, res) {
+            if(_.isUndefined(req.file)) res.render('frontStage/op_res',{isPreview:true,content:'不受支持的文件类型'});
+            else if(req.body.id_number){
+                dbo_photo.exists(req.body.id_number)
+                    .then(function(){
+                        //修改逻辑
+                        dbo_photo.updatePhoto(req.body.id_number,req.file.buffer,req.file.suffix)
+                            .then(function () {
+                                req.log.info('照片_修改_成功',{id_number:req.body.id_number});
+                                //todo:换成模板
+                                res.render('frontStage/op_res',{isPreview:true,content:'照片更新成功'});
+                            })
+                            .catch(function (err) {
+                                req.log.error('照片_修改_失败',{err:err});
+                                res.render('frontStage/op_res',{isPreview:true,content:err.message});
+                            });
+                    })
+                    .catch(function(err){
+                        if(err.message !== '照片不存在') {
+                            req.log.error('照片_添加&修改_失败',{err:err});
+                            res.render('frontStage/op_res',{isPreview:false,content:'unknown'});
+                        }
+                        else{
+                            //添加逻辑
+                            dbo_photo.addPhoto(req.body.id_number,req.file.buffer,req.file.suffix)
+                                .then(function () {
+                                    req.log.info('照片_添加_成功',{id_number:req.body.id_number});
+                                    res.send('照片添加成功');
+                                })
+                                .catch(function (err) {
+                                    req.log.error('照片_添加_失败',{err:err});
+                                    res.render('frontStage/op_res',{isPreview:true,content:err.message});
+                                });
+                        }
+                    });
+
+            } else {
+                res.render('frontStage/op_res',{isPreview:true,content:'请输入证件号'});
+            }
+    });
+
     module.exports = router;
 })();
