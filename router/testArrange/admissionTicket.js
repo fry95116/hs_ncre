@@ -32,7 +32,11 @@
     router.get('/export.pdf',function(req,res,next){
         res.setHeader('Content-type','application/octet-stream');
         dbo.export(res)
+            .then(function(){
+                req.log.info('准考证_导出_成功');
+            })
             .catch(function(err){
+                req.log.info('准考证_导出_失败',{err:err});
                 res.status(400).send(err.message)
             });
     });

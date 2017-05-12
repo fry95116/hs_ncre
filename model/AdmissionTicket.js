@@ -315,11 +315,11 @@
                             doc.addPage({ size: [595, 842],margin:0 });
                             //画裁剪线
                             doc.lineWidth(1)
-                                .moveTo(25, 42)
-                                .lineTo(25 + 290, 42)
-                                .lineTo(25 + 290, 42 + 254)
-                                .lineTo(25, 42 + 254)
-                                .lineTo(25, 42)
+                                .moveTo(20, 37)
+                                .lineTo(20 + 300, 37)
+                                .lineTo(20 + 300, 37 + 264)
+                                .lineTo(20, 37 + 264)
+                                .lineTo(20, 37)
                                 .dash(5, {space: 10})
                                 .stroke()
                                 .undash();

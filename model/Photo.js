@@ -9,6 +9,7 @@
         Promise = require('bluebird'),
         images = require('images'),
         uuid = require('node-uuid'),
+        archiver = require('archiver'),
         fs = require('fs'),
         path = require('path'),
         decompress = require('decompress'),
@@ -143,7 +144,7 @@
 
             var sql = '';
             //单个查询
-            if(!_.isObject(option)){
+            if(_.isString(option)){
                 sql = 'SELECT * FROM ' + table_names.photo + ' WHERE id_number=?';				        //查询用
                 con.query(sql,option,function(err,res){
                     if(err) reject(err);
@@ -431,4 +432,33 @@
         });
     }
     exports.importPhoto = importPhoto;
+
+    function exportPhoto(replaceFileName,writeStream){
+        return new Promise(function(resolve,reject){
+            var archive = archiver('zip', {store: true});
+
+            archive.on('error', reject);
+            archive.pipe(writeStream);
+
+            if(replaceFileName === true){
+                selectPhotoInfo().then(function(res){
+                    _.each(res.rows,function(row){
+                        archive.file(
+                            path.join(user_config.paths.photo,row.file_name),
+                            { name: row.id_number + path.extname(row.file_name)}
+                        );
+                    });
+                    archive.finalize();
+                    resolve();
+                }).catch(reject);
+            }
+            else {
+                archive.directory(user_config.paths.photo,'/');
+                archive.finalize();
+                resolve();
+            }
+        });
+    }
+    exports.exportPhoto = exportPhoto;
+
 })();

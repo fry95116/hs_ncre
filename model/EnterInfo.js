@@ -5,6 +5,9 @@
 
 (function() {
 	var _ = require('lodash'),
+        fs = require('fs'),
+        path = require('path'),
+
         xlsx = require('xlsx'),
         Promise = require('bluebird'),
 
@@ -757,6 +760,83 @@
 
         });
 
+    }
+
+
+    exports.exportInfo = function(writeStream){
+        return new Promise(function(resolve,reject){
+            var pos = {
+                exam_site_code: 'A',
+                name: 'D',
+                sex: 'E',
+                birthday: 'F',
+                id_type: 'G',
+                id_number: 'H',
+                nationality: 'I',
+                career: 'J', degree_of_education: 'K', training_type: 'L',
+                subject_code: 'M',
+                file_name: 'N',
+                post_code: 'O', address: 'P', email: 'Q', phone: 'R',
+                remark: 'T'
+            };
+
+            var sex_text = {
+                1:'男',
+                2:'女'
+            };
+
+            var sheet = xlsx.utils.aoa_to_sheet([
+                ['考点代码','报名流水号','准考证号','考生姓名','性别',
+                    '出生日期','证件类型','证件号','民族','职业',
+                    '文化程度','培训类型','考试科目代码','照片文件名','邮编',
+                    '地址','电子邮件','联系电话','自定义信息','备注']
+            ]);
+            var range = xlsx.utils.decode_range(sheet['!ref']);
+
+            var wb = xlsx.utils.book_new();
+            xlsx.utils.book_append_sheet(wb,sheet,'报名信息');
+
+            var pos_row = 2;//从第二行开始
+
+            ConnectionPool.getConnection()
+                .then(function(con){
+                    con.query('SELECT * FROM ' + table_names.enterInfo + ' LEFT JOIN ' + table_names.photo +
+                        ' ON ' + table_names.enterInfo + '.id_number=' + table_names.photo + '.id_number ;')
+                        .on('error', reject)
+                        .on('result', function(row) {
+                            //改下性别
+                            if(!_.isNil(row.sex)){
+                                if(!_.isUndefined(sex_text[row.sex])) row.sex = sex_text[row.sex];
+                                else row.sex = '未知(' + row.sex + ')';
+                            }
+
+                            _.each(row,function(val,key){
+                                if(!_.isUndefined(pos[key])) sheet[pos[key] + pos_row] = {t:'s',v:val};
+                            });
+                            pos_row++;
+                            /*connection.pause();
+                             connection.resume();*/
+                        })
+                        .on('end', function(){
+                            range.e.r = Math.max(range.e.r,pos_row - 2);
+                            sheet['!ref'] = xlsx.utils.encode_range(range);
+
+                            var exportPath = path.join(__dirname,'../tempData/export');
+                            xlsx.writeFileAsync(exportPath,wb,{bookType:'xlsx'},function(){
+                                fs.createReadStream(exportPath).pipe(writeStream);
+                                resolve();
+                            });
+                        });
+                    /*,function(err,res){
+                        if(err) reject(err);
+
+
+
+                    });*/
+                })
+                .catch(reject);
+
+        });
     }
 
 })();

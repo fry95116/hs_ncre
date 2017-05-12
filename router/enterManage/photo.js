@@ -60,6 +60,26 @@
             });
     });
 
+
+    /**
+     * 导出照片包
+     * @method POST
+     * @param {boolean} replaceFileName 用省份证号替换文件名
+     * */
+
+    router.get('/photoPackage.zip',function(req,res){
+        var replaceFileName = req.query.replaceFileName === 'true';
+        dbo.exportPhoto(replaceFileName,res)
+            .then(function(){
+                req.log.info('照片_导出_成功');
+            })
+            .catch(function(err){
+                req.log.error('照片_导出_失败',{err:err});
+            });
+    });
+
+
+
     /** 获取照片 */
     router.get('/:fileName', function (req, res, next) {
 
@@ -77,7 +97,7 @@
     });
 
     /**
-     * 导入分数信息
+     * 导入照片及照片信息
      * @method POST
      * @param {Object} file 文件对象
      */
@@ -105,6 +125,7 @@
                     res.status(400).send('导入失败：' + err.message);
                 });
         });
+
 
     /**
      * 添加照片

@@ -54,6 +54,15 @@
             });
     });
 
+    router.get('/export.xlsx',function(req,res){
+        dbo.exportInfo(res)
+            .then(function(){
+                req.log.info('报名信息_导出_成功');
+            })
+            .catch(function(err){
+                req.log.error('报名信息_导出_失败',{err:err});
+            });
+    });
     /**
      * 导入报名信息
      * @method POST

@@ -16,7 +16,7 @@ $(document).ready(function(){
         idField:'id_number',
         /* 翻页 */
         clickToSelect:true,
-        pageSize:10,
+        pageSize:25,
         cardView:true,
         pagination:true,
         sidePagination:'server',
@@ -242,8 +242,13 @@ $(document).ready(function(){
                 });
             }
         });
+    });
 
-
+    $('.export',$root).click(function(){
+        myDialog.confirm('是否用身份证号替换?<br>选"<b>是</b>"则使用身份证号做文件名<br>选"<b>否</b>"使用原文件名(与报名表导出的数据对应)',
+            function(re){
+                window.open("/admin/enterManage/photo/photoPackage.zip?replaceFileName=" + (re.state === 'ok'));
+            });
     });
 
 });
