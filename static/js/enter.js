@@ -231,10 +231,10 @@ $(document).ready(function(){
 	catch(err){}
 
     for(var key in errMessage){
-		if(errMessage[key] == 'invalid data'){
+		if(errMessage[key] == '非法的数据'){
 			msgRender($('input[name="' + key + '"],select[name="' + key + '"]'),false,'请填写正确的值');
 		}
-		else if(errMessage[key] == 'not exist'){
+		else if(errMessage[key] == '不存在'){
             msgRender($('input[name="' + key + '"],select[name="' + key + '"]'),false,'该字段不能为空');
 		}
 	}

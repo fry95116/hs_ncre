@@ -11,21 +11,30 @@
         _ = require('lodash');
 
     /** 获取模板 */
-    router.get('/:templateName',function(req,res){
-        fs.readFileAsync(path.join(__dirname,'../../views/frontStage/templates/' + req.params.templateName + '.ejs'))
+    router.get(['/:templateName','/:class/:templateName'],function(req,res){
+        if(req.params.class)
+            var templatePath = path.join(__dirname,'../../views/frontStage/templates/' + req.params.class + '/' + req.params.templateName + '.ejs');
+        else
+            var templatePath = path.join(__dirname,'../../views/frontStage/templates/' + req.params.templateName + '.ejs');
+        fs.readFileAsync(templatePath)
             .then(function(data){
                 res.send(data);
             })
             .catch(function(err){
-                res.status.send('获取失败');
+                res.status(400).send('获取失败');
             });
     });
 
     /** 更新模板 */
-    router.put('/:templateName',bodyParser.urlencoded({extended:true}),function(req,res){
+    router.put(['/:templateName','/:class/:templateName'],bodyParser.urlencoded({extended:true}),function(req,res){
         if(_.isUndefined(req.body.content)) res.status(400).send('请传入内容');
         else {
-            var absolutePath = path.join(__dirname,'../../views/frontStage/templates/' + req.params.templateName + '.ejs');
+            if(req.params.class)
+                var templatePath = path.join(__dirname,'../../views/frontStage/templates/' + req.params.class + '/' + req.params.templateName + '.ejs');
+            else
+                var templatePath = path.join(__dirname,'../../views/frontStage/templates/' + req.params.templateName + '.ejs');
+
+            var absolutePath = path.join(__dirname,'../../views/frontStage/templates/' + templatePath + '.ejs');
             fs.accessAsync(absolutePath)
                 .then(function(){
                     return fs.writeFileAsync(absolutePath,req.body.content,{flag:'w'});
@@ -42,7 +51,7 @@
     });
 
     /** 获取预览 */
-    router.post('/preview/:templateName',bodyParser.urlencoded({extended:true}),function(req,res){
+    router.post(['/preview/:templateName','/preview/:class/:templateName'],bodyParser.urlencoded({extended:true}),function(req,res){
         if(_.isUndefined(req.body.content)) res.status(400).send('请传入内容');
         else {
             if(req.params.templateName === 'instructions')

@@ -47,7 +47,8 @@
     /* 主页 */
     router.get('/', function (req, res) {
         res.render('frontStage/welcome', {
-            reg_info: {}
+            reg_info: {},
+            functionControl:user_config.functionControl
         });
     });
 

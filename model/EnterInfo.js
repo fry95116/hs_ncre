@@ -827,12 +827,6 @@
                                 resolve();
                             });
                         });
-                    /*,function(err,res){
-                        if(err) reject(err);
-
-
-
-                    });*/
                 })
                 .catch(reject);
 

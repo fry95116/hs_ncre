@@ -189,7 +189,23 @@ $(document).ready(function () {
         $importBuffer.bootstrapTable('scrollTo', 'bottom');
     }
 
+    //TODO：测试用，之后删除
     window.appendData = appendData;
+    /* 测试数据集
+     [
+     {"exam_site_code":"410084","name":"马妍祎","sex":"2","birthday":"19960310","id_type":"1","id_number":"110228199603104000","nationality":"01","career":"30","degree_of_education":"3","training_type":"1","subject_code":"24","post_code":"4500046","email":"375451430@qq.com","phone":"18610391369","remark":"土木201404901"},
+     {"exam_site_code":"410084","name":"刘纯玉","sex":"2","birthday":"19960423","id_type":"1","id_number":"120101199604233000","nationality":"01","career":"30","degree_of_education":"3","training_type":"3","subject_code":"29","email":"314815771@qq.com","phone":"13007605001","remark":"法学201418909"},
+     {"exam_site_code":"410067","name":"郑汉琪","sex":"2","birthday":"19970713","id_type":"1","id_number":"120102199707131000","nationality":"01","career":"30","degree_of_education":"4","training_type":"1","subject_code":"26","post_code":"450000","address":"河南省郑州市高新区科学大道100号","email":"1214695356@qq.com","phone":"18838971937","remark":"郑州大学"},
+     {"exam_site_code":"410084","name":"孙萌","sex":"2","birthday":"19960612","id_type":"1","id_number":"120103199606121000","nationality":"01","career":"30","degree_of_education":"3","training_type":"1","subject_code":"24","email":"310058482@qq.com","phone":"15286801691","remark":"水利201403905"},
+     {"exam_site_code":"410084","name":"刘欣宇","sex":"2","birthday":"19960304","id_type":"1","id_number":"120109199603045000","nationality":"01","career":"30","degree_of_education":"3","training_type":"3","subject_code":"65","email":"382013581@qq.com","phone":"13027513623","remark":"管经201414405"},
+     {"exam_site_code":"410067","name":"何东阳","sex":"1","birthday":"19960703","id_type":"1","id_number":"120109199607035000","nationality":"01","career":"30","degree_of_education":"3","training_type":"3","subject_code":"24","email":"305874018@qq.com","phone":"18039298527","remark":"郑州大学"},
+     {"exam_site_code":"410084","name":"魏晴","sex":"2","birthday":"19950129","id_type":"1","id_number":"120113199501294000","nationality":"01","career":"30","degree_of_education":"3","training_type":"1","subject_code":"65","email":"339100147@qq.com","phone":"13007531161","remark":"外语201418129"},
+     {"exam_site_code":"410067","name":"张森","sex":"1","birthday":"19940309","id_type":"1","id_number":"120221199403091000","nationality":"01","career":"30","degree_of_education":"3","training_type":"1","subject_code":"24","email":"352494529@qq.com","phone":"13137107323","remark":"电力201311812"},
+     {"exam_site_code":"410067","name":"周于涵","sex":"1","birthday":"19940617","id_type":"1","id_number":"120225199406170000","nationality":"01","career":"30","degree_of_education":"3","training_type":"1","subject_code":"24","email":"835512873@qq.com","phone":"15538376653","remark":"水利201302820"},
+     {"exam_site_code":"410084","name":"赵国旺","sex":"1","birthday":"19960403","id_type":"1","id_number":"120225199604034000","nationality":"01","career":"30","degree_of_education":"3","training_type":"1","subject_code":"24","email":"308921945@qq.com","phone":"15538164230","remark":"机械201508922"},
+     {"exam_site_code":"410084","name":"韦昊南","sex":"1","birthday":"19960316","id_type":"1","id_number":"130103199603161000","nationality":"01","career":"30","degree_of_education":"3","training_type":"3","subject_code":"35","email":"382863846@qq.com","phone":"13015507030","remark":"水利201405709"},
+     ]
+     */
 
     //添加入缓冲区
     $form.submit(function () {

@@ -189,6 +189,11 @@ $(document).ready(function(){
         $enterTable.bootstrapTable('toggleView');
     });
 
+    //导出按钮
+    $toolbar.find('.export').click(function(){
+        window.open("/admin/enterManage/enterInfo/export.xlsx");
+    });
+
     //搜索按钮
     $toolbar.find('.search').click(function(){
         $enterTable.bootstrapTable('refresh');

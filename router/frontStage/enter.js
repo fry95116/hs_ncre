@@ -55,7 +55,7 @@
                 .then(function(result){
                     //查询为空
                     if(result.total === 0) {
-                        res.render('frontStage/getEnterInfo', {info: null});
+                        res.render('frontStage/op_res',{isPreview:false,content:'getTestInfo/noExist'});
                     }
                     else{
                         var out = {};
@@ -121,54 +121,51 @@
 
     /* 处理提交的考生记录 */
     router.post('/enter',bodyparser.urlencoded({extended: true}),function (req, res) {
-
         //验证验证码
         if (!req.session || req.session.captcha != req.body.captcha.toUpperCase()) {
             res.render('frontStage/enter', {
                 tr: codeRef,
                 sites_info: sites_info,
-                error_info: '{"captcha":"invalid data"}',
+                error_info: '{"captcha":"非法的数据"}',
                 formData: JSON.stringify(req.body)
             });
             return;
         }
         //清空session
         req.session.captcha = '';
-
         //生成备注
         if (req.body.is_our_school) {
             req.body.remark = '' + codeRef.department.findName(req.body.department) + req.body.student_number;
         } else {
             req.body.remark = req.body.school == '01' ? req.body.school_name : codeRef.school.findName(req.body.school);
         }
-
         //正常添加
         dbo_enterInfo.addInfo(req.body)
             .then(function () {
                 //日志
                 req.log.info('报名信息_添加_成功',{id_number:req.body.id_number});
-                res.render('frontStage/op_res',{isPreview:false,content:'success'});
+                res.render('frontStage/op_res',{isPreview:false,content:'enter/success'});
             })
             .catch(function (err) {
                 //日志
                 req.log.error('报名信息_添加_失败',{id_number:req.body.id_number,err:err});
                 //无效的提交数据
                 if (err instanceof ERR.InvalidDataError)
-                    res.send('无效的提交数据');
+                    res.render('frontStage/enter', {
+                        tr: codeRef,
+                        sites_info: sites_info,
+                        error_info: err.message,
+                        formData: JSON.stringify(req.body)
+                    });
                 //重复提交
-                else if (err instanceof ERR.RepeatInfoError)
-                    res.render('frontStage/op_res',{isPreview:false,content:'repeat'});
+                else if (err instanceof ERR.RepeatInfoError) res.render('frontStage/op_res',{isPreview:false,content:'enter/repeat'});
                 //人数超出
-                else if (err instanceof ERR.CountOverFlowError)
-                    res.render('frontStage/op_res',{isPreview:false,content:'overflow'});
+                else if (err instanceof ERR.CountOverFlowError) res.render('frontStage/op_res',{isPreview:false,content:'enter/overflow'});
                 //在黑名单中
-                else if (err instanceof ERR.BlacklistError)
-                    res.render('frontStage/op_res',{isPreview:false,content:'blacklist'});
+                else if (err instanceof ERR.BlacklistError) res.render('frontStage/op_res',{isPreview:false,content:'enter/blacklist'});
                 //未知错误
-                else
-                    res.render('frontStage/op_res',{isPreview:false,content:'unknown'});
+                else res.render('frontStage/op_res',{isPreview:false,content:'unknown'});
             });
-
     });
 
     /** 照片上传界面 */
@@ -187,7 +184,7 @@
                 if(err){
                     req.log.error('照片_添加_失败',{err:err});
                     if(err.code === 'LIMIT_FILE_SIZE')
-                        res.render('frontStage/op_res',{isPreview:true,content:'照片文件大小过大'});
+                        res.render('frontStage/op_res',{isPreview:false,content:'uploadPhoto/oversized'});
                     else
                         res.render('frontStage/op_res',{isPreview:false,content:'unknown'});
                 }
@@ -198,36 +195,51 @@
         function (req, res) {
             if(_.isUndefined(req.file)) res.render('frontStage/op_res',{isPreview:true,content:'不受支持的文件类型'});
             else if(req.body.id_number){
-                dbo_photo.exists(req.body.id_number)
+                //检查报名信息是否存在
+                dbo_enterInfo.exists(req.body.id_number)
+                    //检查照片是否存在
+                    .then(_.partial(dbo_photo.exists,req.body.id_number))
                     .then(function(){
                         //修改逻辑
                         dbo_photo.updatePhoto(req.body.id_number,req.file.buffer,req.file.suffix)
                             .then(function () {
                                 req.log.info('照片_修改_成功',{id_number:req.body.id_number});
-                                //todo:换成模板
-                                res.render('frontStage/op_res',{isPreview:true,content:'照片更新成功'});
+                                res.render('frontStage/op_res',{isPreview:false,content:'uploadPhoto/updated'});
                             })
                             .catch(function (err) {
                                 req.log.error('照片_修改_失败',{err:err});
-                                res.render('frontStage/op_res',{isPreview:true,content:err.message});
+                                //todo:判断错误信息
+                                res.render('frontStage/op_res',{isPreview:false,content:'unknown'});
                             });
                     })
                     .catch(function(err){
-                        if(err.message !== '照片不存在') {
-                            req.log.error('照片_添加&修改_失败',{err:err});
-                            res.render('frontStage/op_res',{isPreview:false,content:'unknown'});
-                        }
-                        else{
+                        if(err.message === '照片不存在') {
                             //添加逻辑
                             dbo_photo.addPhoto(req.body.id_number,req.file.buffer,req.file.suffix)
                                 .then(function () {
                                     req.log.info('照片_添加_成功',{id_number:req.body.id_number});
-                                    res.send('照片添加成功');
+                                    //todo:换成模板
+                                    res.render('frontStage/op_res',{isPreview:false,content:'uploadPhoto/added'});
                                 })
                                 .catch(function (err) {
                                     req.log.error('照片_添加_失败',{err:err});
-                                    res.render('frontStage/op_res',{isPreview:true,content:err.message});
+                                    //todo:判断错误信息
+                                    //msg=照片比例错误
+                                    if(err.message === '照片比例错误')
+                                        res.render('frontStage/op_res',{isPreview:false,content:'uploadPhoto/invalidRatio'});
+                                    //msg=照片分辨率过小
+                                    else if(err.message === '照片分辨率过小')
+                                        res.render('frontStage/op_res',{isPreview:false,content:'uploadPhoto/tooSmall'});
+                                    else
+                                        res.render('frontStage/op_res',{isPreview:false,content:'unknown'});
                                 });
+                        }
+                        else if(err.message == '报名信息不存在'){
+                            res.render('frontStage/op_res',{isPreview:false,content:'uploadPhoto/noExist'});
+                        }
+                        else{
+                            req.log.error('照片_添加&修改_失败',{err:err});
+                            res.render('frontStage/op_res',{isPreview:false,content:'unknown'});
                         }
                     });
 

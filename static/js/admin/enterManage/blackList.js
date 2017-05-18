@@ -94,7 +94,7 @@ $(document).ready(function(){
                     var $this = $(this);
                     $this.siblings().removeClass('active');
                     $this.addClass('active');
-                    $('.import img',$root).attr('src','/img/blackList_example_' + $this.attr('value') + '.jpg');
+                    $modal.find('img').attr('src','/img/blackList_example_' + $this.attr('value') + '.jpg');
                 });
 
                 $modal.find('input[type="file"]').change(function(){

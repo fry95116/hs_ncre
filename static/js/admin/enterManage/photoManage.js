@@ -152,7 +152,7 @@ $(document).ready(function(){
 
     $('.add',$root).click(function(){
         myDialog.dialog({
-            title:'添加黑名单项',
+            title:'添加照片',
             okBtn:false,
             cancelBtn:false,
             msg:template_add,
@@ -213,7 +213,7 @@ $(document).ready(function(){
 
     $('.import',$root).click(function(){
         myDialog.dialog({
-            title:'添加黑名单项',
+            title:'添加照片',
             okBtn:false,
             cancelBtn:false,
             msg:template_import,
@@ -245,10 +245,34 @@ $(document).ready(function(){
     });
 
     $('.export',$root).click(function(){
-        myDialog.confirm('是否用身份证号替换?<br>选"<b>是</b>"则使用身份证号做文件名<br>选"<b>否</b>"使用原文件名(与报名表导出的数据对应)',
-            function(re){
-                window.open("/admin/enterManage/photo/photoPackage.zip?replaceFileName=" + (re.state === 'ok'));
-            });
+        myDialog.dialog({
+            title:'导出照片',
+            okBtn:false,
+            cancelBtn:false,
+            closeBtn:true,
+            msg:'' +
+            '<p> ' +
+            '是否用身份证号替换?<br>' +
+            '</p> ' +
+            '<div style="text-align: right; line-height: 3em;"> ' +
+            '<button type="button" class="action btn btn-primary" value="ok">使用证件号做文件名</button><br> ' +
+            '<button type="button" class="action btn btn-primary" value="cancel">使用原文件名(与报名表导出的数据对应)</button><br> ' +
+            '</div>',
+            init:function($modal,re){
+                $modal.find('.action').click(function(){
+                    re.msg = $(this).attr('value');
+                    $modal.modal('hide');
+                });
+            },
+            response:function(re){
+                if(re.msg === 'ok')
+                    window.open("/admin/enterManage/photo/photoPackage.zip?replaceFileName=true");
+                else if(re.msg === 'cancel')
+                    window.open("/admin/enterManage/photo/photoPackage.zip?replaceFileName=false");
+                else return;
+            }
+        });
+
     });
 
 });
