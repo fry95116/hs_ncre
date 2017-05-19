@@ -23,7 +23,16 @@
 	</div>
 	<div id='mainPanel'>
 		<div>
-			<form action="/uploadPhoto" method="post" enctype="multipart/form-data">
+			<form action="/uploadPhoto?id_number=<%= id_number %>&req_id=<%= req_id %>" method="post" enctype="multipart/form-data">
+				<div class="form-group">
+
+					<div id="current_photo">
+						<h5>现有的证件照</h5>
+						<img src="/getPhoto?id_number=<%= id_number %>&req_id=<%= req_id %>" alt="无">
+
+					</div>
+				</div>
+
 				<div class="form-group">
 					<div class="input-group">
 						<input class="fileNameShower" type="text" placeholder="请选择文件" disabled="" style="display: none;">

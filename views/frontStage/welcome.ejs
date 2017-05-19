@@ -25,11 +25,11 @@
 		<!--<button id="read_info" onclick="window.location = '/instructions'">开始报名</button>-->
 		<ul id="functionList">
 			<% if(functionControl.enter === true){ %>
-			<li><a href="/instructions">开始报名</a></li>
-			<li><a class="func" href="/uploadPhoto">上传照片</a></li>
+			<li><a class="func" href="/instructions">开始报名</a></li>
+			<li><a class="func" href="/requestUploadPhoto">上传 & 修改照片</a></li>
 			<li><a class="func" href="/getEnterInfo">查询 & 修改报名信息</a></li>
 			<% } else { %>
-			<li><a href="/instructions">考生简介</a></li>
+			<li><a class="func" href="/instructions">考生简介</a></li>
 			<% } %>
             <% if(functionControl.print === true){ %>
 			<li><a class="func" href="/getTestInfo">查询考试信息 & 打印准考证</a></li>

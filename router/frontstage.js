@@ -81,11 +81,13 @@
 
     /* 验证码检测 */
     router.get('/captchatest', function (req, res) {
-        res.send(req.session.captcha == (req.query.test).toUpperCase());
+        if(req.query.test === '') res.send(false);
+        else res.send(req.session.captcha == (req.query.test).toUpperCase());
     });
 
     /** 报名阶段的路由 */
-    router.all(['/getEnterInfo','/repeatcheck','/enter','/uploadPhoto'],function(req,res,next){
+    router.all(['/getEnterInfo','/requestUpdateEnterInfo','/updateEnterInfo',
+        '/requestUploadPhoto','/getPhoto','/uploadPhoto','/repeatcheck','/enter'],function(req,res,next){
         if(user_config.functionControl.enter === true)
             next();
         else

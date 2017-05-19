@@ -576,10 +576,12 @@
      * @param {Object} con 数据库连接
 	 * @param {string} id_number 证件号
 	 * @param {object} updateData 要更新的数据
+     * @param {object} isAdmin 是否允许对敏感数据的修改
 	 * */
-	function updateInfo(con,id_number,updateData){
+	function updateInfo(con,id_number,updateData,isAdmin){
 	    return new Promise(function(resolve,reject){
 
+	        if(_.isUndefined(isAdmin)) isAdmin = true;
 	        //获取旧的值
             var sql_select = 'SELECT `exam_site_code`,`subject_code` FROM ' + table_names.enterInfo + ' WHERE `id_number`=?;';
             con.query(sql_select,id_number,function(err,res){
@@ -587,7 +589,12 @@
                 else{
                     var oldData = res[0];
                     //数据检查
-                    var newData = _.pick(updateData, _.chain(data_schema).keys().value());
+                    var newData;
+                    if(isAdmin === true)
+                        newData = _.pick(updateData, _.chain(data_schema).keys().value());
+                    else
+                        newData = _.pick(updateData,_.chain(data_schema).keys().without('exam_site_code','id_type','id_number','subject_code','email').value());
+
                     for(var key in newData){
                         if (!data_schema[key].test(newData[key])) {
                             reject(new Error('非法的数据'));
@@ -653,6 +660,9 @@
 
         });
     };
+
+
+
     /**
      * 删除记录
      * @param {Object} con 数据库连接

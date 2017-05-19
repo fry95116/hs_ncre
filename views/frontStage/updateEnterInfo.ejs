@@ -1,0 +1,225 @@
+﻿<html>
+<head>
+	<title>考生信息修改</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+
+	<script src="/js/libs/jquery-2.1.4.js"></script>
+	<script type="text/javascript" src="js/updateEnterInfo.js"></script>
+	<link href="css/updateEnterInfo.css" rel="stylesheet" type="text/css">
+<style type="text/css"></style>
+</head>
+
+<body>
+<div id="header">
+
+	<div style="position:relative;">
+		<img src="./img/school.png">
+		<h1>考生信息修改</h1>
+		<p>
+			在这里修改你的个人信息
+			<br>注意：只能修改非敏感信息</p>
+	</div>
+</div>
+
+<div id='mainPanel'>
+	<div>
+		<form name="info_form" action="updateEnterInfo?id_number=<%= formData.id_number %>&req_id=<%= req_id %>" method="post">
+
+			<div class="" id="input_exam_site_code">
+				<label for="exam_site_code">考点:</label>
+				<span><%- formData.exam_site_code %></span>
+			</div>
+
+			<div class="" id="input_subject_code">
+				<label for="subject_code">考试科目:</label>
+				<span><%- formData.subject_code %></span>
+				<span class="validated_result"></span>
+			</div>
+
+			<div id="input_name">
+				<label for="name">姓名(必填):</label>
+				<input name="name" type="text" value="<%- formData.name %>">
+				<span class="validated_result"></span>
+			</div>
+
+			<div id="input_sex">
+				<label for="sex">性别(必选):</label>
+				<select name="sex">
+					<option value="0">请选择</option>
+                    <% tr.sex.each(function(val){ %>
+						<%if(val.code === formData.sex){%>
+							<option value="<%= val.code %>" selected = "selected" ><%= val.name %></option>
+                    	<%}else{%>
+							<option value="<%= val.code %>"><%= val.name %></option>
+						<%}%>
+                    <% });%>
+				</select>
+				<span class="validated_result"></span>
+			</div>
+
+			<div id="input_id_type">
+				<label for="id_type">证件类型(必选):</label>
+                    <% tr.id_type.each(function(val){ %>
+						<%if(val.code === formData.id_type){%>
+						<span><%- val.name %></span>
+						<%}%>
+                    <% });%>
+				<span class="validated_result"></span>
+			</div>
+
+			<div id="input_id_number">
+				<label for="id_number">证件号码(必填);</label>
+				<span><%- formData.id_number %></span>
+				<span class="validated_result"></span>
+			</div>
+
+			<div class="" id="input_birthday">
+				<label for="birthday">出生日期(必填):</label>
+				<input type="text" name="birthday" value="<%= formData.birthday %>">
+				<span class="validated_result"></span>
+				<div class="tips">
+					请填写8位出生日期
+					<br>如:19940123
+				</div>
+			</div>
+
+			<div id="input_nationality">
+				<label for="nationality">民族(必选):</label>
+				<select name="nationality">
+					<option value="0">请选择</option>
+                    <% tr.nationality.each(function(val){ %>
+						<%if(val.code === formData.nationality){%>
+							<option value="<%= val.code %>" selected = "selected" ><%= val.name %></option>
+						<%}else{%>
+							<option value="<%= val.code %>"><%= val.name %></option>
+						<%}%>
+					<% });%>
+				</select>
+				<span class="validated_result"></span>
+			</div>
+
+			<div id="input_career">
+				<label for="career">职业(必选):</label>
+				<select class="" name="career">
+					<option value="00">请选择</option>
+                    <% tr.career.each(function(val){ %>
+						<%if(val.code === formData.career){%>
+							<option value="<%= val.code %>" selected = "selected" ><%= val.name %></option>
+						<%}else{%>
+							<option value="<%= val.code %>"><%= val.name %></option>
+						<%}%>
+                    <% }); %>
+				</select>
+				<span class="validated_result"></span>
+			</div>
+
+			<div class="" id="input_degree_of_education">
+				<label for="degree_of_education">文化程度(必选):</label>
+				<select class="" name="degree_of_education">
+					<option value="0">请选择</option>
+                    <% tr.degree_of_education.each(function(val){ %>
+						<%if(val.code === formData.degree_of_education){%>
+							<option value="<%= val.code %>" selected = "selected" ><%= val.name %></option>
+						<%}else{%>
+							<option value="<%= val.code %>"><%= val.name %></option>
+						<%}%>
+					<% }); %>
+				</select>
+				<span class="validated_result"></span>
+			</div>
+
+			<div class="" id="input_training_type">
+				<label for="training_type">培训类型(必选):</label>
+				<select class="" name="training_type">
+					<option value="0">请选择</option>
+                    <% tr.training_type.each(function(val){ %>
+						<%if(val.code === formData.training_type){%>
+							<option value="<%= val.code %>" selected = "selected" ><%= val.name %></option>
+						<%}else{%>
+							<option value="<%= val.code %>"><%= val.name %></option>
+						<%}%>
+					<% }); %>
+				</select>
+				<span class="validated_result"></span>
+			</div>
+
+			<div class="" id="input_phone">
+				<label for="phone">联系电话(必填):</label>
+				<input type="text" name="phone" value="<%= formData.phone %>">
+				<span class="validated_result"></span>
+			</div>
+			<div class="" id="input_post_code">
+				<label for="post_code">邮编(非必填):</label>
+				<input type="text" name="post_code" value="<%= formData.post_code %>">
+				<span class="validated_result"></span>
+			</div>
+
+			<div class="" id="input_address">
+				<label for="address">地址(非必填):</label>
+				<input type="text" name="address" value="<%= formData.address %>">
+				<span class="validated_result"></span>
+			</div>
+
+			<div class="" id="input_email">
+				<label for="email">电子邮箱:</label>
+				<span><%- formData.email %></span>
+				<span class="validated_result"></span>
+			</div>
+
+			<div id="remark">
+				<h4>备注</h4>
+				<div class="" id="input_is_our_school">
+					<label for="is_our_school">是否为本校学生？</label>
+					<input type="checkbox" name="is_our_school" value="true">
+				</div>
+
+				<div class="" id="input_remark_for_not_our_school">
+					<select class="" name="school">
+						<option value="0">请选择学校</option>
+                        <% tr.school.each(function(val){ %>
+						<option value="<%= val.code %>"><%= val.name %></option>
+                        <% }); %>
+					</select>
+					<span>学校(必填):</span>
+					<input type="text" name="school_name" value="">
+					<span class="validated_result"></span>
+				</div>
+
+				<div class="" id="input_remark_for_is_our_school">
+					<select class="" name="department">
+						<option value="0">请选择学院</option>
+                        <% tr.department.each(function(val){ %>
+						<option value="<%= val.code %>"><%= val.name %></option>
+                        <% }); %>
+					</select>
+					<span>学号(必填):</span>
+					<input type="text" name="student_number" value="">
+					<span class="validated_result"></span>
+				</div>
+			</div>
+
+			<div class="" id="input_captcha">
+
+				<label for="captcha">验证码:</label>
+				<input type="text" name="captcha" value="">
+				<span class="validated_result"></span>
+				<img id = "captcha" src="/captcha">
+				<span>看不清？点击图片刷新</span>
+			</div>
+			<div id="input_submit">
+				<input type="submit" name="submit_form" value="提交">
+			</div>
+			<div id="error_message" type="text/template">
+                <%- error_info %>
+			</div>
+			<script id="last_formData" type="text/template">
+                <%- formData %>
+			</script>
+		</form>
+
+	</div>
+</div>
+
+</body>
+</html>

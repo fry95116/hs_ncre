@@ -68,6 +68,22 @@ form{
 	margin-bottom: 20px;
 }
 
+#current_photo{
+	margin: auto;
+	max-width: 185px;
+	padding: 0px 10px 20px 10px;
+	border: 2px #0c84e4 solid;
+	border-radius: 10px;
+}
+
+#current_photo img{
+	min-width:144px;
+	min-height:192px;
+	max-width: 165px;
+	max-height: 220px;
+}
+
+
 .fileNameShower {
 	width: 220px;
 	padding: 10px;
