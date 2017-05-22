@@ -190,7 +190,7 @@
 		});
 	}
     exports.getStatistics = function(){
-        return Promise(function(resolve,reject){
+        return new Promise(function(resolve,reject){
             ConnectionPool.getConnection().then(function(con){
                 getStatistics(con)
                     .then(resolve)
@@ -413,8 +413,8 @@
 		});
 	}
 
-	exports.addInfo = function(data_in){
-	    return new Promise(function(resolve,reject){
+    exports.addInfo = function(data_in){
+        return new Promise(function(resolve,reject){
             ConnectionPool.getConnection().then(function(con){
                 //前期检查
                 check(data_in)

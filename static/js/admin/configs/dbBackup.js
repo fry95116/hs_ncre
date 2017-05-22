@@ -52,18 +52,18 @@ $(document).ready(function(){
             if(type === 'each') exp = exp.replace(segment,'*');
             //间隔n天
             else if(type === 'interval') {
-                exp = exp.replace(segment,'*/' + $content.find('select').val());
+                exp = exp.replace(segment,'*/' + $checked_type.find('select').val());
             }
             //固定n日
             else if(type === 'stable'){
-                exp = exp.replace(segment,$content.find('select').val());
+                exp = exp.replace(segment,$checked_type.find('select').val());
             }
             //从m日至n日
             else if(type === 'contain'){
-                var from = $content.find('select:eq(0)').val();
-                var to = $content.find('select:eq(1)').val();
+                var from = $checked_type.find('select:eq(0)').val();
+                var to = $checked_type.find('select:eq(1)').val();
                 if(from > to){
-                    exp = '错误（' + segment + '）:开始时间必须小于结束时间.'
+                    exp = '错误（' + segment + '）:开始时间必须小于结束时间.';
                     return false;
                 }
                 else{

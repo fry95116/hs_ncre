@@ -29,6 +29,7 @@
     "mysql": "^2.8.0",
     "node-schedule": "^0.5.1",
     "node-uuid": "^1.4.7",
+    "nodemailer": "^4.0.1",
     "pdfkit": "^0.8.0",
     "redis": "^2.6.5",
     "sax": "^1.2.2",

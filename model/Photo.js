@@ -302,12 +302,15 @@
             var width = img.width(),height = img.height();
 
             if(width < 144 || height < 192) reject(new Error('照片分辨率过小'));
-            else if(Math.abs(Math.floor(width / 3 * 4 - height)) > 2) reject(new Error('照片比例错误'));
+            else if(Math.abs(Math.floor(width / 3 * 4 - height)) > 2)
+                reject(new Error('照片比例错误'));
             else __write();
 
             function __write(){
-                var filename = uuid.v4().replace(/-/g, '') + '.' + type;      //文件名
-                var absolutePath = path.join(user_config.paths.photo,filename); //绝对路径
+                //文件名
+                var filename = uuid.v4().replace(/-/g, '') + '.' + type;
+                //绝对路径
+                var absolutePath = path.join(user_config.paths.photo,filename);
 
                 fs.open(absolutePath, 'wx+', function(err, fd){
                     if (err) {
@@ -329,8 +332,6 @@
                     }
                 });
             }
-
-
         });
     }
 

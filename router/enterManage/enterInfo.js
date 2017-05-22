@@ -17,6 +17,7 @@
                 cb(null,'import');
             }
         }),
+
         upload = multer({
             storage: diskStore,
             fileFilter:function(req,file,cb){
@@ -91,6 +92,19 @@
         else next();
     });
 
+    /**
+     * 获取各考点\科目报名人数
+     * */
+
+    router.get('/statistics',function(req,res){
+        dbo.getStatistics().then(function(result){
+            res.setHeader('Content-type','application/json');
+            res.send(result);
+        }).catch(function(err){
+            req.log.error('报名信息_人数获取_失败',{err:err});
+            res.status(400).send(err.message);
+        });
+    });
 
     /**
      * 添加报名信息
