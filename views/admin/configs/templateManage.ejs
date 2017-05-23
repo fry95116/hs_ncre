@@ -8,69 +8,80 @@
             <div class="row">
                 <!-- 编辑器 -->
                 <div class="col-lg-5">
-                    <div class="col-xs-12">
-                        <h4>编辑模板</h4>
-                        <hr>
-                    </div>
-                    <div class="form-group message">
-                    </div>
-                    <div class="form-group clearfix">
-                        <!-- 模板选择 -->
-                        <div class="pull-left">
-                            <div class="templateName btn-group">
-                                <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
-                                    <span class="current_templateName">请选择模板</span><span class="caret"></span>
-                                </button>
-                                <ul class="dropdown-menu">
-                                    <li><a href="javascript:void(0)" value="instructions">考生须知</a></li>
-                                    <li role="separator" class="divider"></li>
-                                    <li><a href="javascript:void(0)" value="unknown">未知错误</a></li>
-                                    <li role="separator" class="divider"></li>
-                                    <li><a href="javascript:void(0)" value="enter/success">报名成功</a></li>
-                                    <li><a href="javascript:void(0)" value="enter/blacklist">报名失败_在黑名单中</a></li>
-                                    <li><a href="javascript:void(0)" value="enter/overflow">报名失败_人数已满</a></li>
-                                    <li><a href="javascript:void(0)" value="enter/repeat">报名失败_重复报名</a></li>
-                                    <li role="separator" class="divider"></li>
-                                    <li><a href="javascript:void(0)" value="getEnterInfo/noExist">报名信息查询_未知错误</a></li>
-                                    <li role="separator" class="divider"></li>
-                                    <li><a href="javascript:void(0)" value="getTestInfo/noExist">考试信息查询_考试信息不存在</a></li>
-                                    <li role="separator" class="divider"></li>
-                                    <li><a href="javascript:void(0)" value="getScoreInfo/noExist">分数信息查询_分数信息不存在</a></li>
-                                    <li role="separator" class="divider"></li>
-                                    <li><a href="javascript:void(0)" value="updateEnterInfo/updated">报名信息修改_成功</a></li>
-                                    <li><a href="javascript:void(0)" value="updateEnterInfo/noExist">报名信息修改_报名信息不存在</a></li>
-                                    <li><a href="javascript:void(0)" value="updateEnterInfo/mailSended">报名信息修改_邮件已发出</a></li>
-                                    <li><a href="javascript:void(0)" value="updateEnterInfo/mailFormat">报名信息修改_邮件格式</a></li>
-                                    <li role="separator" class="divider"></li>
-                                    <li><a href="javascript:void(0)" value="uploadPhoto/added">照片上传_添加成功</a></li>
-                                    <li><a href="javascript:void(0)" value="uploadPhoto/updated">照片上传_修改成功</a></li>
-                                    <li><a href="javascript:void(0)" value="uploadPhoto/invalidFormat">照片上传_文件格式错误</a></li>
-                                    <li><a href="javascript:void(0)" value="uploadPhoto/invalidRatio">照片上传_照片比例错误</a></li>
-                                    <li><a href="javascript:void(0)" value="uploadPhoto/mailSended">照片上传_邮件已发出</a></li>
-                                    <li><a href="javascript:void(0)" value="uploadPhoto/mailFormat">照片上传_邮件格式</a></li>
-                                    <li><a href="javascript:void(0)" value="uploadPhoto/noExist">照片上传_报名信息不存在</a></li>
-                                    <li><a href="javascript:void(0)" value="uploadPhoto/overSized">照片上传_照片大小过大</a></li>
-                                    <li><a href="javascript:void(0)" value="uploadPhoto/tooSmall">照片上传_照片分辨率过小</a></li>
-                                </ul>
-                            </div>
-                            <input name="templateName" type="hidden">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <h4>编辑模板</h4>
+                            <hr>
                         </div>
-                        <div class="pull-right">
-                            <div class="btn-group" role="group">
+                    </div>
+                    <div class="row">
+                        <div class="message">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group clearfix">
+                            <!-- 模板选择 -->
+                            <div class="pull-left">
+                                <div class="templateName btn-group">
+                                    <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
+                                        <span class="current_templateName">请选择模板</span><span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a href="javascript:void(0)" value="instructions">考生须知</a></li>
+                                        <li role="separator" class="divider"></li>
+                                        <li><a href="javascript:void(0)" value="unknown">未知错误</a></li>
+                                        <li role="separator" class="divider"></li>
+                                        <li><a href="javascript:void(0)" value="enter/success">报名成功</a></li>
+                                        <li><a href="javascript:void(0)" value="enter/blacklist">报名失败_在黑名单中</a></li>
+                                        <li><a href="javascript:void(0)" value="enter/overflow">报名失败_人数已满</a></li>
+                                        <li><a href="javascript:void(0)" value="enter/repeat">报名失败_重复报名</a></li>
+                                        <li role="separator" class="divider"></li>
+                                        <li><a href="javascript:void(0)" value="getEnterInfo/noExist">报名信息查询_未知错误</a></li>
+                                        <li role="separator" class="divider"></li>
+                                        <li><a href="javascript:void(0)" value="getTestInfo/noExist">考试信息查询_考试信息不存在</a></li>
+                                        <li role="separator" class="divider"></li>
+                                        <li><a href="javascript:void(0)" value="getScoreInfo/noExist">分数信息查询_分数信息不存在</a></li>
+                                        <li role="separator" class="divider"></li>
+                                        <li><a href="javascript:void(0)" value="updateEnterInfo/updated">报名信息修改_成功</a></li>
+                                        <li><a href="javascript:void(0)" value="updateEnterInfo/noExist">报名信息修改_报名信息不存在</a></li>
+                                        <li><a href="javascript:void(0)" value="updateEnterInfo/mailSended">报名信息修改_邮件已发出</a></li>
+                                        <li><a href="javascript:void(0)" value="updateEnterInfo/mailFormat">报名信息修改_邮件格式</a></li>
+                                        <li role="separator" class="divider"></li>
+                                        <li><a href="javascript:void(0)" value="uploadPhoto/added">照片上传_添加成功</a></li>
+                                        <li><a href="javascript:void(0)" value="uploadPhoto/updated">照片上传_修改成功</a></li>
+                                        <li><a href="javascript:void(0)" value="uploadPhoto/invalidFormat">照片上传_文件格式错误</a></li>
+                                        <li><a href="javascript:void(0)" value="uploadPhoto/invalidRatio">照片上传_照片比例错误</a></li>
+                                        <li><a href="javascript:void(0)" value="uploadPhoto/mailSended">照片上传_邮件已发出</a></li>
+                                        <li><a href="javascript:void(0)" value="uploadPhoto/mailFormat">照片上传_邮件格式</a></li>
+                                        <li><a href="javascript:void(0)" value="uploadPhoto/noExist">照片上传_报名信息不存在</a></li>
+                                        <li><a href="javascript:void(0)" value="uploadPhoto/overSized">照片上传_照片大小过大</a></li>
+                                        <li><a href="javascript:void(0)" value="uploadPhoto/tooSmall">照片上传_照片分辨率过小</a></li>
+                                    </ul>
+                                </div>
+                                <input name="templateName" type="hidden">
+                            </div>
+                            <div class="pull-right">
+                                <div class="btn-group" role="group">
 
-                                <button type="button" class="reload btn btn-primary">
-                                    <i class="glyphicon glyphicon-cloud-download"></i>&nbsp;重新加载
-                                </button>
-                                <button type="button" class="save btn btn-primary">
-                                    <i class="glyphicon glyphicon-cloud-upload"></i>&nbsp;保存
+                                    <button type="button" class="reload btn btn-primary">
+                                        <i class="glyphicon glyphicon-cloud-download"></i>&nbsp;重新加载
+                                    </button>
+                                    <button type="button" class="save btn btn-primary">
+                                        <i class="glyphicon glyphicon-cloud-upload"></i>&nbsp;保存
+                                    </button>
+                                </div>
+                                <button  type="button" class="preview btn btn-primary">
+                                    预览&nbsp;<i class="glyphicon glyphicon-chevron-right"></i>
                                 </button>
                             </div>
-                            <button  type="button" class="preview btn btn-primary">
-                                预览&nbsp;<i class="glyphicon glyphicon-chevron-right"></i>
-                            </button>
                         </div>
                     </div>
-                    <div class="templateEditor"></div>
+                    <div class="row">
+                        <div class="col-xs-12 templateEditor"></div>
+                    </div>
+                    <div class="row">
+                        <p><b>Tips:在编辑邮件格式时，使用REQ_HREF代替请求地址</b></p>
+                    </div>
                 </div>
                 <!-- 预览 -->
                 <div class="col-lg-7">

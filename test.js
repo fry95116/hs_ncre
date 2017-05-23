@@ -22,7 +22,7 @@ var data = {
     from: '386140803@qq.com',
     to: 'fry95116@126.com',
     subject: 'nodeMailer测试',
-    text: 'Plaintext version of the message',
+    text: 'Plaintext version of the message'
     //html: '<p>HTML version of the message</p>'
 };
 transporter.sendMail(data,function(err,info){

@@ -23,10 +23,17 @@
   "redis_config":{
     "host":"localhost",
     "port": 6379,
-    "password":"7758258",
     "ttl": 600
   },
 
+  "stmpConfig":{
+    "service": "163",
+    "auth": {
+      "user": "fry95116@163.com",
+      "pass": "abc7758258"
+    }
+  },
+  "domainName":"http://localhost:8080",
   "Port_frontStage":8080,
   "Port_backStage":8080
 }

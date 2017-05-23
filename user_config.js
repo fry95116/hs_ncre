@@ -12,6 +12,10 @@
         db_config:localConfig.db_config,
 		table_names:localConfig.table_names,
         redis_config:localConfig.redis_config,
+        stmpConfig:localConfig.stmpConfig,
+        domainName:localConfig.domainName,
+        Port_frontStage:localConfig.Port_frontStage,
+        Port_backStage:localConfig.Port_backStage,
 
         admin_passport:{
         	get username(){return config.get('admin_passport.username').value();},
