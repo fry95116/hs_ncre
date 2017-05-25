@@ -25,7 +25,7 @@
 		<!--<button id="read_info" onclick="window.location = '/instructions'">开始报名</button>-->
 		<ul id="functionList">
 			<% if(functionControl.enter === true){ %>
-			<li><a class="func" href="/instructions">开始报名</a></li>
+			<li><a href="/instructions">开始报名</a></li>
 			<li><a class="func" href="/requestUploadPhoto">上传 & 修改照片</a></li>
 			<li><a class="func" href="/getEnterInfo">查询 & 修改报名信息</a></li>
 			<% } else { %>
@@ -39,11 +39,11 @@
 			<% } %>
 		</ul>
 
-		<form id="get_id_number" action="getEnterInfo" method="GET">
+		<form id="get_id_number" action="/getEnterInfo" method="GET">
 			<h3>请输入你的证件号码</h3>
 			<div>
 				<input id="id_number" name="id_number" type="text">
-				<input type="submit" value="检索">
+				<input type="submit" value="继续">
 				<input id="back" type="button" value="返回">
 			</div>
 		</form> 
@@ -76,13 +76,6 @@
 					<td>86551362</td>
 				</tr>
 			</table>
-			<!--<p>考试信息咨询QQ群<br>-->
-				<!--北环考点：437252399<br>-->
-				<!--郑东新区考点：437306317<br>-->
-				<!--437312687<br>-->
-				<!--437314632-->
-			<!--</p>-->
-			<!--<p>报名咨询电话: 86551362</p>-->
 		</div>
 	</div>
 </body>

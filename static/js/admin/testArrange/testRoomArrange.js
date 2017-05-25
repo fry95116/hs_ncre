@@ -46,7 +46,7 @@ $(document).ready(function(){
             formatter:formatter_text
         }, {
             formatter: function(value, row, index){
-                return '<a href="javascript:void(0)" class="delete" key="' + row.code + '">删除</a>';
+                return '<div class="cell"><a href="javascript:void(0)" class="delete" key="' + row.code + '">删除</a></div>';
             }
         }]
     });
@@ -67,7 +67,7 @@ $(document).ready(function(){
             formatter:formatter_date
         }, {
             formatter: function(value, row, index){
-                return '<a href="javascript:void(0)" class="delete" key="' + row.code + '">删除</a>';
+                return '<div class="cell"><a href="javascript:void(0)" class="delete" key="' + row.code + '">删除</a></div>';
             }
         }]
     });

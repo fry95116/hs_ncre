@@ -7,6 +7,9 @@ body {
     font-size: 14px;
 }
 
+.pull-left .form-group,.pull-right .form-group{
+    margin-bottom:10px;
+}
 
 .loader {
     display: inline-block;

@@ -122,7 +122,7 @@
     /* 考生信息查询界面 */
     router.get('/getEnterInfo', function (req, res, next) {
         if (req.query.id_number) {
-            dbo_enterInfo.selectInfo({searchBy:'id_number',searchText:req.query.id_number,strictMode:true})
+            dbo_enterInfo.selectInfo({searchBy:'id_number',searchText:req.query.id_number,strictMode:'true'})
                 .then(function(result){
                     //查询为空
                     if(result.total === 0) {
@@ -178,7 +178,7 @@
     router.get('/requestUpdateEnterInfo',function(req,res,next){
         if(_.isUndefined(req.query.id_number)) next();
         else{
-            dbo_enterInfo.selectInfo({searchBy:'id_number',searchText:req.query.id_number,strictMode:true})
+            dbo_enterInfo.selectInfo({searchBy:'id_number',searchText:req.query.id_number,strictMode:'true'})
             .then(function(result){
                 if(result.total === 0)
                     res.render('frontStage/op_res',{isPreview:false,content:'updateEnterInfo/noExist'});
@@ -186,25 +186,25 @@
                     updateID.create(req.query.id_number)
                         .then(function(req_id){
                             /*** 发送邮件 ***/
-                            var email = result.rows[0].email;
-                            //邮件模板的绝对路径
-                            var mailFormatPath = path.join(__dirname,'../../views/frontStage/templates/updateEnterInfo/mailFormat.ejs');
-                            //请求修改的URL
-                            var url = domainName + '/updateEnterInfo?id_number=' + req.query.id_number + '&req_id=' + req_id;
-                            emailSender.renderAndSend(email,'修改报名信息',mailFormatPath,{req_href:url})
-                                .then(function(){
-                                    res.render('frontStage/op_res',{isPreview:false,content:'updateEnterInfo/mailSended'});
-                                })
-                                .catch(function(err){
-                                    req.log.error('报名信息_获取链接_失败',{err:err});
-                                    res.render('frontStage/op_res',{isPreview:false,content:'unknown'});
-                                });
+                            // var email = result.rows[0].email;
+                            // //邮件模板的绝对路径
+                            // var mailFormatPath = path.join(__dirname,'../../views/frontStage/templates/updateEnterInfo/mailFormat.ejs');
+                            // //请求修改的URL
+                            // var url = domainName + '/updateEnterInfo?id_number=' + req.query.id_number + '&req_id=' + req_id;
+                            // emailSender.renderAndSend(email,'修改报名信息',mailFormatPath,{req_href:url})
+                            //     .then(function(){
+                            //         res.render('frontStage/op_res',{isPreview:false,content:'updateEnterInfo/mailSended'});
+                            //     })
+                            //     .catch(function(err){
+                            //         req.log.error('报名信息_获取链接_失败',{err:err});
+                            //         res.render('frontStage/op_res',{isPreview:false,content:'unknown'});
+                            //     });
 
                             /*** 测试用 ***/
-                            // res.render('frontStage/op_res', {
-                            //     isPreview:true,
-                            //     content:'测试用：<a href="/updateEnterInfo?id_number=' + req.query.id_number + '&req_id=' + req_id + '">修改链接</a>'
-                            // });
+                            res.render('frontStage/op_res', {
+                                isPreview:true,
+                                content:'测试用：<a href="/updateEnterInfo?id_number=' + req.query.id_number + '&req_id=' + req_id + '">修改链接</a>'
+                            });
 
                         })
                         .catch(function(err){
@@ -224,7 +224,7 @@
         if(_.isUndefined(req.query.id_number) ||_.isUndefined(req.query.req_id)) next();
         else{
             updateID.check(req.query.req_id,req.query.id_number)
-                .then(_.partial(dbo_enterInfo.selectInfo,{searchBy:'id_number',searchText:req.query.id_number,strictMode:true}))
+                .then(_.partial(dbo_enterInfo.selectInfo,{searchBy:'id_number',searchText:req.query.id_number,strictMode:'true'}))
                 .then(function(result){
                     if(result.total === 0)
                         res.render('frontStage/op_res',{isPreview:false,content:'updateEnterInfo/noExist'});
@@ -334,7 +334,7 @@
     router.get('/requestUploadPhoto',function(req,res,next){
         if(_.isUndefined(req.query.id_number)) next();
         else{
-            dbo_enterInfo.selectInfo({searchBy:'id_number',searchText:req.query.id_number,strictMode:true})
+            dbo_enterInfo.selectInfo({searchBy:'id_number',searchText:req.query.id_number,strictMode:'true'})
                 .then(function(result){
                     if(result.total === 0)
                         res.render('frontStage/op_res',{isPreview:false,content:'uploadPhoto/noExist'});
@@ -342,25 +342,25 @@
                         updateID.create(req.query.id_number)
                             .then(function(req_id){
                                 /*** 发送邮件 ***/
-                                var email = result.rows[0].email;   //邮箱地址
-                                //邮件模板的绝对路径
-                                var mailFormatPath = path.join(__dirname,'../../views/frontStage/templates/uploadPhoto/mailFormat.ejs');
-                                //请求修改的URL
-                                var url = domainName + '/uploadPhoto?id_number=' + req.query.id_number + '&req_id=' + req_id;
-                                emailSender.renderAndSend(email,'上传或修改照片',mailFormatPath,{req_href:url})
-                                    .then(function(){
-                                        res.render('frontStage/op_res',{isPreview:false,content:'uploadPhoto/mailSended'});
-                                    })
-                                    .catch(function(err){
-                                        req.log.error('上传照片_获取链接_失败',{err:err});
-                                        res.render('frontStage/op_res',{isPreview:false,content:'unknown'});
-                                    });
+                                // var email = result.rows[0].email;   //邮箱地址
+                                // //邮件模板的绝对路径
+                                // var mailFormatPath = path.join(__dirname,'../../views/frontStage/templates/uploadPhoto/mailFormat.ejs');
+                                // //请求修改的URL
+                                // var url = domainName + '/uploadPhoto?id_number=' + req.query.id_number + '&req_id=' + req_id;
+                                // emailSender.renderAndSend(email,'上传或修改照片',mailFormatPath,{req_href:url})
+                                //     .then(function(){
+                                //         res.render('frontStage/op_res',{isPreview:false,content:'uploadPhoto/mailSended'});
+                                //     })
+                                //     .catch(function(err){
+                                //         req.log.error('上传照片_获取链接_失败',{err:err});
+                                //         res.render('frontStage/op_res',{isPreview:false,content:'unknown'});
+                                //     });
 
                                 /*** 测试用 ***/
-                                // res.render('frontStage/op_res', {
-                                //     isPreview:true,
-                                //     content:'测试用：<a href="/uploadPhoto?id_number=' + req.query.id_number + '&req_id=' + req_id + '">修改链接</a>'
-                                // });
+                                res.render('frontStage/op_res', {
+                                    isPreview:true,
+                                    content:'测试用：<a href="/uploadPhoto?id_number=' + req.query.id_number + '&req_id=' + req_id + '">修改链接</a>'
+                                });
 
                             })
                             .catch(function(err){

@@ -41,7 +41,7 @@ $(document).ready(function(){
 
         }, {
             formatter: function(value, row, index){
-                return '<a href="javascript:void(0)" class="delete" key="' + row.code + '">删除</a>';
+                return '<div class="cell"><a href="javascript:void(0)" class="delete" key="' + row.code + '">删除</a></div>';
             }
         }]
     });
@@ -58,7 +58,7 @@ $(document).ready(function(){
             title: '考试时间(分钟)'
         }, {
             formatter: function(value, row, index){
-                return '<a href="javascript:void(0)" class="delete" key="' + row.code + '">删除</a>';
+                return '<div class="cell"><a href="javascript:void(0)" class="delete" key="' + row.code + '">删除</a></div>';
             }
         }]
     });
@@ -289,7 +289,7 @@ $(document).ready(function(){
 
         }, {
             formatter: function(value, row, index){
-                return '<a href="javascript:void(0)" class="delete" key="' + index + '">删除</a>';
+                return '<div class="cell"><a href="javascript:void(0)" class="delete" key="' + index + '">删除</a></div>';
             }
         }]
     });

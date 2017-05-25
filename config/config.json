@@ -5,49 +5,49 @@
       "name": "华北水利水电大学（郑东新区）",
       "subjects": [
         {
-          "code": 24,
-          "name": "二级 —— C语言程序设计",
+          "code": "65",
+          "name": "MS office",
           "duration": 120
         },
         {
-          "code": 26,
-          "name": "二级 —— VB语言程序设计",
+          "code": "24",
+          "name": "C语言程序设计",
           "duration": 120
         },
         {
-          "code": 27,
-          "name": "二级 —— VFP据库程序设计",
+          "code": "26",
+          "name": "VB语言程序设计",
           "duration": 120
         },
         {
-          "code": 29,
-          "name": "二级 —— Access数据库程序设计",
+          "code": "27",
+          "name": "VFP据库程序设计",
           "duration": 120
         },
         {
-          "code": 35,
-          "name": "三级 —— 网络技术",
+          "code": "29",
+          "name": "Access数据库程序设计",
           "duration": 120
         },
         {
-          "code": 36,
-          "name": "三级 —— 数据库技术",
+          "code": "35",
+          "name": "网络技术",
+          "duration": 120
+        },
+        {
+          "code": "36",
+          "name": "数据库技术",
           "duration": 120
         },
         {
           "code": "41",
-          "name": "四级 —— 网络工程师",
-          "duration": "90"
+          "name": "网络工程师",
+          "duration": 90
         },
         {
           "code": "42",
-          "name": "四级 —— 数据库工程师",
-          "duration": "90"
-        },
-        {
-          "code": "65",
-          "name": "二级 —— MS office",
-          "duration": "120"
+          "name": "数据库工程师",
+          "duration": 90
         }
       ]
     },
@@ -56,49 +56,49 @@
       "name": "华北水利水电大学（北环路36号）",
       "subjects": [
         {
-          "code": 65,
-          "name": "二级 —— MS office",
+          "code": "65",
+          "name": "MS office",
           "duration": 120
         },
         {
-          "code": 24,
-          "name": "二级 —— C语言程序设计",
+          "code": "24",
+          "name": "C语言程序设计",
           "duration": 120
         },
         {
-          "code": 26,
-          "name": "二级 —— VB语言程序设计",
+          "code": "26",
+          "name": "VB语言程序设计",
           "duration": 120
         },
         {
-          "code": 27,
-          "name": "二级 —— VFP据库程序设计",
+          "code": "27",
+          "name": "VFP据库程序设计",
           "duration": 120
         },
         {
-          "code": 29,
-          "name": "二级 —— Access数据库程序设计",
+          "code": "29",
+          "name": "Access数据库程序设计",
           "duration": 120
         },
         {
-          "code": 35,
-          "name": "三级 —— 网络技术",
+          "code": "35",
+          "name": "网络技术",
           "duration": 120
         },
         {
-          "code": 36,
-          "name": "三级 —— 数据库技术",
+          "code": "36",
+          "name": "数据库技术",
           "duration": 120
         },
         {
           "code": "41",
-          "name": "四级 —— 网络工程师",
-          "duration": "90"
+          "name": "网络工程师",
+          "duration": 90
         },
         {
           "code": "42",
-          "name": "四级 —— 数据库工程师",
-          "duration": "90"
+          "name": "数据库工程师",
+          "duration": 90
         }
       ]
     }
@@ -143,6 +143,18 @@
       "limit_obj": [
         {
           "exam_site_code": "410084"
+        }
+      ]
+    },
+    {
+      "desc": "报名总人数",
+      "limitNum": "2000",
+      "limit_obj": [
+        {
+          "exam_site_code": "410084"
+        },
+        {
+          "exam_site_code": "410067"
         }
       ]
     }

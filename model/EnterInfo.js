@@ -108,7 +108,7 @@
 		// 接下来对特殊的验证做处理
 
 		// 如果使用的是身份证，则对身份证号码合法性校验
-		if(typeof err.id_number !== 'undefined' && data_in.id_type == "1") {
+		if(typeof err.id_number === 'undefined' && data_in.id_type == "1") {
 			var id_info = getIdCardInfo(data_in.id_number.toString());
 			if(!id_info.isTrue) {
 				err['id_number'] = '非法的数据';

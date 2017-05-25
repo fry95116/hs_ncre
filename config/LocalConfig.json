@@ -1,12 +1,12 @@
 {
   "paths":{
     "mysql":"C:\\Program Files\\MariaDB 10.1\\bin",
-    "photo":"D:\\我的工程\\hs_ncre\\证件照",
-    "dump":"D:\\我的工程\\hs_ncre\\dump"
+    "photo":"C:\\Users\\tastycarb\\Desktop\\hs_ncre\\证件照",
+    "dump":"C:\\Users\\tastycarb\\Desktop\\hs_ncre\\dump"
   },
 
   "db_config":{
-    "host": "localhost",
+    "host": "127.0.0.1",
     "user": "root",
     "password": "abc7758258",
     "database": "test"
@@ -21,7 +21,7 @@
   },
 
   "redis_config":{
-    "host":"localhost",
+    "host":"127.0.0.1",
     "port": 6379,
     "ttl": 600
   },
