@@ -1,7 +1,7 @@
 {
   "paths":{
     "mysql":"C:\\Program Files\\MariaDB 10.1\\bin",
-    "photo":"C:\\Users\\tastycarb\\Desktop\\hs_ncre\\证件照",
+    "photo":"C:\\Users\\tastycarb\\Desktop\\证件照",
     "dump":"C:\\Users\\tastycarb\\Desktop\\hs_ncre\\dump"
   },
 
@@ -21,7 +21,7 @@
   },
 
   "redis_config":{
-    "host":"127.0.0.1",
+    "host":"localhost",
     "port": 6379,
     "ttl": 600
   },

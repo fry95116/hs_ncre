@@ -44,7 +44,7 @@ var CountCheckError = function (msg) {
     CountCheckError.super_.call(this, msg, this.constructor)
 };
 util.inherits(CountCheckError, AbstractError);
-CountCheckError.prototype.name = 'Blacklist';
+CountCheckError.prototype.name = 'count check';
 
 module.exports = {
     InvalidDataError: InvalidDataError,

@@ -59,7 +59,7 @@
 			</div>
 
 			<div id="input_id_type">
-				<label for="id_type">证件类型(必选):</label>
+				<label for="id_type">证件类型:</label>
                     <% tr.id_type.each(function(val){ %>
 						<%if(val.code === formData.id_type){%>
 						<span><%- val.name %></span>
@@ -69,7 +69,7 @@
 			</div>
 
 			<div id="input_id_number">
-				<label for="id_number">证件号码(必填);</label>
+				<label for="id_number">证件号码:</label>
 				<span><%- formData.id_number %></span>
 				<span class="validated_result"></span>
 			</div>
@@ -168,7 +168,7 @@
 			</div>
 
 			<div id="remark">
-				<h4>备注</h4>
+				<h4>备注（请重新填写备注）</h4>
 				<div class="" id="input_is_our_school">
 					<label for="is_our_school">是否为本校学生？</label>
 					<input type="checkbox" name="is_our_school" value="true">
