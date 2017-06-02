@@ -191,30 +191,37 @@
                     updateID.create(req.query.id_number)
                         .then(function(req_id){
                             /*** 发送邮件 ***/
-                            var email = result.rows[0].email;
-                            //邮件模板的绝对路径
-                            var mailFormatPath = path.join(__dirname,'../../views/frontStage/templates/updateEnterInfo/mailFormat.ejs');
-                            //请求修改的URL
-                            var url = domainName + '/updateEnterInfo?id_number=' + req.query.id_number + '&req_id=' + req_id;
-                            emailSender.renderAndSend(email,'修改报名信息',mailFormatPath,{req_href:url})
-                                .then(function(){
-                                    res.render('frontStage/op_res',{isPreview:false,content:'updateEnterInfo/mailSended'});
-                                })
-                                .catch(function(err){
-                                    req.log.error('报名信息_获取链接_失败',{err:err});
-                                    res.render('frontStage/op_res',{isPreview:false,content:'unknown'});
-                                });
+                            // var email = result.rows[0].email;
+                            // //邮件模板的绝对路径
+                            // var mailFormatPath = path.join(__dirname,'../../views/frontStage/templates/updateEnterInfo/mailFormat.ejs');
+                            // //请求修改的URL
+                            // var url = domainName + '/updateEnterInfo?id_number=' + req.query.id_number + '&req_id=' + req_id;
+                            // emailSender.renderAndSend(email,'修改报名信息',mailFormatPath,{req_href:url})
+                            //     .then(function(){
+                            //         res.render('frontStage/op_res',{isPreview:false,content:'updateEnterInfo/mailSended'});
+                            //     })
+                            //     .catch(function(err){
+                            //         req.log.error('报名信息_获取链接_失败',{err:err});
+                            //         res.render('frontStage/op_res',{isPreview:false,content:'unknown'});
+                            //     });
 
                             /*** 测试用 ***/
-                            // res.render('frontStage/op_res', {
-                            //     isPreview:true,
-                            //     content:'测试用：<a href="/updateEnterInfo?id_number=' + req.query.id_number + '&req_id=' + req_id + '">修改链接</a>'
-                            // });
+                            res.render('frontStage/op_res', {
+                                isPreview:true,
+                                content:'测试用：<a href="/updateEnterInfo?id_number=' + req.query.id_number + '&req_id=' + req_id + '">修改链接</a>'
+                            });
 
                         })
                         .catch(function(err){
-                            req.log.error('报名信息_获取链接_失败',{err:err});
-                            res.render('frontStage/op_res',{isPreview:false,content:'unknown'});
+                            if(err.code === 'EEXIST'){
+                                var second = parseInt(err.message);
+                                var time = second % 60 === 0 ? '' + second + '秒' : '' + Math.floor(second / 60) + '分' + second % 60 + '秒';
+                                res.render('frontStage/op_res',{isPreview:true,content:'验证邮件获取失败,请于' + time + '后再次尝试修改'});
+                            }
+                            else{
+                                req.log.error('报名信息_获取链接_失败',{err:err});
+                                res.render('frontStage/op_res',{isPreview:false,content:'unknown'});
+                            }
                         });
             })
             .catch(function(err){
@@ -347,30 +354,37 @@
                         updateID.create(req.query.id_number)
                             .then(function(req_id){
                                 /*** 发送邮件 ***/
-                                var email = result.rows[0].email;   //邮箱地址
-                                //邮件模板的绝对路径
-                                var mailFormatPath = path.join(__dirname,'../../views/frontStage/templates/uploadPhoto/mailFormat.ejs');
-                                //请求修改的URL
-                                var url = domainName + '/uploadPhoto?id_number=' + req.query.id_number + '&req_id=' + req_id;
-                                emailSender.renderAndSend(email,'上传或修改照片',mailFormatPath,{req_href:url})
-                                    .then(function(){
-                                        res.render('frontStage/op_res',{isPreview:false,content:'uploadPhoto/mailSended'});
-                                    })
-                                    .catch(function(err){
-                                        req.log.error('上传照片_获取链接_失败',{err:err});
-                                        res.render('frontStage/op_res',{isPreview:false,content:'unknown'});
-                                    });
+                                // var email = result.rows[0].email;   //邮箱地址
+                                // //邮件模板的绝对路径
+                                // var mailFormatPath = path.join(__dirname,'../../views/frontStage/templates/uploadPhoto/mailFormat.ejs');
+                                // //请求修改的URL
+                                // var url = domainName + '/uploadPhoto?id_number=' + req.query.id_number + '&req_id=' + req_id;
+                                // emailSender.renderAndSend(email,'上传或修改照片',mailFormatPath,{req_href:url})
+                                //     .then(function(){
+                                //         res.render('frontStage/op_res',{isPreview:false,content:'uploadPhoto/mailSended'});
+                                //     })
+                                //     .catch(function(err){
+                                //         req.log.error('上传照片_获取链接_失败',{err:err});
+                                //         res.render('frontStage/op_res',{isPreview:false,content:'unknown'});
+                                //     });
 
                                 /*** 测试用 ***/
-                                // res.render('frontStage/op_res', {
-                                //     isPreview:true,
-                                //     content:'测试用：<a href="/uploadPhoto?id_number=' + req.query.id_number + '&req_id=' + req_id + '">修改链接</a>'
-                                // });
+                                res.render('frontStage/op_res', {
+                                    isPreview:true,
+                                    content:'测试用：<a href="/uploadPhoto?id_number=' + req.query.id_number + '&req_id=' + req_id + '">修改链接</a>'
+                                });
 
                             })
                             .catch(function(err){
-                                req.log.error('上传照片_获取链接_失败',{err:err});
-                                res.render('frontStage/op_res',{isPreview:false,content:'unknown'});
+                                if(err.code === 'EEXIST'){
+                                    var second = parseInt(err.message);
+                                    var time = second < 60 ? '' + second + '秒' : '' + Math.floor(second / 60) + '分' + second % 60 + '秒';
+                                    res.render('frontStage/op_res',{isPreview:true,content:'验证邮件获取失败,请于' + time + '后再次尝试上传'});
+                                }
+                                else{
+                                    req.log.error('上传照片_获取链接_失败',{err:err});
+                                    res.render('frontStage/op_res',{isPreview:false,content:'unknown'});
+                                }
                             });
                 })
                 .catch(function(err){

@@ -7,14 +7,29 @@
         redis_config = require('./config/LocalConfig.json').redis_config,
         redis = require('redis').createClient(redis_config);
 
-    var timeOut = 5 * 60; //5分钟
+    var timeOut_requestID = 5 * 60; //请求码最大有效时间：5分钟
+    var timeOut_getReqID = 3 * 60;  //发送验证邮件的最小时间间隔：3分钟
 
     function create(id_number){
         return new Promise(function(resolve,reject){
-            var token = uuid.v4().replace(/-/g, '');
-            redis.setex('update:' + token, timeOut , id_number ,function(err){
+            redis.ttl('update:' + id_number, function(err,reply){
                 if(err) reject(err);
-                else resolve(token)
+                // 如果存在，返回错误
+                else if(reply > 0){
+                    err = new Error(reply);
+                    err.code = 'EEXIST';
+                    reject(err);
+                }
+                else{
+                    var token = uuid.v4().replace(/-/g, '');
+                    redis.setex('update:' + token, timeOut_requestID , id_number ,function(err){
+                        if(err) reject(err);
+                        else redis.setex('update:' + id_number, timeOut_getReqID , id_number ,function(err){
+                            if(err) reject(err);
+                            else resolve(token)
+                        });
+                    });
+                }
             });
         });
     }

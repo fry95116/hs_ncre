@@ -56,11 +56,6 @@
       "name": "华北水利水电大学（北环路36号）",
       "subjects": [
         {
-          "code": "65",
-          "name": "MS office",
-          "duration": 120
-        },
-        {
           "code": "24",
           "name": "C语言程序设计",
           "duration": 120
@@ -143,18 +138,6 @@
       "limit_obj": [
         {
           "exam_site_code": "410084"
-        }
-      ]
-    },
-    {
-      "desc": "报名总人数",
-      "limitNum": "2000",
-      "limit_obj": [
-        {
-          "exam_site_code": "410084"
-        },
-        {
-          "exam_site_code": "410067"
         }
       ]
     }
