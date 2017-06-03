@@ -86,8 +86,9 @@
     });
 
     /** 报名阶段的路由 */
-    router.all(['/getEnterInfo','/requestUpdateEnterInfo','/updateEnterInfo',
-        '/requestUploadPhoto','/getPhoto','/uploadPhoto','/repeatcheck','/enter'],function(req,res,next){
+    router.all(['/getEnterInfo','/requestUpdateEnterInfo','/requestUpdateEnterInfo/mailSended',
+        '/updateEnterInfo', '/requestUploadPhoto','/requestUploadPhoto/mailSended',
+        '/getPhoto', '/uploadPhoto','/repeatcheck','/enter'],function(req,res,next){
         if(user_config.functionControl.enter === true)
             next();
         else
