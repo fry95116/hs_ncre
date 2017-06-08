@@ -195,22 +195,27 @@
                             //邮件模板的绝对路径
                             var mailFormatPath = path.join(__dirname,'../../views/frontStage/templates/updateEnterInfo/mailFormat.ejs');
                             //请求修改的URL
-                            var url = domainName + '/updateEnterInfo?id_number=' + req.query.id_number + '&req_id=' + req_id;
-                            emailSender.renderAndSend(email,'修改报名信息',mailFormatPath,{req_href:url})
-                                .then(function(){
-                                    res.redirect('updateEnterInfo/mailSended');
-                                    //res.render('frontStage/op_res',{isPreview:false,content:'updateEnterInfo/mailSended'});
-                                })
-                                .catch(function(err){
-                                    req.log.error('报名信息_获取链接_失败',{err:err});
-                                    res.render('frontStage/op_res',{isPreview:false,content:'unknown'});
-                                });
+                            // var url = domainName + '/updateEnterInfo?id_number=' + req.query.id_number + '&req_id=' + req_id;
+                            // emailSender.renderAndSend(email,'修改报名信息',mailFormatPath,{req_href:url})
+                            //     .then(function(){
+                            //         res.redirect('updateEnterInfo/mailSended');
+                            //         //res.render('frontStage/op_res',{isPreview:false,content:'updateEnterInfo/mailSended'});
+                            //     })
+                            //     .catch(function(err){
+                            //         req.log.error('报名信息_获取链接_失败',{err:err});
+                            //         res.render('frontStage/op_res',{isPreview:false,content:'unknown'});
+                            //     });
 
                             /*** 测试用 ***/
-                            // res.render('frontStage/op_res', {
-                            //     isPreview:true,
-                            //     content:'测试用：<a href="/updateEnterInfo?id_number=' + req.query.id_number + '&req_id=' + req_id + '">修改链接</a>'
-                            // });
+                            res.render('frontStage/op_res', {
+                                isPreview:true,
+                                content:'修改链接：' +
+                                '<a href="/updateEnterInfo?id_number=' + req.query.id_number + '&req_id=' + req_id + '">' +
+                                domainName + '/updateEnterInfo?id_number=' + req.query.id_number + '&req_id=' + req_id +
+                                '</a>' +
+                                '请点击修改链接完成接下来的修改操作。'
+
+                            });
 
                         })
                         .catch(function(err){
@@ -317,7 +322,7 @@
                         .then(resolve)
                         .catch(reject);
                 }))
-                .then(_.partial(updateID.remove,req.query.req_id))
+                .then(_.partial(updateID.remove,req.query.req_id,req.query.id_number))
                 .then(function(){
                     //日志
                     req.log.info('报名信息_修改_成功',{id_number:req.body.id_number});
@@ -360,26 +365,30 @@
                         updateID.create(req.query.id_number)
                             .then(function(req_id){
                                 /*** 发送邮件 ***/
-                                var email = result.rows[0].email;   //邮箱地址
-                                //邮件模板的绝对路径
-                                var mailFormatPath = path.join(__dirname,'../../views/frontStage/templates/uploadPhoto/mailFormat.ejs');
-                                //请求修改的URL
-                                var url = domainName + '/uploadPhoto?id_number=' + req.query.id_number + '&req_id=' + req_id;
-                                emailSender.renderAndSend(email,'上传或修改照片',mailFormatPath,{req_href:url})
-                                    .then(function(){
-                                        res.redirect('/requestUploadPhoto/mailSended');
-                                        //res.render('frontStage/op_res',{isPreview:false,content:'uploadPhoto/mailSended'});
-                                    })
-                                    .catch(function(err){
-                                        req.log.error('上传照片_获取链接_失败',{err:err});
-                                        res.render('frontStage/op_res',{isPreview:false,content:'unknown'});
-                                    });
+                                // var email = result.rows[0].email;   //邮箱地址
+                                // //邮件模板的绝对路径
+                                // var mailFormatPath = path.join(__dirname,'../../views/frontStage/templates/uploadPhoto/mailFormat.ejs');
+                                // //请求修改的URL
+                                // var url = domainName + '/uploadPhoto?id_number=' + req.query.id_number + '&req_id=' + req_id;
+                                // emailSender.renderAndSend(email,'上传或修改照片',mailFormatPath,{req_href:url})
+                                //     .then(function(){
+                                //         res.redirect('/requestUploadPhoto/mailSended');
+                                //         //res.render('frontStage/op_res',{isPreview:false,content:'uploadPhoto/mailSended'});
+                                //     })
+                                //     .catch(function(err){
+                                //         req.log.error('上传照片_获取链接_失败',{err:err});
+                                //         res.render('frontStage/op_res',{isPreview:false,content:'unknown'});
+                                //     });
 
                                 /*** 测试用 ***/
-                                // res.render('frontStage/op_res', {
-                                //     isPreview:true,
-                                //     content:'测试用：<a href="/uploadPhoto?id_number=' + req.query.id_number + '&req_id=' + req_id + '">修改链接</a>'
-                                // });
+                                res.render('frontStage/op_res', {
+                                    isPreview:true,
+                                    content:'上传链接：' +
+                                    '<a href="/uploadPhoto?id_number=' + req.query.id_number + '&req_id=' + req_id + '">' +
+                                    domainName + '/uploadPhoto?id_number=' + req.query.id_number + '&req_id=' + req_id +
+                                    '</a>' +
+                                    '请点击上传链接完成接下来的照片上传操作。'
+                                });
 
                             })
                             .catch(function(err){
@@ -515,7 +524,7 @@
 
                             });
                     }))
-                    .then(_.partial(updateID.remove,req.query.req_id))
+                    .then(_.partial(updateID.remove,req.query.req_id,req.query.id_number))
                     //成功信息已经在上面处理了
                     .catch(function (err) {
                         req.log.error('照片_添加&修改_失败',{err:err});
@@ -524,7 +533,7 @@
                             res.render('frontStage/op_res',{isPreview:false,content:'uploadPhoto/invalidRatio'});
                         else if(err.message === '照片分辨率过小')
                             res.render('frontStage/op_res',{isPreview:false,content:'uploadPhoto/tooSmall'});
-                        else if(err.message == '报名信息不存在')
+                        else if(err.message === '报名信息不存在')
                             res.render('frontStage/op_res',{isPreview:false,content:'uploadPhoto/noExist'});
                         else
                             res.render('frontStage/op_res',{isPreview:false,content:'unknown'});

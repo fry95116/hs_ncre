@@ -312,6 +312,14 @@
                 //绝对路径
                 var absolutePath = path.join(user_config.paths.photo,filename);
 
+                fs.writeFile(absolutePath,buffer,{flag:'wx+'},function(err){
+                    if (err) {
+                        if (err.code === 'EEXIST') __write();
+                        else reject(err)
+                    }
+                    else resolve(filename);
+                });
+                /*
                 fs.open(absolutePath, 'wx+', function(err, fd){
                     if (err) {
                         if (err.code === 'EEXIST') __write();
@@ -330,7 +338,7 @@
 
                         });
                     }
-                });
+                });*/
             }
         });
     }

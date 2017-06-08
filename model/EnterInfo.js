@@ -810,7 +810,8 @@
 
             ConnectionPool.getConnection()
                 .then(function(con){
-                    con.query('SELECT * FROM ' + table_names.enterInfo + ' LEFT JOIN ' + table_names.photo +
+                    con.query('SELECT ' + table_names.enterInfo + '.*,' + table_names.photo + '.file_name' +
+                        ' FROM ' + table_names.enterInfo + ' LEFT JOIN ' + table_names.photo +
                         ' ON ' + table_names.enterInfo + '.id_number=' + table_names.photo + '.id_number ;')
                         .on('error', reject)
                         .on('result', function(row) {
@@ -821,7 +822,7 @@
                             }
 
                             _.each(row,function(val,key){
-                                if(!_.isUndefined(pos[key])) sheet[pos[key] + pos_row] = {t:'s',v:val};
+                                if(!_.isUndefined(pos[key])) sheet[pos[key] + pos_row] = {t:'s',v:val === null ? '' : val};
                             });
                             pos_row++;
                             /*connection.pause();

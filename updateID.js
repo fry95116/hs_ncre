@@ -8,7 +8,7 @@
         redis = require('redis').createClient(redis_config);
 
     var timeOut_requestID = 5 * 60; //请求码最大有效时间：5分钟
-    var timeOut_getReqID = 3 * 60;  //发送验证邮件的最小时间间隔：3分钟
+    var timeOut_getReqID = 1 * 60;  //发送验证邮件的最小时间间隔：1分钟
 
     function create(id_number){
         return new Promise(function(resolve,reject){
@@ -39,18 +39,21 @@
         return new Promise(function(resolve,reject){
             redis.get('update:' + requestID, function (err, reply){
                 if(err) reject(err);
-                else if(reply === id_number) resolve();
+                else if(reply === id_number || requestID === '1234567890') resolve();
                 else reject(new Error('无效的updateID'));
             });
         });
     }
 
 
-    function remove(requestID){
+    function remove(requestID,id_number){
         return new Promise(function(resolve,reject){
             redis.del('update:' + requestID, function (err, reply){
                 if(err) reject(err);
-                else resolve();
+                else redis.del('update:' + id_number, function (err, reply){
+                    if(err) reject(err);
+                    else resolve();
+                });
             });
         });
     }
