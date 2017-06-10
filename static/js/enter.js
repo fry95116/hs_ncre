@@ -88,7 +88,13 @@ var validator = [
 	['id_number', function($el) {
 		return msgRender($el, function($el) {
 			if($('[name="id_type"]').val() == 1) {
-				return getIdCardInfo($el.val()).isTrue;
+                var id_info = getIdCardInfo($el.val());
+                if(!id_info.isTrue)
+                	return false;
+                else if($('[name="sex"]').val() !== (id_info.isMale === true ? '1' : '2'))
+                	return false;
+                else
+                	return true;
 			} else return true;
 		}, '请仔细检查证件号是否正确');
 	}],
