@@ -1,6 +1,6 @@
 # 依赖
 1.nodejs（v6,以上目前不支持）下载页面：https://nodejs.org/  
-2.MariaDB \ MySQL 下载页面（MariaDB）：https://downloads.mariadb.org/
+2.MariaDB \ MySQL 下载页面（MariaDB）：https://downloads.mariadb.org/  
 3.redis 下载页面（windows版）：https://github.com/MSOpenTech/redis/releases
 
 # 安装流程（windows）
