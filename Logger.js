@@ -8,8 +8,8 @@
         serializeError = require('serialize-error');
 
     winston
-        .add(winston.transports.File,{filename:path.join(__dirname,'./log/sysLog.log')});
-        //.remove(winston.transports.Console);
+        .add(winston.transports.File,{filename:path.join(__dirname,'./log/sysLog.log')})
+        .remove(winston.transports.Console);
 
     function getLogger(baseData){
         baseData = baseData || {};
